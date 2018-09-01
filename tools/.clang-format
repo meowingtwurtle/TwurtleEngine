@@ -35,7 +35,7 @@ IncludeBlocks: Regroup
 IncludeCategories:
   - Regex: '<(experimental\/)?[a-zA-Z0-9_]+>'
     Priority: 1
-  - Regex: '<meowingtwurtle\/.*>'
+  - Regex: '<randomcat\/.*>'
     Priority: 3
   - Regex: '<.*>'
     Priority: 2

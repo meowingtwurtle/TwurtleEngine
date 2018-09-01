@@ -230,3 +230,6 @@ fabric.properties
 
 # Totally ignore IntelliJ
 .idea
+
+# Ignore build directory
+build
