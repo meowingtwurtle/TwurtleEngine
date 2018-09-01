@@ -1,6 +1,12 @@
-file(GLOB headers include/*.h)
-file(GLOB sources src/*.cpp)
+file(GLOB_RECURSE headers include/*.h)
+file(GLOB_RECURSE sources src/*.cpp)
 
 add_library(RandomCatEngine ${sources} ${headers})
 
 target_include_directories(RandomCatEngine PUBLIC include)
+
+find_package(GLEW REQUIRED)
+find_package(SDL2 REQUIRED)
+find_package(OpenGL REQUIRED)
+
+target_link_libraries(RandomCatEngine ${GLEW_LIBRARY} ${GLEW_LIB} ${SDL2_LIBRARIES} glm)
