@@ -5,7 +5,6 @@
 namespace randomcat::graphics::log {
     enum class LogType : uint8_t { INFO, WARN, ERROR };
 
-    void init();
     void log(std::string const& _message, LogType _type);
 
     inline void info(std::string const& _message) { log(_message, LogType::INFO); }
