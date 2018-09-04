@@ -22,6 +22,7 @@ namespace randomcat::engine::graphics {
     };
 
     RENDERER_SPEC(vertex, vertices)
+    RENDERER_SPEC(object, objects)
 
 #undef RENDERER_SPEC
 }    // namespace randomcat::engine::graphics
