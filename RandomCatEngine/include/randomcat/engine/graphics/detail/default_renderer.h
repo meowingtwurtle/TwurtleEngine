@@ -2,7 +2,7 @@
 
 #include <type_traits>
 #include <vector>
-
+//#include <randomcat/engine/graphics/detail/raii_wrappers/texture_raii.h>
 #include <randomcat/engine/graphics/detail/raii_wrappers/vao_raii.h>
 #include <randomcat/engine/graphics/detail/raii_wrappers/vbo_raii.h>
 #include <randomcat/engine/graphics/renderer.h>
@@ -15,20 +15,6 @@ namespace randomcat::engine::graphics::detail {
     class default_renderer : public vertex_renderer<_vertex_t> {
     public:
         default_renderer(randomcat::engine::graphics::shader _shader) : m_shader(std::move(_shader)) {
-            {
-                unsigned int tempID;
-                glCreateVertexArrays(1, &tempID);
-
-                m_vao = tempID;
-            }
-
-            {
-                unsigned int tempID;
-                glGenBuffers(1, &tempID);
-
-                m_vbo = tempID;
-            }
-
             glBindVertexArray(m_vao);
             glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 

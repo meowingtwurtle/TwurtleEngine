@@ -2,11 +2,12 @@
 
 #include <memory>
 
+#include <GL/glew.h>
+
 namespace randomcat::engine::graphics::detail {
     struct shader_id_wrapper {
     public:
-        shader_id_wrapper();
-        shader_id_wrapper(unsigned int _id);
+        shader_id_wrapper(GLenum _type);
 
         unsigned int id() const;
         operator unsigned int() const;
@@ -19,7 +20,6 @@ namespace randomcat::engine::graphics::detail {
     struct program_id_wrapper {
     public:
         program_id_wrapper();
-        program_id_wrapper(unsigned int _id);
 
         unsigned int id() const;
         operator unsigned int() const;

@@ -45,7 +45,7 @@ namespace randomcat::engine::graphics {
              {{0, 3, GL_FLOAT, false, sizeof(default_vertex), reinterpret_cast<void*>(offsetof(default_vertex, location))}}) {}
 
     shader::shader(char const* _vertex, char const* _fragment, std::vector<shader_input> _inputs) : m_inputs(std::move(_inputs)) {
-        shader_id_wrapper vertexID = glCreateShader(GL_VERTEX_SHADER);
+        shader_id_wrapper vertexID{GL_VERTEX_SHADER};
 
         {
             glShaderSource(vertexID, 1, &_vertex, nullptr);
@@ -64,7 +64,7 @@ namespace randomcat::engine::graphics {
             }
         }
 
-        shader_id_wrapper fragmentID = glCreateShader(GL_FRAGMENT_SHADER);
+        shader_id_wrapper fragmentID{GL_FRAGMENT_SHADER};
 
         {
             glShaderSource(fragmentID, 1, &_fragment, nullptr);
@@ -83,7 +83,7 @@ namespace randomcat::engine::graphics {
             }
         }
 
-        program_id_wrapper programID = glCreateProgram();
+        program_id_wrapper programID{};
 
         {
             glAttachShader(programID, vertexID);
