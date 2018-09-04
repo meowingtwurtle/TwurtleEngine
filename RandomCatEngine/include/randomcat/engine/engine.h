@@ -2,18 +2,16 @@
 
 #include <memory>
 
-#include <twurtle/detail/default_renderer.h>
-#include <twurtle/init.h>
-#include <twurtle/renderer.h>
-#include <twurtle/shader.h>
-#include <twurtle/window.h>
+#include <randomcat/engine/graphics/renderer.h>
+#include <randomcat/engine/graphics/window.h>
+#include <randomcat/engine/init.h>
 
-namespace randomcat::graphics {
+namespace randomcat::engine {
     class engine {
     public:
         engine(std::string _windowTitle = "Twurtle Engine", int _windowWidth = 600, int _windowHeight = 600)
         : m_window{std::move(_windowTitle), _windowWidth, _windowHeight} {
-            setContext(m_window);
+            graphics::detail::setContext(m_window);
         }
 
         engine(engine const&) = delete;
@@ -21,12 +19,12 @@ namespace randomcat::graphics {
 
         void beforeUpdate() {}
 
-        void render(renderer const& _renderer) {
+        void render(graphics::renderer const& _renderer) {
             _renderer.render();
             m_window.swapBuffers();
         }
 
     private:
-        window m_window;
+        graphics::window m_window;
     };
-}    // namespace randomcat::graphics
+}    // namespace randomcat::engine

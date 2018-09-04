@@ -3,9 +3,9 @@
 #include <iostream>
 #include <sstream>
 
-#include <twurtle/log.h>
+#include <randomcat/engine/detail/log.h>
 
-namespace randomcat::graphics::log {
+namespace randomcat::engine::log {
     void log(std::string const& _message, LogType _type) {
         std::ostringstream fullMessage{};
         time_t systemTime = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
@@ -31,4 +31,4 @@ namespace randomcat::graphics::log {
             default: throw bad_log_type{_logType};
         }
     }
-}    // namespace randomcat::graphics::log
+}    // namespace randomcat::engine::log

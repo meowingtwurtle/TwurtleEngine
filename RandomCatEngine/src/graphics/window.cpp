@@ -1,8 +1,8 @@
 #include <GL/glew.h>
-#include <twurtle/init.h>
-#include <twurtle/window.h>
 
-namespace randomcat::graphics {
+#include <randomcat/engine/graphics/window.h>
+
+namespace randomcat::engine::graphics {
     struct window_creation_failed {};
 
     window::window(std::string _title, int _width, int _height) : m_title(std::move(_title)), m_size{_width, _height} {
@@ -14,4 +14,4 @@ namespace randomcat::graphics {
         SDL_DestroyWindow(m_window);
         log::info("Window destroyed.");
     }
-}    // namespace randomcat::graphics
+}    // namespace randomcat::engine::graphics

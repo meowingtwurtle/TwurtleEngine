@@ -3,18 +3,18 @@
 #include <type_traits>
 #include <vector>
 
-#include <twurtle/detail/raii_wrappers/vao_raii.h>
-#include <twurtle/detail/raii_wrappers/vbo_raii.h>
-#include <twurtle/renderer.h>
-#include <twurtle/shader.h>
+#include <randomcat/engine/graphics/detail/raii_wrappers/vao_raii.h>
+#include <randomcat/engine/graphics/detail/raii_wrappers/vbo_raii.h>
+#include <randomcat/engine/graphics/renderer.h>
+#include <randomcat/engine/graphics/shader.h>
 
 // I must put definitions here because of stupid C++ template rules.
 
-namespace randomcat::graphics::detail {
+namespace randomcat::engine::graphics::detail {
     template<typename _vertex_t>
     class default_renderer : public vertex_renderer<_vertex_t> {
     public:
-        default_renderer(randomcat::graphics::shader _shader) : m_shader(std::move(_shader)) {
+        default_renderer(randomcat::engine::graphics::shader _shader) : m_shader(std::move(_shader)) {
             {
                 unsigned int tempID;
                 glCreateVertexArrays(1, &tempID);
@@ -57,7 +57,7 @@ namespace randomcat::graphics::detail {
     private:
         vao_id_wrapper m_vao;
         vbo_id_wrapper m_vbo;
-        randomcat::graphics::shader m_shader;
+        randomcat::engine::graphics::shader m_shader;
         std::vector<_vertex_t> m_vertices;
     };
-}    // namespace randomcat::graphics::detail
+}    // namespace randomcat::engine::graphics::detail

@@ -4,11 +4,13 @@
 
 #include <SDL2/SDL.h>
 #include <glm/vec2.hpp>
-#include <twurtle/init.h>
-#include <twurtle/log.h>
-#include <twurtle/window.h>
 
-namespace randomcat::graphics {
+#include <randomcat/engine/detail/log.h>
+#include <randomcat/engine/graphics/detail/gl_context.h>
+#include <randomcat/engine/graphics/window.h>
+#include <randomcat/engine/init.h>
+
+namespace randomcat::engine::graphics {
     class window {
     public:
         explicit window(std::string _title = "Twurtle Engine", int _width = 600, int _height = 600);
@@ -36,6 +38,6 @@ namespace randomcat::graphics {
         std::string m_title;
         glm::ivec2 m_size;
 
-        friend void randomcat::graphics::setContext(window const&);
+        friend void randomcat::engine::graphics::detail::setContext(window const&);
     };
-}    // namespace randomcat::graphics
+}    // namespace randomcat::engine::graphics

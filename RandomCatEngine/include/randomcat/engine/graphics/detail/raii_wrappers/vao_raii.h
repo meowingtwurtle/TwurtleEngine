@@ -2,7 +2,7 @@
 
 #include <memory>
 
-namespace randomcat::graphics::detail {
+namespace randomcat::engine::graphics::detail {
     struct vao_id_wrapper {
         vao_id_wrapper();
         vao_id_wrapper(unsigned int _id);
@@ -14,4 +14,4 @@ namespace randomcat::graphics::detail {
         struct underlying;
         std::shared_ptr<underlying> m_ptr;
     };
-}    // namespace randomcat::graphics::detail
+}    // namespace randomcat::engine::graphics::detail

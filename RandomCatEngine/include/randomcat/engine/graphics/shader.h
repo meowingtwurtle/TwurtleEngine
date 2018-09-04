@@ -3,10 +3,11 @@
 #include <vector>
 
 #include <glm/glm.hpp>
-#include <twurtle/detail/raii_wrappers/shader_program_raii.h>
-#include <twurtle/shader_input.h>
 
-namespace randomcat::graphics {
+#include <randomcat/engine/graphics/detail/raii_wrappers/shader_program_raii.h>
+#include <randomcat/engine/graphics/shader_input.h>
+
+namespace randomcat::engine::graphics {
     class shader {
     public:
         shader();
@@ -26,4 +27,4 @@ namespace randomcat::graphics {
         detail::program_id_wrapper m_programID;
         std::vector<shader_input> m_inputs;
     };
-}    // namespace randomcat::graphics
+}    // namespace randomcat::engine::graphics

@@ -1,7 +1,8 @@
 #include <GL/glew.h>
-#include <twurtle/detail/raii_wrappers/shader_program_raii.h>
 
-namespace randomcat::graphics::detail {
+#include <randomcat/engine/graphics/detail/raii_wrappers/shader_program_raii.h>
+
+namespace randomcat::engine::graphics::detail {
     struct shader_id_wrapper::underlying {
         unsigned int m_id;
 
@@ -14,9 +15,9 @@ namespace randomcat::graphics::detail {
 
     unsigned int shader_id_wrapper::id() const { return m_ptr->m_id; }
     shader_id_wrapper::operator unsigned int() const { return id(); }
-}    // namespace randomcat::graphics::detail
+}    // namespace randomcat::engine::graphics::detail
 
-namespace randomcat::graphics::detail {
+namespace randomcat::engine::graphics::detail {
     struct program_id_wrapper::underlying {
         unsigned int m_id;
 
@@ -29,4 +30,4 @@ namespace randomcat::graphics::detail {
 
     unsigned int program_id_wrapper::id() const { return m_ptr->m_id; }
     program_id_wrapper::operator unsigned int() const { return id(); }
-}    // namespace randomcat::graphics::detail
+}    // namespace randomcat::engine::graphics::detail

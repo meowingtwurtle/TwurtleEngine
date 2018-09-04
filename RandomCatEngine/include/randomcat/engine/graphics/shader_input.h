@@ -2,7 +2,7 @@
 
 #include <GL/glew.h>
 
-namespace randomcat::graphics {
+namespace randomcat::engine::graphics {
     struct shader_input {
         GLuint position;
         GLint count;
@@ -11,4 +11,4 @@ namespace randomcat::graphics {
         GLsizei stride;
         void const* offset;
     };
-}    // namespace randomcat::graphics
+}    // namespace randomcat::engine::graphics

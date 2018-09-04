@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace randomcat::graphics::log {
+namespace randomcat::engine::log {
     enum class LogType : uint8_t { INFO, WARN, ERROR };
 
     void log(std::string const& _message, LogType _type);
@@ -12,4 +12,4 @@ namespace randomcat::graphics::log {
     inline void error(std::string const& _message) { log(_message, LogType::ERROR); }
 
     inline std::string logTypeString(LogType _logType);
-}    // namespace randomcat::graphics::log
+}    // namespace randomcat::engine::log

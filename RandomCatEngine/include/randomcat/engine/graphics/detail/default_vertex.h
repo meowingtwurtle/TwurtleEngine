@@ -4,8 +4,8 @@
 
 #include <glm/glm.hpp>
 
-namespace randomcat::graphics {
+namespace randomcat::engine::graphics::detail {
     struct default_vertex {
         glm::vec3 location;
     };
-}    // namespace randomcat::graphics
+}    // namespace randomcat::engine::graphics::detail

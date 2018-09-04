@@ -1,8 +1,9 @@
 #include <GL/glew.h>
-#include <twurtle/log.h>
-#include <twurtle/shader.h>
 
-namespace randomcat::graphics {
+#include <randomcat/engine/detail/log.h>
+#include <randomcat/engine/graphics/shader.h>
+
+namespace randomcat::engine::graphics {
     struct shader_compile_fail {};
     struct shader_link_fail {};
 
@@ -115,4 +116,4 @@ namespace randomcat::graphics {
     void shader::setMat4(std::string const& _name, glm::mat4 const& _value) {
         glUniformMatrix4fv(glGetUniformLocation(m_programID, _name.c_str()), 1, false, reinterpret_cast<float const*>(&_value));
     }
-}    // namespace randomcat::graphics
+}    // namespace randomcat::engine::graphics

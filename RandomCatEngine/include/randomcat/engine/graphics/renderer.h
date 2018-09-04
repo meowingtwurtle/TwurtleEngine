@@ -2,7 +2,7 @@
 
 #include <vector>
 
-namespace randomcat::graphics {
+namespace randomcat::engine::graphics {
     class renderer {
     public:
         virtual void render() const = 0;
@@ -15,4 +15,4 @@ namespace randomcat::graphics {
         virtual std::vector<_vertex_t>& vertices() = 0;
         virtual std::vector<_vertex_t> const& vertices() const = 0;
     };
-}    // namespace randomcat::graphics
+}    // namespace randomcat::engine::graphics

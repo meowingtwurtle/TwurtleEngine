@@ -2,7 +2,7 @@
 
 #include <memory>
 
-namespace randomcat::graphics::detail {
+namespace randomcat::engine::graphics::detail {
     struct shader_id_wrapper {
     public:
         shader_id_wrapper();
@@ -28,4 +28,4 @@ namespace randomcat::graphics::detail {
         struct underlying;
         std::shared_ptr<underlying> m_ptr;
     };
-}    // namespace randomcat::graphics::detail
+}    // namespace randomcat::engine::graphics::detail

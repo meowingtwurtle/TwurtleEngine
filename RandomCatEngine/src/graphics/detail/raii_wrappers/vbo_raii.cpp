@@ -1,7 +1,8 @@
 #include <GL/glew.h>
-#include <twurtle/detail/raii_wrappers/vbo_raii.h>
 
-namespace randomcat::graphics::detail {
+#include <randomcat/engine/graphics/detail/raii_wrappers/vbo_raii.h>
+
+namespace randomcat::engine::graphics::detail {
     struct vbo_id_wrapper::underlying {
         unsigned int m_id;
 
@@ -14,4 +15,4 @@ namespace randomcat::graphics::detail {
 
     unsigned int vbo_id_wrapper::id() const { return m_ptr->m_id; }
     vbo_id_wrapper::operator unsigned int() const { return id(); }
-}    // namespace randomcat::graphics::detail
+}    // namespace randomcat::engine::graphics::detail
