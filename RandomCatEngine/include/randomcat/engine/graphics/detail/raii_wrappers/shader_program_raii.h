@@ -5,9 +5,9 @@
 #include <GL/glew.h>
 
 namespace randomcat::engine::graphics::detail {
-    struct shader_id_wrapper {
+    struct shader_id {
     public:
-        shader_id_wrapper(GLenum _type);
+        shader_id(GLenum _type);
 
         unsigned int id() const;
         operator unsigned int() const;
@@ -17,9 +17,9 @@ namespace randomcat::engine::graphics::detail {
         std::shared_ptr<underlying> m_ptr;
     };
 
-    struct program_id_wrapper {
+    struct program_id {
     public:
-        program_id_wrapper();
+        program_id();
 
         unsigned int id() const;
         operator unsigned int() const;

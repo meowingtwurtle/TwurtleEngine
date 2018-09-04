@@ -24,7 +24,7 @@ namespace randomcat::engine::graphics {
         std::vector<shader_input> inputs() const { return m_inputs; }
 
     private:
-        detail::program_id_wrapper m_programID;
+        detail::program_id m_programID;
         std::vector<shader_input> m_inputs;
     };
 }    // namespace randomcat::engine::graphics

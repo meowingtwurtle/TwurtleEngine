@@ -41,8 +41,8 @@ namespace randomcat::engine::graphics::detail {
         }
 
     private:
-        vao_id_wrapper m_vao;
-        vbo_id_wrapper m_vbo;
+        vao_id m_vao;
+        vbo_id m_vbo;
         randomcat::engine::graphics::shader m_shader;
         std::vector<_vertex_t> m_vertices;
     };

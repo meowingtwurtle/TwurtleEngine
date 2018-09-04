@@ -3,8 +3,8 @@
 #include <memory>
 
 namespace randomcat::engine::graphics::detail {
-    struct vbo_id_wrapper {
-        vbo_id_wrapper();
+    struct vbo_id {
+        vbo_id();
 
         unsigned int id() const;
         operator unsigned int() const;
