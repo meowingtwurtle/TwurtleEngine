@@ -14,24 +14,31 @@ namespace randomcat::engine::graphics {
         static constexpr const char* const DEFAULT_VERTEX_SHADER = R"(
             #version 330 core
             layout (location = 0) in vec3 aPos;
-              
-            out vec4 vertexColor;
+            layout (location = 1) in vec2 aTexCoord;
+            layout (location = 2) in int aLayerNum;
+
+            out vec2 texCoord;
+            flat out int layerNum;
             
             void main()
             {
                 gl_Position = vec4(aPos, 1.0);
-                vertexColor = vec4(1.0, 0.0, 0.0, 1.0);
+                texCoord = aTexCoord;
+                layerNum = aLayerNum;
             }
         )";
         static constexpr const char* const DEFAULT_FRAGMENT_SHADER = R"(
             #version 330 core
             out vec4 FragColor;
               
-            in vec4 vertexColor;
+            in vec2 texCoord;
+            flat in int layerNum;
+
+            uniform sampler2DArray textures;
             
             void main()
             {
-                FragColor = vertexColor;
+                FragColor = texture(textures, vec3(texCoord, layerNum));
             }
         )";
     }    // namespace
@@ -42,7 +49,9 @@ namespace randomcat::engine::graphics {
     shader::shader()
     : shader(DEFAULT_VERTEX_SHADER,
              DEFAULT_FRAGMENT_SHADER,
-             {{0, 3, GL_FLOAT, false, sizeof(default_vertex), reinterpret_cast<void*>(offsetof(default_vertex, location))}}) {}
+             {{0, 3, GL_FLOAT, false, sizeof(default_vertex), reinterpret_cast<void*>(offsetof(default_vertex, location))},
+              {1, 2, GL_FLOAT, false, sizeof(default_vertex), reinterpret_cast<void*>(offsetof(default_vertex, texCoord))},
+              {2, 1, GL_INT, false, sizeof(default_vertex), reinterpret_cast<void*>(offsetof(default_vertex, layerNum))}}) {}
 
     shader::shader(char const* _vertex, char const* _fragment, std::vector<shader_input> _inputs) : m_inputs(std::move(_inputs)) {
         shader_id vertexID{GL_VERTEX_SHADER};
