@@ -1,9 +1,12 @@
 #include <GL/glew.h>
 
 #include <randomcat/engine/detail/log.h>
+#include <randomcat/engine/graphics/detail/default_vertex.h>
 #include <randomcat/engine/graphics/shader.h>
 
 namespace randomcat::engine::graphics {
+    using detail::default_vertex;
+
     struct shader_compile_fail {};
     struct shader_link_fail {};
 
@@ -37,7 +40,9 @@ namespace randomcat::engine::graphics {
     using detail::shader_id_wrapper;
 
     shader::shader()
-    : shader(DEFAULT_VERTEX_SHADER, DEFAULT_FRAGMENT_SHADER, {{0, 3, GL_FLOAT, false, 3 * sizeof(float), reinterpret_cast<void*>(0)}}) {}
+    : shader(DEFAULT_VERTEX_SHADER,
+             DEFAULT_FRAGMENT_SHADER,
+             {{0, 3, GL_FLOAT, false, sizeof(default_vertex), reinterpret_cast<void*>(offsetof(default_vertex, location))}}) {}
 
     shader::shader(char const* _vertex, char const* _fragment, std::vector<shader_input> _inputs) : m_inputs(std::move(_inputs)) {
         shader_id_wrapper vertexID = glCreateShader(GL_VERTEX_SHADER);
