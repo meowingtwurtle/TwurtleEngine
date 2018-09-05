@@ -27,13 +27,7 @@ namespace randomcat::engine::graphics::detail {
         virtual std::vector<_vertex_t>& vertices() override { return m_vertices; }
         virtual std::vector<_vertex_t> const& vertices() const override { return m_vertices; }
 
-        void makeActive() const {
-            m_shader.makeActive();
-            glBindVertexArray(m_vao);
-            glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-        }
-
-        void render() const {
+        virtual void render() const override {
             makeActive();
 
             glBufferData(GL_ARRAY_BUFFER, vertices().size() * sizeof(_vertex_t), vertices().data(), GL_DYNAMIC_DRAW);
@@ -41,6 +35,12 @@ namespace randomcat::engine::graphics::detail {
         }
 
     private:
+        void makeActive() const {
+            m_shader.makeActive();
+            glBindVertexArray(m_vao);
+            glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+        }
+
         vao_id m_vao;
         vbo_id m_vbo;
         randomcat::engine::graphics::shader m_shader;
