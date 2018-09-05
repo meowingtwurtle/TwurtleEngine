@@ -7,7 +7,6 @@ namespace randomcat::engine::graphics {
     public:
         virtual ~renderer() = default;
         virtual void render() const = 0;
-        virtual void makeActive() const = 0;
     };
 
     // Using macro to highlight that replacements are the same thing, just with
