@@ -19,10 +19,14 @@ namespace randomcat::engine::graphics {
 
             out vec2 texCoord;
             flat out int layerNum;
+
+            uniform mat4 model;
+            uniform mat4 view;
+            uniform mat4 projection;
             
             void main()
             {
-                gl_Position = vec4(aPos, 1.0);
+                gl_Position = projection * view * model * vec4(aPos, 1.0);
                 texCoord = aTexCoord;
                 layerNum = aLayerNum;
             }
@@ -51,7 +55,13 @@ namespace randomcat::engine::graphics {
              DEFAULT_FRAGMENT_SHADER,
              {{0, 3, GL_FLOAT, false, sizeof(default_vertex), reinterpret_cast<void*>(offsetof(default_vertex, location))},
               {1, 2, GL_FLOAT, false, sizeof(default_vertex), reinterpret_cast<void*>(offsetof(default_vertex, texCoord))},
-              {2, 1, GL_INT, false, sizeof(default_vertex), reinterpret_cast<void*>(offsetof(default_vertex, layerNum))}}) {}
+              {2, 1, GL_INT, false, sizeof(default_vertex), reinterpret_cast<void*>(offsetof(default_vertex, layerNum))}}) {
+        makeActive();
+
+        setMat4("model", glm::mat4{1.0f});
+        setMat4("view", glm::mat4{1.0f});
+        setMat4("projection", glm::mat4{1.0f});
+    }
 
     shader::shader(char const* _vertex, char const* _fragment, std::vector<shader_input> _inputs) : m_inputs(std::move(_inputs)) {
         shader_id vertexID{GL_VERTEX_SHADER};
