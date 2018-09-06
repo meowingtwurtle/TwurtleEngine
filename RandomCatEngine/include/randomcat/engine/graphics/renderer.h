@@ -24,4 +24,29 @@ namespace randomcat::engine::graphics {
     RENDERER_SPEC(object, objects)
 
 #undef RENDERER_SPEC
+
+    template<typename... Ts>
+    class multi_renderer;
+
+    template<>
+    class multi_renderer<> : public renderer {
+    public:
+        virtual void render() const override {}
+    };
+
+    template<typename T, typename... Ts>
+    class multi_renderer<T, Ts...> : private multi_renderer<Ts...> {
+    public:
+        multi_renderer(T _t, Ts... _others) : parent(_others...), m_item(std::move(_t)) {}
+
+        virtual void render() const override {
+            m_item.render();
+            parent::render();
+        }
+
+    private:
+        using parent = multi_renderer<Ts...>;
+
+        T m_item;
+    };
 }    // namespace randomcat::engine::graphics
