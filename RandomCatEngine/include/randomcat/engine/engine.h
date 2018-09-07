@@ -24,6 +24,9 @@ namespace randomcat::engine {
             m_window.swapBuffers();
         }
 
+        graphics::window& window() { return m_window; }
+        graphics::window const& window() const { return m_window; }
+
     private:
         graphics::window m_window;
     };
