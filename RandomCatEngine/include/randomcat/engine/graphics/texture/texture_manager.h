@@ -1,8 +1,8 @@
 #pragma once
 
-#include <map>
 #include <memory>
 #include <string>
+#include <unordered_map>
 
 namespace randomcat::engine::graphics::texture {
     struct texture_not_found {
@@ -51,12 +51,12 @@ namespace randomcat::engine::graphics::texture {
         texture const& loadTexture(std::string const& _path);
         texture const& getTexture(std::string const& _path) const;
 
-        using texture_map_iterator = std::map<std::string, texture>::const_iterator;
+        using texture_map_iterator = std::unordered_map<std::string, texture>::const_iterator;
 
         texture_map_iterator begin() const { return m_textureMap.begin(); }
         texture_map_iterator end() const { return m_textureMap.end(); }
 
     private:
-        std::map<std::string, texture> m_textureMap;
+        std::unordered_map<std::string, texture> m_textureMap;
     };
 }    // namespace randomcat::engine::graphics::texture
