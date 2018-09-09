@@ -3,24 +3,6 @@
 #include <randomcat/engine/graphics/texture/texture_manager.h>
 
 namespace randomcat::engine::graphics::texture {
-    struct texture_not_found {
-        std::string path;
-
-        std::string what() { return "No texture registered with path: " + path; }
-    };
-
-    struct texture_reregister {
-        std::string path;
-
-        std::string what() { return "Attempt to re-register texture with path: " + path; }
-    };
-
-    struct texture_load_failure {
-        std::string path;
-
-        std::string what() { return "Unable to find texture with path: " + path; }
-    };
-
     texture::texture() : m_name(""), m_width(0), m_height(0), m_underlying(std::make_shared<underlying>(nullptr)) {}
     texture::texture(std::string _name, int _width, int _height, unsigned char* _data)
     : m_name(std::move(_name)), m_width(_width), m_height(_height), m_underlying(std::make_shared<underlying>(_data)) {}
@@ -34,7 +16,7 @@ namespace randomcat::engine::graphics::texture {
         if (it != m_textureMap.end()) throw texture_reregister{_path};
 
         int width, height, burn;
-        auto data = stbi_load(_path.c_str(), &width, &height, &burn, 0);
+        auto data = stbi_load(_path.c_str(), &width, &height, &burn, STBI_rgb_alpha);
 
         if (data == nullptr) {
             log::error("Unable to load texture with path: " + _path);

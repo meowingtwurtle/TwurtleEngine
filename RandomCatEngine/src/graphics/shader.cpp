@@ -7,9 +7,6 @@
 namespace randomcat::engine::graphics {
     using detail::default_vertex;
 
-    struct shader_compile_fail {};
-    struct shader_link_fail {};
-
     namespace {
         static constexpr const char* const DEFAULT_VERTEX_SHADER = R"(
             #version 330 core

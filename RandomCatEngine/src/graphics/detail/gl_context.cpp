@@ -12,8 +12,6 @@ namespace randomcat::engine::graphics::detail {
         SDL_GLContext g_context = nullptr;
     }
 
-    struct context_creation_failed {};
-
     void setContext(window const& _window) {
         if (g_context) {
             SDL_GL_DeleteContext(g_context);
