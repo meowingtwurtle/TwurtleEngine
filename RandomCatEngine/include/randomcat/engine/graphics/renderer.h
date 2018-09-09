@@ -5,6 +5,7 @@
 namespace randomcat::engine::graphics {
     class renderer {
     public:
+        virtual ~renderer() = default;
         virtual void render() const = 0;
         virtual void makeActive() const = 0;
     };
