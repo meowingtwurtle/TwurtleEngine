@@ -24,10 +24,9 @@ namespace randomcat::engine::graphics {
         void setVec3(std::string const& _name, glm::vec3 const& _value);
         void setMat4(std::string const& _name, glm::mat4 const& _value);
 
-        std::vector<shader_input> inputs() const { return m_inputs; }
+        std::vector<shader_input> inputs() const;
 
     private:
         detail::program_id m_programID;
-        std::vector<shader_input> m_inputs;
     };
 }    // namespace randomcat::engine::graphics

@@ -1,3 +1,5 @@
+#include <unordered_map>
+
 #include <GL/glew.h>
 
 #include <randomcat/engine/detail/log.h>
@@ -42,6 +44,8 @@ namespace randomcat::engine::graphics {
                 FragColor = texture(textures, vec3(texCoord, layerNum));
             }
         )";
+
+        std::unordered_map<unsigned, std::vector<shader_input>> g_shaderInputsMap{};
     }    // namespace
 
     using detail::program_id;
@@ -60,7 +64,7 @@ namespace randomcat::engine::graphics {
         setMat4("projection", glm::mat4{1.0f});
     }
 
-    shader::shader(char const* _vertex, char const* _fragment, std::vector<shader_input> _inputs) : m_inputs(std::move(_inputs)) {
+    shader::shader(char const* _vertex, char const* _fragment, std::vector<shader_input> _inputs) {
         shader_id vertexID{GL_VERTEX_SHADER};
 
         {
@@ -120,6 +124,8 @@ namespace randomcat::engine::graphics {
         }
 
         m_programID = programID;
+
+        g_shaderInputsMap.emplace(std::make_pair(m_programID, std::move(_inputs)));
     }
 
     void shader::makeActive() const { glUseProgram(m_programID); }
@@ -137,4 +143,6 @@ namespace randomcat::engine::graphics {
     void shader::setMat4(std::string const& _name, glm::mat4 const& _value) {
         glUniformMatrix4fv(glGetUniformLocation(m_programID, _name.c_str()), 1, false, reinterpret_cast<float const*>(&_value));
     }
+
+    std::vector<shader_input> shader::inputs() const { return g_shaderInputsMap.at(m_programID); }
 }    // namespace randomcat::engine::graphics
