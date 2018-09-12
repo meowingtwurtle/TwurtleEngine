@@ -26,6 +26,9 @@ namespace randomcat::engine::graphics {
 
         std::vector<shader_input> inputs() const;
 
+        bool operator==(shader const& _other) const { return m_programID == _other.m_programID; }
+        bool operator!=(shader const& _other) const { return !(*this == _other); }
+
     private:
         detail::program_id m_programID;
     };
