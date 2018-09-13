@@ -29,7 +29,7 @@ namespace randomcat::engine::graphics {
                     vertices.insert(std::end(vertices), std::begin(subVertices), std::end(subVertices));
                 }
 
-                auto vertexRenderer = renderer{object->getShader()};
+                auto vertexRenderer = renderer{object->shader()};
                 vertexRenderer.vertices() = std::move(vertices);
                 vertexRenderer.render();
             }

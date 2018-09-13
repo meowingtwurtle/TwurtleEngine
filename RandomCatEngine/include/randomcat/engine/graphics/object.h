@@ -32,25 +32,25 @@ namespace randomcat::engine::graphics {
 
         virtual ~render_object() = default;
         virtual std::vector<component> const& components() const = 0;
-        virtual shader const& getShader() const = 0;
+        virtual graphics::shader const& shader() const = 0;
     };
 
     class render_object_triangle : public render_object<render_triangle_texture> {
     public:
-        render_object_triangle(render_triangle_texture _triangle, class shader _shader)
+        render_object_triangle(render_triangle_texture _triangle, graphics::shader _shader)
         : m_triangle{std::move(_triangle)}, m_shader(std::move(_shader)) {}
 
         virtual std::vector<render_triangle_texture> const& components() const override { return m_triangle; }
-        virtual class shader const& getShader() const override { return m_shader; }
+        virtual graphics::shader const& shader() const override { return m_shader; }
 
     private:
         std::vector<render_triangle_texture> m_triangle;
-        class shader m_shader;
+        graphics::shader m_shader;
     };
 
     class render_object_rect_prism : public render_object<render_triangle_texture> {
     public:
-        render_object_rect_prism(glm::vec3 _center, glm::vec3 _sides, unsigned int _texture, class shader _shader)
+        render_object_rect_prism(glm::vec3 _center, glm::vec3 _sides, unsigned int _texture, graphics::shader _shader)
         : render_object_rect_prism(_center, _sides, _texture, _texture, _texture, _texture, _texture, _texture, std::move(_shader)) {}
         render_object_rect_prism(glm::vec3 _center,
                                  glm::vec3 _sides,
@@ -60,7 +60,7 @@ namespace randomcat::engine::graphics {
                                  unsigned int _texLY,
                                  unsigned int _texHZ,
                                  unsigned int _texLZ,
-                                 class shader _shader)
+                                 graphics::shader _shader)
         : m_shader(std::move(_shader)) {
             m_triangles.reserve(12);
 
@@ -101,16 +101,16 @@ namespace randomcat::engine::graphics {
         }
 
         virtual std::vector<render_triangle_texture> const& components() const override { return m_triangles; }
-        virtual class shader const& getShader() const override { return m_shader; }
+        virtual graphics::shader const& shader() const override { return m_shader; }
 
     private:
         std::vector<render_triangle_texture> m_triangles;
-        class shader m_shader;
+        graphics::shader m_shader;
     };
 
     class render_object_cube : public render_object_rect_prism {
     public:
-        render_object_cube(glm::vec3 _center, float _side, unsigned int _texture, shader _shader)
+        render_object_cube(glm::vec3 _center, float _side, unsigned int _texture, graphics::shader _shader)
         : render_object_cube(std::move(_center), std::move(_side), _texture, _texture, _texture, _texture, _texture, _texture, std::move(_shader)) {}
 
         render_object_cube(glm::vec3 _center,
@@ -121,7 +121,7 @@ namespace randomcat::engine::graphics {
                            unsigned int _texLY,
                            unsigned int _texHZ,
                            unsigned int _texLZ,
-                           class shader _shader)
+                           graphics::shader _shader)
         : render_object_rect_prism(std::move(_center),
                                    glm::vec3{_side, _side, _side},
                                    std::move(_texHX),
