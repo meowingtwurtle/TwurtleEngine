@@ -2,6 +2,7 @@
 #include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 
 #include <randomcat/engine/detail/log.h>
 
@@ -15,20 +16,14 @@ namespace randomcat::engine::log {
         std::cout << fullMessage.str() << std::endl;    // Yes, endl. This flushes.
     }
 
-    struct bad_log_type {
-        explicit bad_log_type(LogType _logType) : logType(_logType) {}
-
-        std::string what() { return std::string{"Bad log type: "} + std::to_string(static_cast<std::underlying_type_t<LogType>>(logType)); }
-
-        LogType logType;
-    };
-
     std::string logTypeString(LogType _logType) {
         switch (_logType) {
             case LogType::INFO: return "INFO";
             case LogType::WARN: return "WARN";
             case LogType::ERROR: return "ERROR";
-            default: throw bad_log_type{_logType};
+            default:
+                throw std::logic_error{std::string{"Invalid log type: "}
+                                       + std::to_string(static_cast<std::underlying_type_t<decltype(_logType)>>(_logType))};
         }
     }
 }    // namespace randomcat::engine::log

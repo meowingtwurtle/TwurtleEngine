@@ -1,3 +1,4 @@
+#include <stdexcept>
 #include <unordered_map>
 
 #include <GL/glew.h>
@@ -79,8 +80,7 @@ namespace randomcat::engine::graphics {
                 std::array<char, BUFFER_LEN> errorBuffer{};
                 glGetShaderInfoLog(vertexID, BUFFER_LEN, nullptr, errorBuffer.data());
 
-                log::error(errorBuffer.data());
-                throw shader_compile_fail{};
+                throw std::runtime_error{std::string{"Error compiling vertex shader:"} + errorBuffer.data()};
             }
         }
 
@@ -98,8 +98,7 @@ namespace randomcat::engine::graphics {
                 std::array<char, BUFFER_LEN> errorBuffer{};
                 glGetShaderInfoLog(fragmentID, BUFFER_LEN, nullptr, errorBuffer.data());
 
-                log::error(errorBuffer.data());
-                throw shader_compile_fail{};
+                throw std::runtime_error{std::string{"Error compiling fragment shader:"} + errorBuffer.data()};
             }
         }
 
@@ -118,8 +117,7 @@ namespace randomcat::engine::graphics {
                 std::array<char, BUFFER_LEN> errorBuffer{};
 
                 glGetProgramInfoLog(programID, BUFFER_LEN, nullptr, errorBuffer.data());
-                log::error(errorBuffer.data());
-                throw shader_link_fail{};
+                throw std::runtime_error{std::string{"Error linking shader:"} + errorBuffer.data()};
             }
         }
 

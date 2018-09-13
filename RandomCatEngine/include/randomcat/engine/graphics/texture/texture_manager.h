@@ -5,24 +5,6 @@
 #include <unordered_map>
 
 namespace randomcat::engine::graphics::texture {
-    struct texture_not_found {
-        std::string path;
-
-        std::string what() { return "No texture registered with path: " + path; }
-    };
-
-    struct texture_reregister {
-        std::string path;
-
-        std::string what() { return "Attempt to re-register texture with path: " + path; }
-    };
-
-    struct texture_load_failure {
-        std::string path;
-
-        std::string what() { return "Unable to find texture with path: " + path; }
-    };
-
     class texture {
     public:
         texture();

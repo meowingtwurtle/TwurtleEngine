@@ -1,3 +1,4 @@
+#include <stdexcept>
 #include <string>
 
 #include <GL/glew.h>
@@ -20,15 +21,11 @@ namespace randomcat::engine::graphics::detail {
 
         g_context = SDL_GL_CreateContext(_window.m_window);
 
-        if (!g_context) {
-            log::error(std::string{"Error creating GL context: "} + SDL_GetError());
-            throw context_creation_failed{};
-        }
+        if (!g_context) { throw std::runtime_error{std::string{"Error creating GL context: "} + SDL_GetError()}; }
 
         auto glewErr = glewInit();
         if (glewErr != GLEW_OK) {
-            log::error("Error initializing GLEW:" + std::string{reinterpret_cast<char const*>(glewGetErrorString(glewErr))});
-            throw context_creation_failed{};
+            throw std::runtime_error{"Error initializing GLEW:" + std::string{reinterpret_cast<char const*>(glewGetErrorString(glewErr))}};
         }
 
         log::info("New GL context created.");

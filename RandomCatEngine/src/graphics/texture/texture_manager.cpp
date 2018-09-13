@@ -1,3 +1,5 @@
+#include <exception>
+
 #include <randomcat/engine/detail/log.h>
 #include <randomcat/engine/graphics/texture/stb_image.h>
 #include <randomcat/engine/graphics/texture/texture_manager.h>
@@ -13,15 +15,12 @@ namespace randomcat::engine::graphics::texture {
 
     texture const& texture_manager::loadTexture(std::string const& _path) {
         auto it = m_textureMap.find(_path);
-        if (it != m_textureMap.end()) throw texture_reregister{_path};
+        if (it != m_textureMap.end()) return it->second;
 
         int width, height, burn;
         auto data = stbi_load(_path.c_str(), &width, &height, &burn, STBI_rgb_alpha);
 
-        if (data == nullptr) {
-            log::error("Unable to load texture with path: " + _path);
-            throw texture_load_failure{_path};
-        }
+        if (data == nullptr) { throw std::runtime_error{"Unable to load texture with path: " + _path}; }
 
         m_textureMap.insert({_path, texture{_path, width, height, data}});
 
@@ -31,10 +30,7 @@ namespace randomcat::engine::graphics::texture {
     texture const& texture_manager::getTexture(std::string const& _path) const {
         auto it = m_textureMap.find(_path);
 
-        if (it == m_textureMap.end()) {
-            log::error("No texture registered with path: " + _path);
-            throw texture_not_found{_path};
-        }
+        if (it == m_textureMap.end()) { throw std::runtime_error{"No texture registered with path: " + _path}; }
 
         return it->second;
     }

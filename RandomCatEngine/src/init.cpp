@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
 
@@ -10,8 +12,6 @@ namespace randomcat::engine {
         bool g_initDone = false;
     }
 
-    struct init_failed {};
-
     void init() {
         if (g_initDone) {
             log::warn("Init called when already initialized!");
@@ -22,10 +22,7 @@ namespace randomcat::engine {
 
         log::info("Beginning initialization...");
 
-        if (SDL_Init(SDL_INIT_EVERYTHING)) {
-            log::error(std::string{"Error initializing SDL: "} + SDL_GetError());
-            throw init_failed{};
-        }
+        if (SDL_Init(SDL_INIT_EVERYTHING)) { throw std::runtime_error{std::string{"Error initializing SDL: "} + SDL_GetError()}; }
 
         graphics::init();
 

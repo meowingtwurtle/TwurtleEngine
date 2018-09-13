@@ -8,9 +8,6 @@
 #include <randomcat/engine/graphics/shader_input.h>
 
 namespace randomcat::engine::graphics {
-    struct shader_compile_fail {};
-    struct shader_link_fail {};
-
     class shader {
     public:
         shader();
