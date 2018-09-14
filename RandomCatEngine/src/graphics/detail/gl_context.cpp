@@ -13,7 +13,7 @@ namespace randomcat::engine::graphics::detail {
         SDL_GLContext g_context = nullptr;
     }
 
-    void setContext(window const& _window) {
+    void set_render_context(window const& _window) {
         if (g_context) {
             SDL_GL_DeleteContext(g_context);
             log::info("Destroyed previous GL context.");

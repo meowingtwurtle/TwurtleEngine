@@ -11,12 +11,12 @@ namespace randomcat::engine::log {
         std::ostringstream fullMessage{};
         time_t systemTime = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
         auto formatTime = *std::localtime(&systemTime);
-        fullMessage << "[" << std::put_time(&formatTime, "%H:%M:%S") << "] [" << logTypeString(_type) << "] " << _message;
+        fullMessage << "[" << std::put_time(&formatTime, "%H:%M:%S") << "] [" << log_type_name(_type) << "] " << _message;
 
         std::cout << fullMessage.str() << std::endl;    // Yes, endl. This flushes.
     }
 
-    std::string logTypeString(LogType _logType) {
+    std::string log_type_name(LogType _logType) {
         switch (_logType) {
             case LogType::INFO: return "INFO";
             case LogType::WARN: return "WARN";

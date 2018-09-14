@@ -8,77 +8,79 @@
 namespace randomcat::engine::graphics {
     class camera {
     public:
-        explicit camera(shader _shader) : m_shader(std::move(_shader)) {}
-        camera(shader _shader, glm::vec3 _pos) : m_shader(std::move(_shader)), m_pos(_pos) {}
-        camera(shader _shader, glm::vec3 _pos, glm::vec3 _dir) : m_shader(std::move(_shader)), m_pos(_pos), m_dir(_dir) { updateShader(); }
+        explicit camera(graphics::shader _shader) : m_shader(std::move(_shader)) {}
+        camera(graphics::shader _shader, glm::vec3 _pos) : m_shader(std::move(_shader)), m_pos(_pos) {}
+        camera(graphics::shader _shader, glm::vec3 _pos, glm::vec3 _dir) : m_shader(std::move(_shader)), m_pos(_pos), m_dir(_dir) {
+            update_shader();
+        }
 
-        camera(shader _shader, glm::vec3 _pos, glm::vec3 _dir, float _fov)
+        camera(graphics::shader _shader, glm::vec3 _pos, glm::vec3 _dir, float _fov)
         : m_shader(std::move(_shader)), m_pos(_pos), m_dir(_dir), m_fov(_fov) {
-            updateShader();
+            update_shader();
         }
 
-        camera(shader _shader, glm::vec3 _pos, glm::vec3 _dir, float _fov, float _aspectRatio)
+        camera(graphics::shader _shader, glm::vec3 _pos, glm::vec3 _dir, float _fov, float _aspectRatio)
         : m_shader(std::move(_shader)), m_pos(_pos), m_dir(_dir), m_fov(_fov), m_aspectRatio(_aspectRatio) {
-            updateShader();
+            update_shader();
         }
 
-        camera(shader _shader, glm::vec3 _pos, glm::vec3 _dir, float _fov, float _aspectRatio, float _shortDistance, float _longDistance)
-        : m_shader(std::move(_shader)), m_pos(_pos), m_dir(_dir), m_fov(_fov), m_aspectRatio(_aspectRatio), m_shortDistance(_shortDistance), m_longDistance(_longDistance) {
-            updateShader();
+        camera(graphics::shader _shader, glm::vec3 _pos, glm::vec3 _dir, float _fov, float _aspectRatio, float _shortDistance, float _longDistance)
+        : m_shader(std::move(_shader)), m_pos(_pos), m_dir(_dir), m_fov(_fov), m_aspectRatio(_aspectRatio), m_minDistance(_shortDistance), m_maxDistance(_longDistance) {
+            update_shader();
         }
 
-        shader const& getShader() const& { return m_shader; }
+        graphics::shader const& shader() const& { return m_shader; }
 
         glm::vec3 pos() const { return m_pos; }
-        void setPos(glm::vec3 _pos) {
+        void set_pos(glm::vec3 _pos) {
             m_pos = _pos;
-            updateShader();
+            update_shader();
         }
-        void addPos(glm::vec3 _delta) {
+        void add_pos(glm::vec3 _delta) {
             m_pos += _delta;
-            updateShader();
+            update_shader();
         }
 
         glm::vec3 dir() const { return m_dir; }
-        void setDir(glm::vec3 _dir) {
+        void set_dir(glm::vec3 _dir) {
             m_dir = _dir;
-            updateShader();
+            update_shader();
         }
-        void addDir(glm::vec3 _delta) {
+        void add_dir(glm::vec3 _delta) {
             m_dir += _delta;
-            updateShader();
+            update_shader();
         }
 
-        void setDir(float _yaw, float _pitch);
+        void set_dir(float _yaw, float _pitch);
 
         float fov() const { return m_fov; }
-        void setFov(float _fov) {
+        void set_fov(float _fov) {
             m_fov = _fov;
-            updateShader();
+            update_shader();
         }
 
-        float shortDistance() const { return m_shortDistance; }
-        void setShortDistance(float _shortDistance) {
-            m_shortDistance = _shortDistance;
-            updateShader();
+        float min_distance() const { return m_minDistance; }
+        void set_min_distance(float _shortDistance) {
+            m_minDistance = _shortDistance;
+            update_shader();
         }
 
-        float longDistance() const { return m_longDistance; }
-        void setLongDistance(float _longDistance) {
-            m_longDistance = _longDistance;
-            updateShader();
+        float max_distance() const { return m_maxDistance; }
+        void set_max_distance(float _longDistance) {
+            m_maxDistance = _longDistance;
+            update_shader();
         }
 
     private:
-        void updateShader();
+        void update_shader();
 
-        shader m_shader;
+        graphics::shader m_shader;
 
         glm::vec3 m_pos{0.0f};
         glm::vec3 m_dir{0.0f};
         float m_fov = 45.0f;
         float m_aspectRatio = 1.0f;
-        float m_shortDistance = 0.1f;
-        float m_longDistance = 100.0f;
+        float m_minDistance = 0.1f;
+        float m_maxDistance = 100.0f;
     };
 }    // namespace randomcat::engine::graphics

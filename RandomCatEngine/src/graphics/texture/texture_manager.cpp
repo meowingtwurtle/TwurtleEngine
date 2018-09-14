@@ -13,7 +13,7 @@ namespace randomcat::engine::graphics::texture {
         if (m_data != nullptr) stbi_image_free(static_cast<void*>(m_data));
     }
 
-    texture const& texture_manager::loadTexture(std::string const& _path) {
+    texture const& texture_manager::load_texture(std::string const& _path) {
         auto it = m_textureMap.find(_path);
         if (it != m_textureMap.end()) return it->second;
 
@@ -27,7 +27,7 @@ namespace randomcat::engine::graphics::texture {
         return m_textureMap.at(_path);
     }
 
-    texture const& texture_manager::getTexture(std::string const& _path) const {
+    texture const& texture_manager::get_texture(std::string const& _path) const {
         auto it = m_textureMap.find(_path);
 
         if (it == m_textureMap.end()) { throw std::runtime_error{"No texture registered with path: " + _path}; }

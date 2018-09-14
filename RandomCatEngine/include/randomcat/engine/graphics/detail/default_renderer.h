@@ -36,7 +36,7 @@ namespace randomcat::engine::graphics::detail {
 
     private:
         void makeActive() const {
-            m_shader.makeActive();
+            m_shader.make_active();
             glBindVertexArray(m_vao);
             glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
         }

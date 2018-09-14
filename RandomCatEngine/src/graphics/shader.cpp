@@ -58,11 +58,11 @@ namespace randomcat::engine::graphics {
              {{0, 3, GL_FLOAT, false, sizeof(default_vertex), reinterpret_cast<void*>(offsetof(default_vertex, location))},
               {1, 2, GL_FLOAT, false, sizeof(default_vertex), reinterpret_cast<void*>(offsetof(default_vertex, texCoord))},
               {2, 1, GL_INT, false, sizeof(default_vertex), reinterpret_cast<void*>(offsetof(default_vertex, layerNum))}}) {
-        makeActive();
+        make_active();
 
-        setMat4("model", glm::mat4{1.0f});
-        setMat4("view", glm::mat4{1.0f});
-        setMat4("projection", glm::mat4{1.0f});
+        uniform_set_mat4("model", glm::mat4{1.0f});
+        uniform_set_mat4("view", glm::mat4{1.0f});
+        uniform_set_mat4("projection", glm::mat4{1.0f});
     }
 
     shader::shader(char const* _vertex, char const* _fragment, std::vector<shader_input> _inputs) {
@@ -126,19 +126,25 @@ namespace randomcat::engine::graphics {
         g_shaderInputsMap.emplace(std::make_pair(m_programID, std::move(_inputs)));
     }
 
-    void shader::makeActive() const { glUseProgram(m_programID); }
+    void shader::make_active() const { glUseProgram(m_programID); }
 
-    void shader::setBool(std::string const& _name, bool _value) { glUniform1i(glGetUniformLocation(m_programID, _name.c_str()), _value); }
+    void shader::uniform_set_bool(std::string const& _name, bool _value) {
+        glUniform1i(glGetUniformLocation(m_programID, _name.c_str()), _value);
+    }
 
-    void shader::setInt(std::string const& _name, int _value) { glUniform1i(glGetUniformLocation(m_programID, _name.c_str()), _value); }
+    void shader::uniform_set_int(std::string const& _name, int _value) {
+        glUniform1i(glGetUniformLocation(m_programID, _name.c_str()), _value);
+    }
 
-    void shader::setFloat(std::string const& _name, float _value) { glUniform1f(glGetUniformLocation(m_programID, _name.c_str()), _value); }
+    void shader::uniform_set_float(std::string const& _name, float _value) {
+        glUniform1f(glGetUniformLocation(m_programID, _name.c_str()), _value);
+    }
 
-    void shader::setVec3(std::string const& _name, glm::vec3 const& _value) {
+    void shader::uniform_set_vec3(std::string const& _name, glm::vec3 const& _value) {
         glUniform3fv(glGetUniformLocation(m_programID, _name.c_str()), 1, reinterpret_cast<float const*>(&_value));
     }
 
-    void shader::setMat4(std::string const& _name, glm::mat4 const& _value) {
+    void shader::uniform_set_mat4(std::string const& _name, glm::mat4 const& _value) {
         glUniformMatrix4fv(glGetUniformLocation(m_programID, _name.c_str()), 1, false, reinterpret_cast<float const*>(&_value));
     }
 

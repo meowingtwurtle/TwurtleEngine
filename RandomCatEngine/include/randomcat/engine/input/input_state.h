@@ -9,7 +9,7 @@ namespace randomcat::engine::input {
     public:
         void update();
 
-        bool keyIsDown(keycode _key) const {
+        bool is_key_down(keycode _key) const {
             // map operator[] default-constructs value if absent. Since 0-value of
             // key_state is up, if there is no entry, this will be false.
             auto const it = m_map.find(_key);
@@ -17,36 +17,36 @@ namespace randomcat::engine::input {
             return it != m_map.end() && it->second != key_state::up;
         }
 
-        bool keyIsUp(keycode _key) const {
+        bool is_key_up(keycode _key) const {
             auto const it = m_map.find(_key);
 
             return it != m_map.end() && it->second == key_state::up;
         }
-        bool keyIsHeld(keycode _key) const {
+        bool key_is_held(keycode _key) const {
             auto const it = m_map.find(_key);
 
             return it != m_map.end() && it->second == key_state::held;
         }
 
-        void keyDown(keycode _key) {
+        void set_key_down(keycode _key) {
             auto& state = m_map[_key];
 
             // Must check here, since there are two down states: down and held.
             if (state == key_state::up) state = key_state::down;
         }
 
-        void keyUp(keycode _key) { m_map[_key] = key_state::up; }
+        void set_key_up(keycode _key) { m_map[_key] = key_state::up; }
 
-        int mouseX() const { return m_mouseX; }
-        int mouseY() const { return m_mouseY; }
+        int mouse_X() const { return m_mouseX; }
+        int mouse_Y() const { return m_mouseY; }
 
-        int mouseRelX() const { return m_relMouseX; }
-        int mouseRelY() const { return m_relMouseY; }
+        int rel_mouse_x() const { return m_relMouseX; }
+        int rel_mouse_y() const { return m_relMouseY; }
 
-        bool shouldQuit() const { return m_shouldQuit; }
+        bool quit_received() const { return m_shouldQuit; }
 
     private:
-        void downToHeld() {
+        void down_to_held() {
             for (auto& entry : m_map) {
                 if (entry.second == key_state::down) entry.second = key_state::held;
             }

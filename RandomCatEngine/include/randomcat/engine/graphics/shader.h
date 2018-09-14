@@ -13,13 +13,13 @@ namespace randomcat::engine::graphics {
         shader();
         shader(char const* _vertex, char const* _fragment, std::vector<shader_input> _inputs);
 
-        void makeActive() const;
+        void make_active() const;
 
-        void setBool(std::string const& _name, bool _value);
-        void setInt(std::string const& _name, int _value);
-        void setFloat(std::string const& _name, float _value);
-        void setVec3(std::string const& _name, glm::vec3 const& _value);
-        void setMat4(std::string const& _name, glm::mat4 const& _value);
+        void uniform_set_bool(std::string const& _name, bool _value);
+        void uniform_set_int(std::string const& _name, int _value);
+        void uniform_set_float(std::string const& _name, float _value);
+        void uniform_set_vec3(std::string const& _name, glm::vec3 const& _value);
+        void uniform_set_mat4(std::string const& _name, glm::mat4 const& _value);
 
         std::vector<shader_input> inputs() const;
 

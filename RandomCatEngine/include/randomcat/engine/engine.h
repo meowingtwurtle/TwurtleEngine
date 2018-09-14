@@ -11,17 +11,17 @@ namespace randomcat::engine {
     public:
         engine(std::string _windowTitle = "Twurtle Engine", int _windowWidth = 600, int _windowHeight = 600)
         : m_window{std::move(_windowTitle), _windowWidth, _windowHeight} {
-            graphics::detail::setContext(m_window);
+            graphics::detail::set_render_context(m_window);
         }
 
         engine(engine const&) = delete;
         engine(engine&&) = delete;
 
-        void beforeUpdate() {}
+        void before_update() {}
 
         void render(graphics::renderer const& _renderer) {
             _renderer.render();
-            m_window.swapBuffers();
+            m_window.swap_buffers();
         }
 
         graphics::window& window() { return m_window; }

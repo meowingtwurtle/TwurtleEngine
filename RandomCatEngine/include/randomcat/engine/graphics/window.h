@@ -17,25 +17,25 @@ namespace randomcat::engine::graphics {
 
         ~window();
 
-        glm::ivec2 getSize() const { return m_size; }
+        glm::ivec2 size() const { return m_size; }
 
-        void setSize(glm::ivec2 _size) {
+        void set_size(glm::ivec2 _size) {
             m_size = std::move(_size);
             SDL_SetWindowSize(m_window, m_size.x, m_size.y);
         }
 
-        std::string getTitle() const { return m_title; }
+        std::string title() const { return m_title; }
 
-        void setTitle(std::string _title) {
+        void set_title(std::string _title) {
             m_title = std::move(_title);
             SDL_SetWindowTitle(m_window, m_title.c_str());
         }
 
-        void swapBuffers() { SDL_GL_SwapWindow(m_window); }
+        void swap_buffers() { SDL_GL_SwapWindow(m_window); }
 
-        void setGrabbed(bool _grabbed) { SDL_SetWindowGrab(m_window, _grabbed ? SDL_TRUE : SDL_FALSE); }
+        void set_grabbed(bool _grabbed) { SDL_SetWindowGrab(m_window, _grabbed ? SDL_TRUE : SDL_FALSE); }
 
-        void setCursorShown(bool _shown) {
+        void set_cursor_shown(bool _shown) {
             SDL_ShowCursor(_shown ? SDL_ENABLE : SDL_DISABLE);
             SDL_SetRelativeMouseMode(!_shown ? SDL_TRUE : SDL_FALSE);
         }
@@ -45,6 +45,6 @@ namespace randomcat::engine::graphics {
         std::string m_title;
         glm::ivec2 m_size;
 
-        friend void randomcat::engine::graphics::detail::setContext(window const&);
+        friend void randomcat::engine::graphics::detail::set_render_context(window const&);
     };
 }    // namespace randomcat::engine::graphics

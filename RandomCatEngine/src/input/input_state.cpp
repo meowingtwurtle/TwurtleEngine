@@ -7,19 +7,19 @@ namespace randomcat::engine::input {
         m_relMouseX = 0;
         m_relMouseY = 0;
 
-        downToHeld();
+        down_to_held();
 
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
                 case SDL_KEYDOWN: {
-                    keyDown(event.key.keysym.sym);
+                    set_key_down(event.key.keysym.sym);
 
                     break;
                 }
 
                 case SDL_KEYUP: {
-                    keyUp(event.key.keysym.sym);
+                    set_key_up(event.key.keysym.sym);
 
                     break;
                 }
