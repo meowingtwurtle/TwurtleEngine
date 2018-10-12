@@ -3,5 +3,8 @@ project(TwurtleEngine)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_subdirectory(lib)
-add_subdirectory(TwurtleEngine)
+file(GLOB sub_projects */CMakeLists.txt)
+foreach(sub_project ${sub_projects})
+    get_filename_component(directory ${sub_project} DIRECTORY)
+    add_subdirectory(${directory})
+endforeach()
