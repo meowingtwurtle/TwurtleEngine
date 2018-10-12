@@ -2,7 +2,6 @@
 
 #include <memory>
 
-#include <randomcat/engine/graphics/renderer.h>
 #include <randomcat/engine/graphics/window.h>
 #include <randomcat/engine/init.h>
 
@@ -19,8 +18,9 @@ namespace randomcat::engine {
 
         void before_update() {}
 
-        void render(graphics::renderer const& _renderer) {
-            _renderer.render();
+        template<typename _renderer_t, typename... _renderer_arg_t>
+        void render(_renderer_t const& _renderer, _renderer_arg_t&&... _rendererArg) {
+            _renderer(std::forward<_renderer_arg_t>(_rendererArg)...);
             m_window.swap_buffers();
         }
 

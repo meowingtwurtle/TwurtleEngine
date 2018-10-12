@@ -1,42 +1,64 @@
 #pragma once
 
+#include <algorithm>
+#include <optional>
 #include <type_traits>
 
-#include <randomcat/engine/graphics/detail/default_renderer.h>
+#include <randomcat/engine/detail/tag.h>
 #include <randomcat/engine/graphics/detail/default_vertex.h>
+#include <randomcat/engine/graphics/detail/default_vertex_renderer.h>
 #include <randomcat/engine/graphics/object.h>
-#include <randomcat/engine/graphics/renderer.h>
 
 namespace randomcat::engine::graphics {
-    template<typename _object_t, typename _renderer_t = detail::default_renderer<typename _object_t::component::vertex>>
-    class default_object_renderer : public object_renderer<_object_t> {
+    template<typename _object_t, typename _sub_renderer_t, typename _transform_func_t, typename = std::void_t<std::invoke_result_t<_sub_renderer_t, std::invoke_result_t<_transform_func_t, _object_t>>>>
+    class transform_object_renderer {
     public:
         using object = _object_t;
-        using component = typename object::component;
-        using vertex = typename component::vertex;
-        using renderer = _renderer_t;
+        using sub_renderer = _sub_renderer_t;
 
-        virtual void render() const override {
-            for (auto const& object : objects()) {
-                auto const components = object.components();
+        transform_object_renderer(sub_renderer _subRenderer, _transform_func_t _transform)
+        : m_subRenderer(std::move(_subRenderer)), m_transform(std::move(_transform)) {}
 
-                std::vector<vertex> vertices;
+        transform_object_renderer(tag_t<object>, sub_renderer _subRenderer, _transform_func_t _transform)
+        : transform_object_renderer(std::move(_subRenderer), std::move(_transform)) {}
 
-                for (auto const& component : components) {
-                    auto const subVertices = component.vertices();
-                    vertices.insert(std::end(vertices), std::begin(subVertices), std::end(subVertices));
-                }
-
-                auto vertexRenderer = renderer{object.shader()};
-                vertexRenderer.vertices() = std::move(vertices);
-                vertexRenderer.render();
-            }
-        }
-
-        virtual std::vector<object>& objects() override { return m_objects; }
-        virtual std::vector<object> const& objects() const override { return m_objects; }
+        void operator()(object const& _object) const { m_subRenderer(std::move(m_transform(_object))); }
 
     private:
-        std::vector<object> m_objects;
+        using sub_object_extractor = _transform_func_t;
+
+        sub_renderer m_subRenderer;
+        sub_object_extractor m_transform;
+    };
+
+    template<typename _object_t, typename _sub_renderer_t, typename _sub_object_extractor_t = decltype(_object_t::sub_extractor_f)>
+    static inline auto make_decomposing_renderer(_sub_renderer_t _subRenderer, _sub_object_extractor_t _subExtractor = _object_t::sub_extractor_f) {
+        return transform_object_renderer<_object_t, _sub_renderer_t, _sub_object_extractor_t>(std::move(_subRenderer), std::move(_subExtractor));
+    }
+
+    template<typename _object_t, typename _sub_renderer_t, typename _sub_object_extractor_t = decltype(_object_t::sub_extractor_f)>
+    static inline auto make_decomposing_renderer(tag_t<_object_t>, _sub_renderer_t _subRenderer, _sub_object_extractor_t _subExtractor = _object_t::sub_extractor_f) {
+        return make_decomposing_renderer<_object_t, _sub_renderer_t, _sub_object_extractor_t>(std::move(_subRenderer), std::move(_subExtractor));
+    }
+
+    template<typename _object_t, typename _render_func_t, typename = std::void_t<std::invoke_result_t<_render_func_t, _object_t>>>
+    class for_each_object_renderer {
+    public:
+        using object = _object_t;
+
+        for_each_object_renderer(_render_func_t _renderFunc) : m_renderFunc(std::move(_renderFunc)) {}
+
+        template<typename... Ts>
+        for_each_object_renderer(tag_t<object>, _render_func_t _renderFunc) : for_each_object_renderer(std::move(_renderFunc)) {}
+
+        void operator()(object const& _object) const { m_renderFunc(_object); }
+
+        template<typename _container_t, typename = std::void_t<std::invoke_result_t<_render_func_t, decltype(*begin(std::declval<_container_t>()))>>>
+        void operator()(_container_t const& _objects) const {
+            std::for_each(begin(_objects), end(_objects), m_renderFunc);
+        }
+
+    private:
+        _render_func_t m_renderFunc;
     };
 }    // namespace randomcat::engine::graphics
