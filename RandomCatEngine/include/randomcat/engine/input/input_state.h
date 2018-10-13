@@ -9,15 +9,13 @@ namespace randomcat::engine::input {
     public:
         void update();
 
-        bool is_key_down(keycode _key) const {
-            // map operator[] default-constructs value if absent. Since 0-value of
-            // key_state is up, if there is no entry, this will be false.
+        bool key_is_down(keycode _key) const {
             auto const it = m_map.find(_key);
 
             return it != m_map.end() && it->second != key_state::up;
         }
 
-        bool is_key_up(keycode _key) const {
+        bool key_is_up(keycode _key) const {
             auto const it = m_map.find(_key);
 
             return it != m_map.end() && it->second == key_state::up;
