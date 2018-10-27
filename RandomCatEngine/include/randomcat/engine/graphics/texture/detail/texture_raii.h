@@ -1,19 +1,19 @@
 #pragma once
 
-#include <memory>
+#include <GL/glew.h>
+
+#include <randomcat/engine/graphics/detail/raii_wrappers/opengl_raii_id.h>
 
 namespace randomcat::engine::graphics::texture::detail {
-    struct texture_id {
-        texture_id();
+    using opengl_raw_id = randomcat::engine::graphics::detail::opengl_raw_id;
 
-        unsigned int id() const;
-        operator unsigned int() const;
+    inline opengl_raw_id createTexture() {
+        opengl_raw_id id;
+        glGenTextures(1, &id);
+        return id;
+    }
 
-        bool operator==(texture_id const& _other) const { return id() == _other.id(); }
-        bool operator!=(texture_id const& _other) const { return !(*this == _other); }
+    inline void deleteTexture(opengl_raw_id _id) { glDeleteTextures(1, &_id); }
 
-    private:
-        struct underlying;
-        std::shared_ptr<underlying> m_ptr;
-    };
+    using texture_id = randomcat::engine::graphics::detail::opengl_raii_id<createTexture, deleteTexture>;
 }    // namespace randomcat::engine::graphics::texture::detail

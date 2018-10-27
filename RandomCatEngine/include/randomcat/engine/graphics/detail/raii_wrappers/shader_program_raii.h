@@ -1,37 +1,18 @@
 #pragma once
 
-#include <memory>
-
 #include <GL/glew.h>
 
+#include <randomcat/engine/graphics/detail/raii_wrappers/opengl_raii_id.h>
+
 namespace randomcat::engine::graphics::detail {
-    struct shader_id {
-    public:
-        shader_id(GLenum _type);
+    inline opengl_raw_id makeShader(GLenum _type) { return opengl_raw_id{glCreateShader(_type)}; }
 
-        unsigned int id() const;
-        operator unsigned int() const;
+    inline void destroyShader(opengl_raw_id _id) { glDeleteShader(_id); }
 
-        bool operator==(shader_id const& _other) const { return id() == _other.id(); }
-        bool operator!=(shader_id const& _other) const { return !(*this == _other); }
+    inline opengl_raw_id makeProgram() { return opengl_raw_id{glCreateProgram()}; }
 
-    private:
-        struct underlying;
-        std::shared_ptr<underlying> m_ptr;
-    };
+    inline void destroyProgram(opengl_raw_id _id) { glDeleteProgram(_id); }
 
-    struct program_id {
-    public:
-        program_id();
-
-        unsigned int id() const;
-        operator unsigned int() const;
-
-        bool operator==(program_id const& _other) const { return id() == _other.id(); }
-        bool operator!=(program_id const& _other) const { return !(*this == _other); }
-
-    private:
-        struct underlying;
-        std::shared_ptr<underlying> m_ptr;
-    };
+    using shader_id = opengl_raii_id<makeShader, destroyShader, GLenum>;
+    using program_id = opengl_raii_id<makeProgram, destroyProgram>;
 }    // namespace randomcat::engine::graphics::detail

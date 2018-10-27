@@ -123,7 +123,7 @@ namespace randomcat::engine::graphics {
 
         m_programID = programID;
 
-        g_shaderInputsMap.emplace(std::make_pair(m_programID, std::move(_inputs)));
+        g_shaderInputsMap.emplace(std::make_pair(m_programID.value(), std::move(_inputs)));
     }
 
     void shader::make_active() const { glUseProgram(m_programID); }

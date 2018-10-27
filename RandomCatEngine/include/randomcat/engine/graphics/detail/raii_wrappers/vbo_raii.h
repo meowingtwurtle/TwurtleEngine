@@ -1,19 +1,17 @@
 #pragma once
 
-#include <memory>
+#include <GL/glew.h>
+
+#include <randomcat/engine/graphics/detail/raii_wrappers/opengl_raii_id.h>
 
 namespace randomcat::engine::graphics::detail {
-    struct vbo_id {
-        vbo_id();
+    inline decltype(auto) makeVBO() {
+        unsigned id;
+        glGenBuffers(1, &id);
+        return opengl_raw_id{id};
+    }
 
-        unsigned int id() const;
-        operator unsigned int() const;
+    inline void destroyVBO(opengl_raw_id _id) { glDeleteBuffers(1, &_id); }
 
-        bool operator==(vbo_id const& _other) const { return id() == _other.id(); }
-        bool operator!=(vbo_id const& _other) const { return !(*this == _other); }
-
-    private:
-        struct underlying;
-        std::shared_ptr<underlying> m_ptr;
-    };
+    using vbo_id = opengl_raii_id<makeVBO, destroyVBO>;
 }    // namespace randomcat::engine::graphics::detail
