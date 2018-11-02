@@ -21,7 +21,7 @@ namespace randomcat::engine::graphics {
         void uniform_set_vec3(std::string const& _name, glm::vec3 const& _value);
         void uniform_set_mat4(std::string const& _name, glm::mat4 const& _value);
 
-        std::vector<shader_input> inputs() const;
+        std::vector<shader_input> const& inputs() const;
 
         bool operator==(shader const& _other) const { return m_programID == _other.m_programID; }
         bool operator!=(shader const& _other) const { return !(*this == _other); }

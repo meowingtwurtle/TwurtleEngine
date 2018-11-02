@@ -148,5 +148,5 @@ namespace randomcat::engine::graphics {
         glUniformMatrix4fv(glGetUniformLocation(m_programID, _name.c_str()), 1, false, reinterpret_cast<float const*>(&_value));
     }
 
-    std::vector<shader_input> shader::inputs() const { return g_shaderInputsMap.at(m_programID); }
+    std::vector<shader_input> const& shader::inputs() const { return g_shaderInputsMap.at(m_programID); }
 }    // namespace randomcat::engine::graphics
