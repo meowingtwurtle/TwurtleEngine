@@ -33,12 +33,7 @@ namespace randomcat::engine::graphics {
 
         void swap_buffers() { SDL_GL_SwapWindow(m_window); }
 
-        void set_grabbed(bool _grabbed) { SDL_SetWindowGrab(m_window, _grabbed ? SDL_TRUE : SDL_FALSE); }
-
-        void set_cursor_shown(bool _shown) {
-            SDL_ShowCursor(_shown ? SDL_ENABLE : SDL_DISABLE);
-            SDL_SetRelativeMouseMode(!_shown ? SDL_TRUE : SDL_FALSE);
-        }
+        void set_cursor_shown(bool _shown) { SDL_SetRelativeMouseMode(!_shown ? SDL_TRUE : SDL_FALSE); }
 
     private:
         SDL_Window* m_window;
