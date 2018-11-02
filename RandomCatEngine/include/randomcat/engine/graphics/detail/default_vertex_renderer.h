@@ -4,6 +4,7 @@
 #include <type_traits>
 #include <vector>
 
+#include <randomcat/engine/detail/tag.h>
 #include <randomcat/engine/graphics/detail/raii_wrappers/vao_raii.h>
 #include <randomcat/engine/graphics/detail/raii_wrappers/vbo_raii.h>
 #include <randomcat/engine/graphics/shader.h>
@@ -24,8 +25,7 @@ namespace randomcat::engine::graphics::detail {
             }
         }
 
-        template<typename... Ts>
-        default_vertex_renderer(tag_t<_vertex_t>, Ts... _args) : default_vertex_renderer(_args...) {}
+        default_vertex_renderer(tag_t<_vertex_t>, shader _shader) : default_vertex_renderer(std::move(_shader)) {}
         using vertex = _vertex_t;
         using container = std::vector<vertex>;
 
