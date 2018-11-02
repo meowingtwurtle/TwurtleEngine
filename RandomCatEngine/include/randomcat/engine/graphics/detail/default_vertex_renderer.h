@@ -25,39 +25,69 @@ namespace randomcat::engine::graphics::detail {
         }
 
         template<typename... Ts>
-        default_vertex_renderer(tag<_vertex_t>, Ts... _args) : default_vertex_renderer(_args...) {}
+        default_vertex_renderer(tag_t<_vertex_t>, Ts... _args) : default_vertex_renderer(_args...) {}
         using vertex = _vertex_t;
-        using container = detail::default_renderer_container<vertex>;
-        using container_container = detail::default_renderer_container<container>;
+        using container = std::vector<vertex>;
 
         void operator()(container const& _vertices) const {
-            makeActive();
-            renderActive(_vertices);
+            if (!is_forced_active()) make_active();
+            render_active(_vertices);
         }
 
         template<typename T>
         void operator()(T const& _t) const {
-            makeActive();
-            renderActive<T>(_t);
+            if (!is_forced_active()) make_active();
+            render_active<T>(_t);
+        }
+
+        // Must not outlive the renderer object
+        class active_lock {
+        public:
+            active_lock(active_lock const&) = delete;
+            active_lock(active_lock&&) = delete;
+
+            active_lock(default_vertex_renderer const& _renderer) : m_renderer(_renderer) {
+                m_renderer.make_active();
+                m_renderer.set_forced_active();
+            }
+
+            ~active_lock() { m_renderer.release_forced_active(); }
+
+        private:
+            default_vertex_renderer const& m_renderer;
+        };
+
+        active_lock make_active_lock() const {
+            return active_lock(*this);    // Constructor activates the renderer
         }
 
     private:
-        void makeActive() const {
+        void make_active() const {
             m_shader.make_active();
             glBindVertexArray(m_vao);
             glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
         }
 
-        void renderActive(container const& _vertices) const {
+        void render_active(container const& _vertices) const {
             glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(_vertex_t), _vertices.data(), GL_DYNAMIC_DRAW);
             glDrawArrays(GL_TRIANGLES, 0, _vertices.size());
         }
 
         template<typename T>
-        void renderActive(const T& _t) const {
-            std::for_each(begin(_t), end(_t), [this](const auto& x) { renderActive(x); });
+        void render_active(T const& _t) const {
+            std::for_each(begin(_t), end(_t), [this](auto const& x) { render_active(x); });
         }
 
+        void set_forced_active() const {
+            if (is_forced_active()) throw std::runtime_error("Cannot double-force active.");
+            m_isForcedActive = true;
+        }
+
+        void release_forced_active() const { m_isForcedActive = false; }
+
+        bool is_forced_active() const { return m_isForcedActive; }
+
+        mutable bool m_isForcedActive = false;
         vao_id m_vao;
         vbo_id m_vbo;
         randomcat::engine::graphics::shader m_shader;
