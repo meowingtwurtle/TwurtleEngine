@@ -5,7 +5,6 @@
 #include <glm/glm.hpp>
 
 #include <randomcat/engine/graphics/detail/default_vertex.h>
-#include <randomcat/engine/graphics/shader.h>
 
 namespace randomcat::engine::graphics {
     namespace detail {
@@ -53,23 +52,20 @@ namespace randomcat::engine::graphics {
 
     class render_object_triangle {
     public:
-        render_object_triangle(render_triangle_texture _triangle, graphics::shader _shader) noexcept
-        : m_triangle{std::move(_triangle)}, m_shader(std::move(_shader)) {}
+        render_object_triangle(render_triangle_texture _triangle) noexcept : m_triangle{std::move(_triangle)} {}
 
         std::vector<render_triangle_texture> const& components() const noexcept { return m_triangle; }
-        graphics::shader const& shader() const noexcept { return m_shader; }
 
         static constexpr auto sub_extractor_f = detail::component_extractor_f<render_object_triangle>;
 
     private:
         std::vector<render_triangle_texture> m_triangle;
-        graphics::shader m_shader;
     };
 
     class render_object_rect_prism {
     public:
-        render_object_rect_prism(glm::vec3 _center, glm::vec3 _sides, unsigned int _texture, graphics::shader _shader) noexcept
-        : render_object_rect_prism(_center, _sides, _texture, _texture, _texture, _texture, _texture, _texture, std::move(_shader)) {}
+        render_object_rect_prism(glm::vec3 _center, glm::vec3 _sides, unsigned int _texture) noexcept
+        : render_object_rect_prism(_center, _sides, _texture, _texture, _texture, _texture, _texture, _texture) {}
         render_object_rect_prism(glm::vec3 _center,
                                  glm::vec3 _sides,
                                  unsigned int _texHX,
@@ -77,9 +73,7 @@ namespace randomcat::engine::graphics {
                                  unsigned int _texHY,
                                  unsigned int _texLY,
                                  unsigned int _texHZ,
-                                 unsigned int _texLZ,
-                                 graphics::shader _shader) noexcept
-        : m_shader(std::move(_shader)) {
+                                 unsigned int _texLZ) noexcept {
             m_triangles.reserve(12);
 
             auto const addTriangle = [&, this](glm::vec3 posA, glm::vec3 posB, glm::vec3 posC, unsigned int tex, auto const& toTexCoord) {
@@ -119,29 +113,19 @@ namespace randomcat::engine::graphics {
         }
 
         std::vector<render_triangle_texture> const& components() const noexcept { return m_triangles; }
-        graphics::shader const& shader() const noexcept { return m_shader; }
 
         static constexpr auto sub_extractor_f = detail::component_extractor_f<render_object_rect_prism>;
 
     private:
         std::vector<render_triangle_texture> m_triangles;
-        graphics::shader m_shader;
     };
 
     class render_object_cube : public render_object_rect_prism {
     public:
-        render_object_cube(glm::vec3 _center, float _side, unsigned int _texture, graphics::shader _shader) noexcept
-        : render_object_cube(std::move(_center), std::move(_side), _texture, _texture, _texture, _texture, _texture, _texture, std::move(_shader)) {}
+        render_object_cube(glm::vec3 _center, float _side, unsigned int _texture) noexcept
+        : render_object_cube(std::move(_center), std::move(_side), _texture, _texture, _texture, _texture, _texture, _texture) {}
 
-        render_object_cube(glm::vec3 _center,
-                           float _side,
-                           unsigned int _texHX,
-                           unsigned int _texLX,
-                           unsigned int _texHY,
-                           unsigned int _texLY,
-                           unsigned int _texHZ,
-                           unsigned int _texLZ,
-                           graphics::shader _shader) noexcept
+        render_object_cube(glm::vec3 _center, float _side, unsigned int _texHX, unsigned int _texLX, unsigned int _texHY, unsigned int _texLY, unsigned int _texHZ, unsigned int _texLZ) noexcept
         : render_object_rect_prism(std::move(_center),
                                    glm::vec3{_side, _side, _side},
                                    std::move(_texHX),
@@ -149,8 +133,7 @@ namespace randomcat::engine::graphics {
                                    std::move(_texHY),
                                    std::move(_texLY),
                                    std::move(_texHZ),
-                                   std::move(_texLZ),
-                                   std::move(_shader)) {
+                                   std::move(_texLZ)) {
             _side = 4;
         }
 
