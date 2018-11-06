@@ -17,6 +17,9 @@ namespace randomcat::engine::graphics {
 
         ~window() noexcept;
 
+        window(window const&) = delete;
+        window(window&&) = delete;
+
         glm::ivec2 size() const noexcept { return m_size; }
 
         void set_size(glm::ivec2 _size) noexcept {
