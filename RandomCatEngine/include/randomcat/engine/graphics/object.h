@@ -10,13 +10,13 @@
 namespace randomcat::engine::graphics {
     namespace detail {
         template<typename T>
-        static constexpr auto vertex_extractor_f = [](auto const& x) -> decltype(auto) {
+        static constexpr auto vertex_extractor_f = [](auto const& x) noexcept(noexcept(x.vertices())) -> decltype(auto) {
             static_assert(std::is_same_v<decltype(x), T const&>);
             return x.vertices();
         };
 
         template<typename T>
-        static constexpr auto component_extractor_f = [](auto const& x) -> decltype(auto) {
+        static constexpr auto component_extractor_f = [](auto const& x) noexcept(noexcept(x.components())) -> decltype(auto) {
             static_assert(std::is_same_v<decltype(x), T const&>);
             return x.components();
         };
@@ -26,14 +26,14 @@ namespace randomcat::engine::graphics {
     public:
         using vertex = detail::default_vertex;
 
-        render_triangle(vertex _posA, vertex _posB, vertex _posC)
+        render_triangle(vertex _posA, vertex _posB, vertex _posC) noexcept
         : posA(std::move(_posA)), posB(std::move(_posB)), posC(std::move(_posC)), m_vertices{posA, posB, posC} {}
 
         vertex posA;
         vertex posB;
         vertex posC;
 
-        std::vector<vertex> const& vertices() const { return m_vertices; }
+        std::vector<vertex> const& vertices() const noexcept { return m_vertices; }
 
     private:
         std::vector<vertex> m_vertices;
@@ -46,18 +46,18 @@ namespace randomcat::engine::graphics {
         render_triangle shape;
         unsigned int texture;
 
-        decltype(auto) vertices() const { return shape.vertices(); }
+        decltype(auto) vertices() const noexcept { return shape.vertices(); }
 
         static constexpr auto sub_extractor_f = detail::vertex_extractor_f<render_triangle_texture>;
     };
 
     class render_object_triangle {
     public:
-        render_object_triangle(render_triangle_texture _triangle, graphics::shader _shader)
+        render_object_triangle(render_triangle_texture _triangle, graphics::shader _shader) noexcept
         : m_triangle{std::move(_triangle)}, m_shader(std::move(_shader)) {}
 
-        std::vector<render_triangle_texture> const& components() const { return m_triangle; }
-        graphics::shader const& shader() const { return m_shader; }
+        std::vector<render_triangle_texture> const& components() const noexcept { return m_triangle; }
+        graphics::shader const& shader() const noexcept { return m_shader; }
 
         static constexpr auto sub_extractor_f = detail::component_extractor_f<render_object_triangle>;
 
@@ -68,7 +68,7 @@ namespace randomcat::engine::graphics {
 
     class render_object_rect_prism {
     public:
-        render_object_rect_prism(glm::vec3 _center, glm::vec3 _sides, unsigned int _texture, graphics::shader _shader)
+        render_object_rect_prism(glm::vec3 _center, glm::vec3 _sides, unsigned int _texture, graphics::shader _shader) noexcept
         : render_object_rect_prism(_center, _sides, _texture, _texture, _texture, _texture, _texture, _texture, std::move(_shader)) {}
         render_object_rect_prism(glm::vec3 _center,
                                  glm::vec3 _sides,
@@ -78,7 +78,7 @@ namespace randomcat::engine::graphics {
                                  unsigned int _texLY,
                                  unsigned int _texHZ,
                                  unsigned int _texLZ,
-                                 graphics::shader _shader)
+                                 graphics::shader _shader) noexcept
         : m_shader(std::move(_shader)) {
             m_triangles.reserve(12);
 
@@ -118,8 +118,8 @@ namespace randomcat::engine::graphics {
             addTriangle(glm::vec3{0.5f, 0.5f, 0.5f}, glm::vec3{-0.5f, 0.5f, 0.5f}, glm::vec3{-0.5f, 0.5f, -0.5f}, _texHY, dropHY);
         }
 
-        std::vector<render_triangle_texture> const& components() const { return m_triangles; }
-        graphics::shader const& shader() const { return m_shader; }
+        std::vector<render_triangle_texture> const& components() const noexcept { return m_triangles; }
+        graphics::shader const& shader() const noexcept { return m_shader; }
 
         static constexpr auto sub_extractor_f = detail::component_extractor_f<render_object_rect_prism>;
 
@@ -130,7 +130,7 @@ namespace randomcat::engine::graphics {
 
     class render_object_cube : public render_object_rect_prism {
     public:
-        render_object_cube(glm::vec3 _center, float _side, unsigned int _texture, graphics::shader _shader)
+        render_object_cube(glm::vec3 _center, float _side, unsigned int _texture, graphics::shader _shader) noexcept
         : render_object_cube(std::move(_center), std::move(_side), _texture, _texture, _texture, _texture, _texture, _texture, std::move(_shader)) {}
 
         render_object_cube(glm::vec3 _center,
@@ -141,7 +141,7 @@ namespace randomcat::engine::graphics {
                            unsigned int _texLY,
                            unsigned int _texHZ,
                            unsigned int _texLZ,
-                           graphics::shader _shader)
+                           graphics::shader _shader) noexcept
         : render_object_rect_prism(std::move(_center),
                                    glm::vec3{_side, _side, _side},
                                    std::move(_texHX),
@@ -150,7 +150,9 @@ namespace randomcat::engine::graphics {
                                    std::move(_texLY),
                                    std::move(_texHZ),
                                    std::move(_texLZ),
-                                   std::move(_shader)) {}
+                                   std::move(_shader)) {
+            _side = 4;
+        }
 
         static constexpr auto sub_extractor_f = detail::component_extractor_f<render_object_cube>;
     };

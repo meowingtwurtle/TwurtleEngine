@@ -16,13 +16,18 @@ namespace randomcat::engine::graphics {
         using object = _object_t;
         using sub_renderer = _sub_renderer_t;
 
-        transform_object_renderer(sub_renderer _subRenderer, _transform_func_t _transform)
+        transform_object_renderer(sub_renderer _subRenderer, _transform_func_t _transform) noexcept(
+            std::is_nothrow_move_constructible_v<sub_renderer>&& std::is_nothrow_move_constructible_v<_transform_func_t>)
         : m_subRenderer(std::move(_subRenderer)), m_transform(std::move(_transform)) {}
 
-        transform_object_renderer(tag_t<object>, sub_renderer _subRenderer, _transform_func_t _transform)
+        transform_object_renderer(tag_t<object>, sub_renderer _subRenderer, _transform_func_t _transform) noexcept(
+            noexcept(transform_object_renderer(std::move(_subRenderer), std::move(_transform))))
         : transform_object_renderer(std::move(_subRenderer), std::move(_transform)) {}
 
-        void operator()(object const& _object) const { m_subRenderer(std::move(m_transform(_object))); }
+        void operator()(object const& _object) const
+            noexcept(noexcept(std::declval<sub_renderer>()(std::move(std::declval<_transform_func_t>()(_object))))) {
+            m_subRenderer(std::move(m_transform(_object)));
+        }
 
     private:
         using sub_object_extractor = _transform_func_t;
@@ -32,12 +37,14 @@ namespace randomcat::engine::graphics {
     };
 
     template<typename _object_t, typename _sub_renderer_t, typename _sub_object_extractor_t = decltype(_object_t::sub_extractor_f)>
-    static inline auto make_decomposing_renderer(_sub_renderer_t _subRenderer, _sub_object_extractor_t _subExtractor = _object_t::sub_extractor_f) {
+    static inline auto make_decomposing_renderer(_sub_renderer_t _subRenderer, _sub_object_extractor_t _subExtractor = _object_t::sub_extractor_f) noexcept(
+        noexcept(transform_object_renderer<_object_t, _sub_renderer_t, _sub_object_extractor_t>(std::move(_subRenderer), std::move(_subExtractor)))) {
         return transform_object_renderer<_object_t, _sub_renderer_t, _sub_object_extractor_t>(std::move(_subRenderer), std::move(_subExtractor));
     }
 
     template<typename _object_t, typename _sub_renderer_t, typename _sub_object_extractor_t = decltype(_object_t::sub_extractor_f)>
-    static inline auto make_decomposing_renderer(tag_t<_object_t>, _sub_renderer_t _subRenderer, _sub_object_extractor_t _subExtractor = _object_t::sub_extractor_f) {
+    static inline auto make_decomposing_renderer(tag_t<_object_t>, _sub_renderer_t _subRenderer, _sub_object_extractor_t _subExtractor = _object_t::sub_extractor_f) noexcept(
+        noexcept(make_decomposing_renderer<_object_t, _sub_renderer_t, _sub_object_extractor_t>(std::move(_subRenderer), std::move(_subExtractor)))) {
         return make_decomposing_renderer<_object_t, _sub_renderer_t, _sub_object_extractor_t>(std::move(_subRenderer), std::move(_subExtractor));
     }
 
@@ -46,15 +53,18 @@ namespace randomcat::engine::graphics {
     public:
         using object = _object_t;
 
-        for_each_object_renderer(_render_func_t _renderFunc) : m_renderFunc(std::move(_renderFunc)) {}
+        for_each_object_renderer(_render_func_t _renderFunc) noexcept(std::is_nothrow_move_constructible_v<_render_func_t>)
+        : m_renderFunc(std::move(_renderFunc)) {}
 
         template<typename... Ts>
-        for_each_object_renderer(tag_t<object>, _render_func_t _renderFunc) : for_each_object_renderer(std::move(_renderFunc)) {}
+        for_each_object_renderer(tag_t<object>, _render_func_t _renderFunc) noexcept(noexcept(for_each_object_renderer(std::move(_renderFunc))))
+        : for_each_object_renderer(std::move(_renderFunc)) {}
 
-        void operator()(object const& _object) const { m_renderFunc(_object); }
+        void operator()(object const& _object) const noexcept(noexcept(m_renderFunc(_object))) { m_renderFunc(_object); }
 
         template<typename _container_t, typename = std::void_t<std::invoke_result_t<_render_func_t, decltype(*begin(std::declval<_container_t>()))>>>
-        void operator()(_container_t const& _objects) const {
+        void operator()(_container_t const& _objects) const
+            noexcept(noexcept(std::for_each(begin(_objects), end(_objects), std::declval<_render_func_t>()))) {
             std::for_each(begin(_objects), end(_objects), m_renderFunc);
         }
 

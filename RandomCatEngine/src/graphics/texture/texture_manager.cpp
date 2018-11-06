@@ -5,11 +5,11 @@
 #include <randomcat/engine/graphics/texture/texture_manager.h>
 
 namespace randomcat::engine::graphics::texture {
-    texture::texture() : m_name(""), m_width(0), m_height(0), m_underlying(std::make_shared<underlying>(nullptr)) {}
-    texture::texture(std::string _name, int _width, int _height, unsigned char* _data)
+    texture::texture() noexcept : m_name(""), m_width(0), m_height(0), m_underlying(std::make_shared<underlying>(nullptr)) {}
+    texture::texture(std::string _name, int _width, int _height, unsigned char* _data) noexcept
     : m_name(std::move(_name)), m_width(_width), m_height(_height), m_underlying(std::make_shared<underlying>(_data)) {}
 
-    texture::underlying::~underlying() {
+    texture::underlying::~underlying() noexcept {
         if (m_data != nullptr) stbi_image_free(static_cast<void*>(m_data));
     }
 

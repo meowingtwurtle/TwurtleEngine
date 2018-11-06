@@ -7,19 +7,19 @@
 namespace randomcat::engine::graphics::texture {
     class texture {
     public:
-        texture();
-        texture(std::string _name, int _width, int _height, unsigned char* _data);
+        texture() noexcept;
+        texture(std::string _name, int _width, int _height, unsigned char* _data) noexcept;
 
-        std::string const& name() const { return m_name; }
-        int width() const { return m_width; }
-        int height() const { return m_height; }
-        unsigned char const* data() const { return m_underlying->m_data; }
+        std::string const& name() const noexcept { return m_name; }
+        int width() const noexcept { return m_width; }
+        int height() const noexcept { return m_height; }
+        unsigned char const* data() const noexcept { return m_underlying->m_data; }
 
     private:
         struct underlying {
             unsigned char* m_data;
-            underlying(unsigned char* _data) : m_data(_data) {}
-            ~underlying();
+            underlying(unsigned char* _data) noexcept : m_data(_data) {}
+            ~underlying() noexcept;
         };
 
         std::string m_name;
@@ -35,8 +35,8 @@ namespace randomcat::engine::graphics::texture {
 
         using texture_map_iterator = std::unordered_map<std::string, texture>::const_iterator;
 
-        texture_map_iterator begin() const { return m_textureMap.begin(); }
-        texture_map_iterator end() const { return m_textureMap.end(); }
+        texture_map_iterator begin() const noexcept { return m_textureMap.begin(); }
+        texture_map_iterator end() const noexcept { return m_textureMap.end(); }
 
     private:
         std::unordered_map<std::string, texture> m_textureMap;

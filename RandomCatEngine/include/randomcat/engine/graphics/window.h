@@ -13,27 +13,27 @@
 namespace randomcat::engine::graphics {
     class window {
     public:
-        explicit window(std::string _title = "Twurtle Engine", int _width = 600, int _height = 600);
+        explicit window(std::string _title = "Twurtle Engine", int _width = 600, int _height = 600) noexcept;
 
-        ~window();
+        ~window() noexcept;
 
-        glm::ivec2 size() const { return m_size; }
+        glm::ivec2 size() const noexcept { return m_size; }
 
-        void set_size(glm::ivec2 _size) {
+        void set_size(glm::ivec2 _size) noexcept {
             m_size = std::move(_size);
             SDL_SetWindowSize(m_window, m_size.x, m_size.y);
         }
 
-        std::string title() const { return m_title; }
+        std::string title() const noexcept { return m_title; }
 
-        void set_title(std::string _title) {
+        void set_title(std::string _title) noexcept {
             m_title = std::move(_title);
             SDL_SetWindowTitle(m_window, m_title.c_str());
         }
 
-        void swap_buffers() { SDL_GL_SwapWindow(m_window); }
+        void swap_buffers() noexcept { SDL_GL_SwapWindow(m_window); }
 
-        void set_cursor_shown(bool _shown) { SDL_SetRelativeMouseMode(!_shown ? SDL_TRUE : SDL_FALSE); }
+        void set_cursor_shown(bool _shown) noexcept { SDL_SetRelativeMouseMode(!_shown ? SDL_TRUE : SDL_FALSE); }
 
     private:
         SDL_Window* m_window;

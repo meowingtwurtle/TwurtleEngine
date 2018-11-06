@@ -126,27 +126,27 @@ namespace randomcat::engine::graphics {
         g_shaderInputsMap.emplace(std::make_pair(m_programID.value(), std::move(_inputs)));
     }
 
-    void shader::make_active() const { glUseProgram(m_programID); }
+    void shader::make_active() const noexcept { glUseProgram(m_programID); }
 
-    void shader::uniform_set_bool(std::string const& _name, bool _value) {
+    void shader::uniform_set_bool(std::string const& _name, bool _value) noexcept {
         glUniform1i(glGetUniformLocation(m_programID, _name.c_str()), _value);
     }
 
-    void shader::uniform_set_int(std::string const& _name, int _value) {
+    void shader::uniform_set_int(std::string const& _name, int _value) noexcept {
         glUniform1i(glGetUniformLocation(m_programID, _name.c_str()), _value);
     }
 
-    void shader::uniform_set_float(std::string const& _name, float _value) {
+    void shader::uniform_set_float(std::string const& _name, float _value) noexcept {
         glUniform1f(glGetUniformLocation(m_programID, _name.c_str()), _value);
     }
 
-    void shader::uniform_set_vec3(std::string const& _name, glm::vec3 const& _value) {
+    void shader::uniform_set_vec3(std::string const& _name, glm::vec3 const& _value) noexcept {
         glUniform3fv(glGetUniformLocation(m_programID, _name.c_str()), 1, reinterpret_cast<float const*>(&_value));
     }
 
-    void shader::uniform_set_mat4(std::string const& _name, glm::mat4 const& _value) {
+    void shader::uniform_set_mat4(std::string const& _name, glm::mat4 const& _value) noexcept {
         glUniformMatrix4fv(glGetUniformLocation(m_programID, _name.c_str()), 1, false, reinterpret_cast<float const*>(&_value));
     }
 
-    std::vector<shader_input> const& shader::inputs() const { return g_shaderInputsMap.at(m_programID); }
+    std::vector<shader_input> const& shader::inputs() const noexcept { return g_shaderInputsMap.at(m_programID); }
 }    // namespace randomcat::engine::graphics

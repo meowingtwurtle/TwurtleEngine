@@ -3,7 +3,7 @@
 #include <randomcat/engine/input/input_state.h>
 
 namespace randomcat::engine::input {
-    void input_state::update() {
+    void input_state::update() noexcept {
         m_relMouseX = 0;
         m_relMouseY = 0;
 
