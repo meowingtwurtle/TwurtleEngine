@@ -8,21 +8,8 @@
 namespace randomcat::engine::graphics {
     class camera {
     public:
-        explicit camera(graphics::shader _shader) noexcept : m_shader(std::move(_shader)) {}
-        camera(graphics::shader _shader, glm::vec3 _pos) noexcept : m_shader(std::move(_shader)), m_pos(_pos) {}
-        camera(graphics::shader _shader, glm::vec3 _pos, glm::vec3 _dir) noexcept : m_shader(std::move(_shader)), m_pos(_pos), m_dir(_dir) {
-            update_shader();
-        }
-
-        camera(graphics::shader _shader, glm::vec3 _pos, glm::vec3 _dir, float _fov) noexcept
-        : m_shader(std::move(_shader)), m_pos(_pos), m_dir(_dir), m_fov(_fov) {
-            update_shader();
-        }
-
-        camera(graphics::shader _shader, glm::vec3 _pos, glm::vec3 _dir, float _fov, float _aspectRatio) noexcept
-        : m_shader(std::move(_shader)), m_pos(_pos), m_dir(_dir), m_fov(_fov), m_aspectRatio(_aspectRatio) {
-            update_shader();
-        }
+        camera(graphics::shader _shader, glm::vec3 _pos = glm::vec3{0.0f}, glm::vec3 _dir = glm::vec3{0.0f}, float _fov = 45.0f, float _aspectRatio = 1.0f) noexcept
+        : camera(std::move(_shader), std::move(_pos), std::move(_dir), std::move(_fov), std::move(_aspectRatio), 0.1f, 100.0f) {}
 
         camera(graphics::shader _shader, glm::vec3 _pos, glm::vec3 _dir, float _fov, float _aspectRatio, float _shortDistance, float _longDistance) noexcept
         : m_shader(std::move(_shader)), m_pos(_pos), m_dir(_dir), m_fov(_fov), m_aspectRatio(_aspectRatio), m_minDistance(_shortDistance), m_maxDistance(_longDistance) {
@@ -76,11 +63,11 @@ namespace randomcat::engine::graphics {
 
         graphics::shader m_shader;
 
-        glm::vec3 m_pos{0.0f};
-        glm::vec3 m_dir{0.0f};
-        float m_fov = 45.0f;
-        float m_aspectRatio = 1.0f;
-        float m_minDistance = 0.1f;
-        float m_maxDistance = 100.0f;
+        glm::vec3 m_pos;
+        glm::vec3 m_dir;
+        float m_fov;
+        float m_aspectRatio;
+        float m_minDistance;
+        float m_maxDistance;
     };
 }    // namespace randomcat::engine::graphics
