@@ -31,17 +31,11 @@ namespace randomcat::engine::graphics::detail {
         RC_NOEXCEPT_CONSTRUCT_ASSIGN(default_vertex_renderer);
 
         using vertex = _vertex_t;
-        using container = std::vector<vertex>;
-
-        void operator()(container const& _vertices) const noexcept {
-            if (!is_forced_active()) make_active();
-            render_active(_vertices);
-        }
 
         template<typename T>
         void operator()(T const& _t) const noexcept {
             if (!is_forced_active()) make_active();
-            render_active<T>(_t);
+            render_active(_t);
         }
 
         // Must not outlive the renderer object
@@ -66,18 +60,41 @@ namespace randomcat::engine::graphics::detail {
         }
 
     private:
+        template<typename T0, typename T1, typename = std::enable_if_t<std::is_pointer_v<T0> && std::is_pointer_v<T1>>>
+        struct is_pointer_same :
+        std::bool_constant<std::is_same_v<std::remove_cv_t<std::remove_pointer_t<T0>>, std::remove_cv_t<std::remove_pointer_t<T1>>>> {};
+
+        template<typename T0, typename T1>
+        static auto constexpr is_pointer_same_v = is_pointer_same<T0, T1>::value;
+
+        template<typename container>
+        static auto constexpr is_vertex_container_v = is_pointer_same_v<decltype(std::declval<container const&>().data()), vertex*>;
+
+        template<bool V>
+        using bool_if_t = std::enable_if_t<V, bool>;
+
         void make_active() const noexcept {
             m_shader.make_active();
             glBindVertexArray(m_vao);
             glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
         }
 
-        void render_active(container const& _vertices) const noexcept {
+        // bool_if_t makes the template parameter lists different here, so no
+        // redeclaration If this is confusing, go watch
+        // https://www.youtube.com/watch?v=ybaE9qlhHvw bool_if_t evaluates to bool
+        // only if the value is true, otherwise it SFINAEs away
+
+        // is_vertex_container_v tests if we can use this as a vertex container
+        // (namely, if it has a possibly data() method returning a cv-pointer to
+        // vertex)
+
+        template<typename _container_t, bool_if_t<is_vertex_container_v<_container_t>> = true>
+        void render_active(_container_t const& _vertices) const noexcept {
             glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(_vertex_t), _vertices.data(), GL_DYNAMIC_DRAW);
             glDrawArrays(GL_TRIANGLES, 0, _vertices.size());
         }
 
-        template<typename T>
+        template<typename T, bool_if_t<!is_vertex_container_v<T>> = true>
         void render_active(T const& _t) const noexcept {
             std::for_each(begin(_t), end(_t), [this](auto const& x) { render_active(x); });
         }
