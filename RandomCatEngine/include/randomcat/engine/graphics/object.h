@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include <array>
 
 #include <glm/glm.hpp>
 
@@ -32,10 +32,10 @@ namespace randomcat::engine::graphics {
         vertex posB;
         vertex posC;
 
-        std::vector<vertex> const& vertices() const noexcept { return m_vertices; }
+        auto const& vertices() const noexcept { return m_vertices; }
 
     private:
-        std::vector<vertex> m_vertices;
+        std::array<vertex, 3> m_vertices;
 
         static constexpr auto sub_extractor_f = detail::vertex_extractor_f<render_triangle>;
     };
@@ -54,12 +54,12 @@ namespace randomcat::engine::graphics {
     public:
         render_object_triangle(render_triangle_texture _triangle) noexcept : m_triangle{std::move(_triangle)} {}
 
-        std::vector<render_triangle_texture> const& components() const noexcept { return m_triangle; }
+        auto const& components() const noexcept { return m_triangle; }
 
         static constexpr auto sub_extractor_f = detail::component_extractor_f<render_object_triangle>;
 
     private:
-        std::vector<render_triangle_texture> m_triangle;
+        std::array<render_triangle_texture, 1> m_triangle;
     };
 
     class render_object_rect_prism {
@@ -73,15 +73,22 @@ namespace randomcat::engine::graphics {
                                  unsigned int _texHY,
                                  unsigned int _texLY,
                                  unsigned int _texHZ,
-                                 unsigned int _texLZ) noexcept {
-            m_triangles.reserve(12);
+                                 unsigned int _texLZ) noexcept
+        : m_triangles(genTriangles(_center, _sides, _texHX, _texLX, _texHY, _texLY, _texHZ, _texLZ)) {}
 
-            auto const addTriangle = [&, this](glm::vec3 posA, glm::vec3 posB, glm::vec3 posC, unsigned int tex, auto const& toTexCoord) {
-                m_triangles.push_back(
-                    render_triangle_texture{render_triangle{detail::default_vertex{_center + (posA * _sides), toTexCoord(posA), tex},
-                                                            detail::default_vertex{_center + (posB * _sides), toTexCoord(posB), tex},
-                                                            {_center + (posC * _sides), toTexCoord(posC), tex}},
-                                            tex});
+        std::array<render_triangle_texture, 12> genTriangles(glm::vec3 _center,
+                                                             glm::vec3 _sides,
+                                                             unsigned int _texHX,
+                                                             unsigned int _texLX,
+                                                             unsigned int _texHY,
+                                                             unsigned int _texLY,
+                                                             unsigned int _texHZ,
+                                                             unsigned int _texLZ) const {
+            auto const makeTriangle = [&](glm::vec3 posA, glm::vec3 posB, glm::vec3 posC, unsigned int tex, auto const& toTexCoord) {
+                return render_triangle_texture{render_triangle{detail::default_vertex{_center + (posA * _sides), toTexCoord(posA), tex},
+                                                               detail::default_vertex{_center + (posB * _sides), toTexCoord(posB), tex},
+                                                               {_center + (posC * _sides), toTexCoord(posC), tex}},
+                                               tex};
             };
 
             auto const dropHX = [](glm::vec3 pos) -> glm::vec2 { return glm::vec2{pos.y - 0.5, pos.z - 0.5} * 1.0f; };
@@ -92,32 +99,34 @@ namespace randomcat::engine::graphics {
             auto const dropLY = [](glm::vec3 pos) -> glm::vec2 { return glm::vec2{pos.x + 0.5, pos.z + 0.5} * 1.0f; };
             auto const dropLZ = [](glm::vec3 pos) -> glm::vec2 { return glm::vec2{pos.x + 0.5, pos.y + 0.5} * 1.0f; };
 
-            addTriangle(glm::vec3{-0.5f, -0.5f, -0.5f}, glm::vec3{0.5f, -0.5f, -0.5f}, glm::vec3{0.5f, 0.5f, -0.5f}, _texLZ, dropLZ);
-            addTriangle(glm::vec3{0.5f, 0.5f, -0.5f}, glm::vec3{-0.5f, 0.5f, -0.5f}, glm::vec3{-0.5f, -0.5f, -0.5f}, _texLZ, dropLZ);
+            auto tri0 = makeTriangle(glm::vec3{-0.5f, -0.5f, -0.5f}, glm::vec3{0.5f, -0.5f, -0.5f}, glm::vec3{0.5f, 0.5f, -0.5f}, _texLZ, dropLZ);
+            auto tri1 = makeTriangle(glm::vec3{0.5f, 0.5f, -0.5f}, glm::vec3{-0.5f, 0.5f, -0.5f}, glm::vec3{-0.5f, -0.5f, -0.5f}, _texLZ, dropLZ);
 
-            addTriangle(glm::vec3{-0.5f, -0.5f, 0.5f}, glm::vec3{0.5f, -0.5f, 0.5f}, glm::vec3{0.5f, 0.5f, 0.5f}, _texHZ, dropHZ);
-            addTriangle(glm::vec3{0.5f, 0.5f, 0.5f}, glm::vec3{-0.5f, 0.5f, 0.5f}, glm::vec3{-0.5f, -0.5f, 0.5f}, _texHZ, dropHZ);
+            auto tri2 = makeTriangle(glm::vec3{-0.5f, -0.5f, 0.5f}, glm::vec3{0.5f, -0.5f, 0.5f}, glm::vec3{0.5f, 0.5f, 0.5f}, _texHZ, dropHZ);
+            auto tri3 = makeTriangle(glm::vec3{0.5f, 0.5f, 0.5f}, glm::vec3{-0.5f, 0.5f, 0.5f}, glm::vec3{-0.5f, -0.5f, 0.5f}, _texHZ, dropHZ);
 
-            addTriangle(glm::vec3{-0.5f, 0.5f, 0.5f}, glm::vec3{-0.5f, 0.5f, -0.5f}, glm::vec3{-0.5f, -0.5f, -0.5f}, _texLX, dropLX);
-            addTriangle(glm::vec3{-0.5f, -0.5f, -0.5f}, glm::vec3{-0.5f, -0.5f, 0.5f}, glm::vec3{-0.5f, 0.5f, 0.5f}, _texLX, dropLX);
+            auto tri4 = makeTriangle(glm::vec3{-0.5f, 0.5f, 0.5f}, glm::vec3{-0.5f, 0.5f, -0.5f}, glm::vec3{-0.5f, -0.5f, -0.5f}, _texLX, dropLX);
+            auto tri5 = makeTriangle(glm::vec3{-0.5f, -0.5f, -0.5f}, glm::vec3{-0.5f, -0.5f, 0.5f}, glm::vec3{-0.5f, 0.5f, 0.5f}, _texLX, dropLX);
 
-            addTriangle(glm::vec3{0.5f, 0.5f, 0.5f}, glm::vec3{0.5f, 0.5f, -0.5f}, glm::vec3{0.5f, -0.5f, -0.5f}, _texHX, dropHX);
+            auto tri6 = makeTriangle(glm::vec3{0.5f, 0.5f, 0.5f}, glm::vec3{0.5f, 0.5f, -0.5f}, glm::vec3{0.5f, -0.5f, -0.5f}, _texHX, dropHX);
 
-            addTriangle(glm::vec3{0.5f, -0.5f, -0.5f}, glm::vec3{0.5f, -0.5f, 0.5f}, glm::vec3{0.5f, 0.5f, 0.5f}, _texHX, dropHX);
+            auto tri7 = makeTriangle(glm::vec3{0.5f, -0.5f, -0.5f}, glm::vec3{0.5f, -0.5f, 0.5f}, glm::vec3{0.5f, 0.5f, 0.5f}, _texHX, dropHX);
 
-            addTriangle(glm::vec3{-0.5f, -0.5f, -0.5f}, glm::vec3{0.5f, -0.5f, -0.5f}, glm::vec3{0.5f, -0.5f, 0.5f}, _texLY, dropLY);
-            addTriangle(glm::vec3{0.5f, -0.5f, 0.5f}, glm::vec3{-0.5f, -0.5f, 0.5f}, glm::vec3{-0.5f, -0.5f, -0.5f}, _texLY, dropLY);
+            auto tri8 = makeTriangle(glm::vec3{-0.5f, -0.5f, -0.5f}, glm::vec3{0.5f, -0.5f, -0.5f}, glm::vec3{0.5f, -0.5f, 0.5f}, _texLY, dropLY);
+            auto tri9 = makeTriangle(glm::vec3{0.5f, -0.5f, 0.5f}, glm::vec3{-0.5f, -0.5f, 0.5f}, glm::vec3{-0.5f, -0.5f, -0.5f}, _texLY, dropLY);
 
-            addTriangle(glm::vec3{-0.5f, 0.5f, -0.5f}, glm::vec3{0.5f, 0.5f, -0.5f}, glm::vec3{0.5f, 0.5f, 0.5f}, _texHY, dropHY);
-            addTriangle(glm::vec3{0.5f, 0.5f, 0.5f}, glm::vec3{-0.5f, 0.5f, 0.5f}, glm::vec3{-0.5f, 0.5f, -0.5f}, _texHY, dropHY);
+            auto tri10 = makeTriangle(glm::vec3{-0.5f, 0.5f, -0.5f}, glm::vec3{0.5f, 0.5f, -0.5f}, glm::vec3{0.5f, 0.5f, 0.5f}, _texHY, dropHY);
+            auto tri11 = makeTriangle(glm::vec3{0.5f, 0.5f, 0.5f}, glm::vec3{-0.5f, 0.5f, 0.5f}, glm::vec3{-0.5f, 0.5f, -0.5f}, _texHY, dropHY);
+
+            return std::array<render_triangle_texture, 12>{tri0, tri1, tri2, tri3, tri4, tri5, tri6, tri7, tri8, tri9, tri10, tri11};
         }
 
-        std::vector<render_triangle_texture> const& components() const noexcept { return m_triangles; }
+        auto const& components() const noexcept { return m_triangles; }
 
         static constexpr auto sub_extractor_f = detail::component_extractor_f<render_object_rect_prism>;
 
     private:
-        std::vector<render_triangle_texture> m_triangles;
+        std::array<render_triangle_texture, 12> m_triangles;
     };
 
     class render_object_cube : public render_object_rect_prism {
@@ -133,9 +142,7 @@ namespace randomcat::engine::graphics {
                                    std::move(_texHY),
                                    std::move(_texLY),
                                    std::move(_texHZ),
-                                   std::move(_texLZ)) {
-            _side = 4;
-        }
+                                   std::move(_texLZ)) {}
 
         static constexpr auto sub_extractor_f = detail::component_extractor_f<render_object_cube>;
     };
