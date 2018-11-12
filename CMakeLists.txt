@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 project(TwurtleEngine)
 
 set(CMAKE_CXX_STANDARD 17)
+set(OpenGL_GL_PREFERENCE GLVND)
 
 file(GLOB sub_projects */CMakeLists.txt)
 foreach(sub_project ${sub_projects})

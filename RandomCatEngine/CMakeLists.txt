@@ -1,3 +1,5 @@
+project(engine)
+
 file(GLOB_RECURSE headers include/*.h)
 file(GLOB_RECURSE sources src/*.cpp)
 
