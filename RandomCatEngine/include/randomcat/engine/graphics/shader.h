@@ -11,7 +11,6 @@
 namespace randomcat::engine::graphics {
     class shader {
     public:
-        shader() noexcept(false);
         shader(char const* _vertex, char const* _fragment, std::vector<shader_input> _inputs) noexcept(false);
 
         RC_NOEXCEPT_CONSTRUCT_ASSIGN(shader);
@@ -35,6 +34,7 @@ namespace randomcat::engine::graphics {
 
         private:
             detail::program_id m_programID;
+            void make_active() const noexcept;
         };
 
         uniform_manager uniforms() { return uniform_manager(m_programID); }

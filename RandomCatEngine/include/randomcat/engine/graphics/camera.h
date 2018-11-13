@@ -64,6 +64,8 @@ namespace randomcat::engine::graphics {
             update_shader();
         }
 
+        static shader camera_shader();
+
     private:
         void update_shader() noexcept;
 
