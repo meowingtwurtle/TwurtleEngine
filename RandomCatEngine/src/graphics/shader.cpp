@@ -60,9 +60,9 @@ namespace randomcat::engine::graphics {
               {2, 1, GL_INT, false, sizeof(default_vertex), reinterpret_cast<void*>(offsetof(default_vertex, layerNum))}}) {
         make_active();
 
-        uniform_set_mat4("model", glm::mat4{1.0f});
-        uniform_set_mat4("view", glm::mat4{1.0f});
-        uniform_set_mat4("projection", glm::mat4{1.0f});
+        uniforms().set_mat4("model", glm::mat4{1.0f});
+        uniforms().set_mat4("view", glm::mat4{1.0f});
+        uniforms().set_mat4("projection", glm::mat4{1.0f});
     }
 
     shader::shader(char const* _vertex, char const* _fragment, std::vector<shader_input> _inputs) {
@@ -128,23 +128,23 @@ namespace randomcat::engine::graphics {
 
     void shader::make_active() const noexcept { glUseProgram(m_programID); }
 
-    void shader::uniform_set_bool(std::string const& _name, bool _value) noexcept {
+    void shader::uniform_manager::set_bool(std::string const& _name, bool _value) noexcept {
         glUniform1i(glGetUniformLocation(m_programID, _name.c_str()), _value);
     }
 
-    void shader::uniform_set_int(std::string const& _name, int _value) noexcept {
+    void shader::uniform_manager::set_int(std::string const& _name, int _value) noexcept {
         glUniform1i(glGetUniformLocation(m_programID, _name.c_str()), _value);
     }
 
-    void shader::uniform_set_float(std::string const& _name, float _value) noexcept {
+    void shader::uniform_manager::set_float(std::string const& _name, float _value) noexcept {
         glUniform1f(glGetUniformLocation(m_programID, _name.c_str()), _value);
     }
 
-    void shader::uniform_set_vec3(std::string const& _name, glm::vec3 const& _value) noexcept {
+    void shader::uniform_manager::set_vec3(std::string const& _name, glm::vec3 const& _value) noexcept {
         glUniform3fv(glGetUniformLocation(m_programID, _name.c_str()), 1, reinterpret_cast<float const*>(&_value));
     }
 
-    void shader::uniform_set_mat4(std::string const& _name, glm::mat4 const& _value) noexcept {
+    void shader::uniform_manager::set_mat4(std::string const& _name, glm::mat4 const& _value) noexcept {
         glUniformMatrix4fv(glGetUniformLocation(m_programID, _name.c_str()), 1, false, reinterpret_cast<float const*>(&_value));
     }
 
