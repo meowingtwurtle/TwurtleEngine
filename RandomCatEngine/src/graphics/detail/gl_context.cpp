@@ -4,9 +4,9 @@
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
 
-#include <randomcat/engine/detail/log.h>
-#include <randomcat/engine/graphics/detail/gl_context.h>
-#include <randomcat/engine/graphics/window.h>
+#include <randomcat/engine/detail/log.hpp>
+#include <randomcat/engine/graphics/detail/gl_context.hpp>
+#include <randomcat/engine/graphics/window.hpp>
 
 namespace randomcat::engine::graphics::detail {
     namespace {

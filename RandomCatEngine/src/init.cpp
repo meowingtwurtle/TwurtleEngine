@@ -3,9 +3,9 @@
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
 
-#include <randomcat/engine/detail/log.h>
-#include <randomcat/engine/graphics/init.h>
-#include <randomcat/engine/init.h>
+#include <randomcat/engine/detail/log.hpp>
+#include <randomcat/engine/graphics/init.hpp>
+#include <randomcat/engine/init.hpp>
 
 namespace randomcat::engine {
     namespace {

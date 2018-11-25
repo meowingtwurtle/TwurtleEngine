@@ -2,8 +2,8 @@
 
 #include <memory>
 
-#include <randomcat/engine/graphics/window.h>
-#include <randomcat/engine/init.h>
+#include <randomcat/engine/graphics/window.hpp>
+#include <randomcat/engine/init.hpp>
 
 namespace randomcat::engine {
     class engine {

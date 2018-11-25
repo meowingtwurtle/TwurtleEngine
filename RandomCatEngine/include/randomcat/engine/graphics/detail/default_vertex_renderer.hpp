@@ -4,11 +4,11 @@
 #include <type_traits>
 #include <vector>
 
-#include <randomcat/engine/detail/noexcept_util.h>
-#include <randomcat/engine/detail/tag.h>
-#include <randomcat/engine/graphics/detail/raii_wrappers/vao_raii.h>
-#include <randomcat/engine/graphics/detail/raii_wrappers/vbo_raii.h>
-#include <randomcat/engine/graphics/shader.h>
+#include <randomcat/engine/detail/noexcept_util.hpp>
+#include <randomcat/engine/detail/tag.hpp>
+#include <randomcat/engine/graphics/detail/raii_wrappers/vao_raii.hpp>
+#include <randomcat/engine/graphics/detail/raii_wrappers/vbo_raii.hpp>
+#include <randomcat/engine/graphics/shader.hpp>
 
 // I must put definitions here because of stupid C++ template rules.
 

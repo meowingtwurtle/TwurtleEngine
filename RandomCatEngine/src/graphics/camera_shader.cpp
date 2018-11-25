@@ -1,6 +1,6 @@
-#include <randomcat/engine/graphics/camera.h>
-#include <randomcat/engine/graphics/detail/default_vertex.h>
-#include <randomcat/engine/graphics/shader.h>
+#include <randomcat/engine/graphics/camera.hpp>
+#include <randomcat/engine/graphics/detail/default_vertex.hpp>
+#include <randomcat/engine/graphics/shader.hpp>
 
 namespace randomcat::engine::graphics {
     namespace {

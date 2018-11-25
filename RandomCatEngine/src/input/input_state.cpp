@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include <randomcat/engine/input/input_state.h>
+#include <randomcat/engine/input/input_state.hpp>
 
 namespace randomcat::engine::input {
     void input_state::update() noexcept {

@@ -4,10 +4,10 @@
 #include <optional>
 #include <type_traits>
 
-#include <randomcat/engine/detail/tag.h>
-#include <randomcat/engine/graphics/detail/default_vertex.h>
-#include <randomcat/engine/graphics/detail/default_vertex_renderer.h>
-#include <randomcat/engine/graphics/object.h>
+#include <randomcat/engine/detail/tag.hpp>
+#include <randomcat/engine/graphics/detail/default_vertex.hpp>
+#include <randomcat/engine/graphics/detail/default_vertex_renderer.hpp>
+#include <randomcat/engine/graphics/object.hpp>
 
 namespace randomcat::engine::graphics {
     template<typename _object_t, typename _sub_renderer_t, typename _transform_func_t, typename = std::void_t<std::invoke_result_t<_sub_renderer_t, std::invoke_result_t<_transform_func_t, _object_t>>>>

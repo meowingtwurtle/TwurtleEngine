@@ -2,7 +2,7 @@
 
 #include <unordered_map>
 
-#include <randomcat/engine/input/keycodes.h>
+#include <randomcat/engine/input/keycodes.hpp>
 
 namespace randomcat::engine::input {
     class input_state {

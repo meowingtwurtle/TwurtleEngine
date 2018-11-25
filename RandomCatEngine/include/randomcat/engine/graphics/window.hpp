@@ -5,10 +5,10 @@
 #include <SDL2/SDL.h>
 #include <glm/vec2.hpp>
 
-#include <randomcat/engine/detail/log.h>
-#include <randomcat/engine/graphics/detail/gl_context.h>
-#include <randomcat/engine/graphics/window.h>
-#include <randomcat/engine/init.h>
+#include <randomcat/engine/detail/log.hpp>
+#include <randomcat/engine/graphics/detail/gl_context.hpp>
+#include <randomcat/engine/graphics/window.hpp>
+#include <randomcat/engine/init.hpp>
 
 namespace randomcat::engine::graphics {
     class window {

@@ -1,8 +1,8 @@
 #include <exception>
 
-#include <randomcat/engine/detail/log.h>
-#include <randomcat/engine/graphics/texture/stb_image.h>
-#include <randomcat/engine/graphics/texture/texture_manager.h>
+#include <randomcat/engine/detail/log.hpp>
+#include <randomcat/engine/graphics/texture/stb_image.hpp>
+#include <randomcat/engine/graphics/texture/texture_manager.hpp>
 
 namespace randomcat::engine::graphics::texture {
     texture::texture() noexcept : m_name(""), m_width(0), m_height(0), m_underlying(std::make_shared<underlying>(nullptr)) {}

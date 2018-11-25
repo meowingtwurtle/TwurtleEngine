@@ -1,4 +1,4 @@
-#include <randomcat/engine/graphics/camera.h>
+#include <randomcat/engine/graphics/camera.hpp>
 
 namespace randomcat::engine::graphics {
     void camera::set_dir(float _yaw, float _pitch) noexcept {

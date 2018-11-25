@@ -4,7 +4,7 @@
 #include <sstream>
 #include <stdexcept>
 
-#include <randomcat/engine/detail/log.h>
+#include <randomcat/engine/detail/log.hpp>
 
 namespace randomcat::engine::log {
     void log(std::string const& _message, LogType _type) noexcept {

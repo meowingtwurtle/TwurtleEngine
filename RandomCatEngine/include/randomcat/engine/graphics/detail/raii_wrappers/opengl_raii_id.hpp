@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include <randomcat/engine/detail/noexcept_util.h>
+#include <randomcat/engine/detail/noexcept_util.hpp>
 
 namespace randomcat::engine::graphics::detail {
     template<auto, auto, typename...>

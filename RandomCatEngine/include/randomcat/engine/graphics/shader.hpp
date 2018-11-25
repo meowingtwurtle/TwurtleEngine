@@ -4,9 +4,9 @@
 
 #include <glm/glm.hpp>
 
-#include <randomcat/engine/detail/noexcept_util.h>
-#include <randomcat/engine/graphics/detail/raii_wrappers/shader_program_raii.h>
-#include <randomcat/engine/graphics/shader_input.h>
+#include <randomcat/engine/detail/noexcept_util.hpp>
+#include <randomcat/engine/graphics/detail/raii_wrappers/shader_program_raii.hpp>
+#include <randomcat/engine/graphics/shader_input.hpp>
 
 namespace randomcat::engine::graphics {
     class shader {

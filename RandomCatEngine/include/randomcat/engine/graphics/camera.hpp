@@ -5,7 +5,7 @@
 #include <glm/ext.hpp>
 #include <glm/glm.hpp>
 
-#include <randomcat/engine/graphics/shader.h>
+#include <randomcat/engine/graphics/shader.hpp>
 
 namespace randomcat::engine::graphics {
     class camera {

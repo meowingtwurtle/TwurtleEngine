@@ -2,8 +2,8 @@
 
 #include <GL/glew.h>
 
-#include <randomcat/engine/graphics/texture/detail/texture_raii.h>
-#include <randomcat/engine/graphics/texture/texture_manager.h>
+#include <randomcat/engine/graphics/texture/detail/texture_raii.hpp>
+#include <randomcat/engine/graphics/texture/texture_manager.hpp>
 
 namespace randomcat::engine::graphics::texture {
     struct texture_array {

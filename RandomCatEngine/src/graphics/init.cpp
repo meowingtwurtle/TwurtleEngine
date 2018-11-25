@@ -1,7 +1,7 @@
 #include <SDL2/SDL.h>
 
-#include <randomcat/engine/detail/log.h>
-#include <randomcat/engine/graphics/init.h>
+#include <randomcat/engine/detail/log.hpp>
+#include <randomcat/engine/graphics/init.hpp>
 
 namespace randomcat::engine::graphics {
     void init() {

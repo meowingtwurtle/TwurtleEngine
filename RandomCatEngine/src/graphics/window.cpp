@@ -1,6 +1,6 @@
 #include <GL/glew.h>
 
-#include <randomcat/engine/graphics/window.h>
+#include <randomcat/engine/graphics/window.hpp>
 
 namespace randomcat::engine::graphics {
     struct window_creation_failed {};

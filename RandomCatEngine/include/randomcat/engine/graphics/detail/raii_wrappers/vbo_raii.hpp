@@ -2,7 +2,7 @@
 
 #include <GL/glew.h>
 
-#include <randomcat/engine/graphics/detail/raii_wrappers/opengl_raii_id.h>
+#include <randomcat/engine/graphics/detail/raii_wrappers/opengl_raii_id.hpp>
 
 namespace randomcat::engine::graphics::detail {
     inline decltype(auto) makeVBO() noexcept {

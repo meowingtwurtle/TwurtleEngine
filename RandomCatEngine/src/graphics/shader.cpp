@@ -3,9 +3,9 @@
 
 #include <GL/glew.h>
 
-#include <randomcat/engine/detail/log.h>
-#include <randomcat/engine/graphics/detail/default_vertex.h>
-#include <randomcat/engine/graphics/shader.h>
+#include <randomcat/engine/detail/log.hpp>
+#include <randomcat/engine/graphics/detail/default_vertex.hpp>
+#include <randomcat/engine/graphics/shader.hpp>
 
 namespace randomcat::engine::graphics {
     using detail::default_vertex;
