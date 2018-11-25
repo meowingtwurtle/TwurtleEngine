@@ -13,13 +13,11 @@ namespace randomcat::engine::graphics {
             out vec2 texCoord;
             flat out int layerNum;
 
-            uniform mat4 model;
-            uniform mat4 view;
-            uniform mat4 projection;
+            uniform mat4 camera;
             
             void main()
             {
-                gl_Position = projection * view * model * vec4(aPos, 1.0);
+                gl_Position = camera * vec4(aPos, 1.0);
                 texCoord = aTexCoord;
                 layerNum = aLayerNum;
             }
@@ -50,9 +48,7 @@ namespace randomcat::engine::graphics {
                           {2, 1, GL_INT, false, sizeof(default_vertex), reinterpret_cast<void*>(offsetof(default_vertex, layerNum))}});
 
         shader::uniform_manager shaderUniforms = ourShader.uniforms();
-        shaderUniforms.set_mat4("model", glm::mat4{1.0f});
-        shaderUniforms.set_mat4("view", glm::mat4{1.0f});
-        shaderUniforms.set_mat4("projection", glm::mat4{1.0f});
+        shaderUniforms.set_mat4("camera", glm::mat4{1.0f});
 
         return ourShader;
     }
