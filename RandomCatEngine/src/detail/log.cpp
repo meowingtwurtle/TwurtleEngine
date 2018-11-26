@@ -3,11 +3,12 @@
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
+#include <string_view>
 
 #include <randomcat/engine/detail/log.hpp>
 
 namespace randomcat::engine::log {
-    void log(std::string const& _message, LogType _type) noexcept {
+    void log(std::string_view _message, LogType _type) noexcept {
         std::ostringstream fullMessage{};
         time_t systemTime = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
         auto formatTime = *std::localtime(&systemTime);

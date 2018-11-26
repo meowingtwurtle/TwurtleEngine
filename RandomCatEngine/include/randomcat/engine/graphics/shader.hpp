@@ -26,15 +26,15 @@ namespace randomcat::engine::graphics {
         public:
             explicit uniform_manager(detail::program_id _programID) : m_programID(std::move(_programID)) {}
 
-            void set_bool(std::string const& _name, bool _value) noexcept;
-            void set_int(std::string const& _name, int _value) noexcept;
-            void set_float(std::string const& _name, float _value) noexcept;
-            void set_vec3(std::string const& _name, glm::vec3 const& _value) noexcept;
-            void set_mat4(std::string const& _name, glm::mat4 const& _value) noexcept;
+            void set_bool(std::string_view _name, bool _value) noexcept;
+            void set_int(std::string_view _name, int _value) noexcept;
+            void set_float(std::string_view _name, float _value) noexcept;
+            void set_vec3(std::string_view _name, glm::vec3 const& _value) noexcept;
+            void set_mat4(std::string_view _name, glm::mat4 const& _value) noexcept;
 
         private:
             detail::program_id m_programID;
-            GLint get_uniform_location(std::string const& _name) const;
+            GLint get_uniform_location(std::string_view _name) const;
             void make_active() const noexcept;
 
             class active_lock {

@@ -30,7 +30,7 @@ namespace randomcat::engine::graphics::texture {
 
     class texture_manager {
     public:
-        texture const& load_texture(std::string const& _path);
+        texture const& load_texture(std::string _path);
         texture const& get_texture(std::string const& _path) const;
 
         using texture_map_iterator = std::unordered_map<std::string, texture>::const_iterator;

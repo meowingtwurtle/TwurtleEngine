@@ -50,7 +50,7 @@ namespace randomcat::engine::input {
         RC_KC_DEF(lshift, LSHIFT)
         RC_KC_DEF(rshift, RSHIFT)
 
-        inline keycode keycode_from_name(std::string const& _character) noexcept { return SDL_GetKeyFromName(_character.c_str()); }
+        inline keycode keycode_from_name(std::string_view _character) noexcept { return SDL_GetKeyFromName(_character.data()); }
 
         inline std::string name_from_keycode(keycode _keycode) noexcept { return SDL_GetKeyName(_keycode); }
     }    // namespace keycodes

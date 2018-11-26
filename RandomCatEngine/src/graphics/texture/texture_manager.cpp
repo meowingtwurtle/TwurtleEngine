@@ -13,7 +13,7 @@ namespace randomcat::engine::graphics::texture {
         if (m_data != nullptr) stbi_image_free(static_cast<void*>(m_data));
     }
 
-    texture const& texture_manager::load_texture(std::string const& _path) {
+    texture const& texture_manager::load_texture(std::string _path) {
         auto it = m_textureMap.find(_path);
         if (it != m_textureMap.end()) return it->second;
 
