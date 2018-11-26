@@ -34,7 +34,21 @@ namespace randomcat::engine::graphics {
 
         private:
             detail::program_id m_programID;
+            GLint get_uniform_location(std::string const& _name) const;
             void make_active() const noexcept;
+
+            class active_lock {
+            public:
+                active_lock(detail::program_id _programID);
+                ~active_lock();
+
+            private:
+                static GLuint get_active_program();
+                static void set_active_program(GLuint _id);
+
+                std::optional<GLuint> m_oldID = std::nullopt;
+                detail::program_id m_programID;
+            };
         };
 
         uniform_manager uniforms() { return uniform_manager(m_programID); }

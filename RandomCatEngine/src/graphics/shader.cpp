@@ -80,29 +80,49 @@ namespace randomcat::engine::graphics {
 
     void shader::make_active() const noexcept { glUseProgram(m_programID); }
 
+    shader::uniform_manager::active_lock::active_lock(detail::program_id _programID) : m_programID(std::move(_programID)) {
+        auto oldActiveShader = get_active_program();
+        if (m_programID.value() != oldActiveShader) {
+            m_oldID = oldActiveShader;
+            set_active_program(m_programID.value());
+        }
+    }
+
+    shader::uniform_manager::active_lock::~active_lock() {
+        if (m_oldID.has_value()) set_active_program(*m_oldID);
+    }
+
+    GLuint shader::uniform_manager::active_lock::get_active_program() {
+        GLint value;
+        glGetIntegerv(GL_CURRENT_PROGRAM, &value);
+        return static_cast<uint>(value);
+    }
+
+    void shader::uniform_manager::active_lock::set_active_program(GLuint _id) { glUseProgram(_id); }
+
+    GLint shader::uniform_manager::get_uniform_location(std::string const& _name) const {
+        active_lock l(m_programID);
+        return glGetUniformLocation(m_programID, _name.c_str());
+    }
+
     void shader::uniform_manager::set_bool(std::string const& _name, bool _value) noexcept {
-        make_active();
-        glUniform1i(glGetUniformLocation(m_programID, _name.c_str()), _value);
+        glUniform1i(get_uniform_location(_name), _value);
     }
 
     void shader::uniform_manager::set_int(std::string const& _name, int _value) noexcept {
-        make_active();
-        glUniform1i(glGetUniformLocation(m_programID, _name.c_str()), _value);
+        glUniform1i(get_uniform_location(_name), _value);
     }
 
     void shader::uniform_manager::set_float(std::string const& _name, float _value) noexcept {
-        make_active();
-        glUniform1f(glGetUniformLocation(m_programID, _name.c_str()), _value);
+        glUniform1f(get_uniform_location(_name), _value);
     }
 
     void shader::uniform_manager::set_vec3(std::string const& _name, glm::vec3 const& _value) noexcept {
-        make_active();
-        glUniform3fv(glGetUniformLocation(m_programID, _name.c_str()), 1, reinterpret_cast<float const*>(&_value));
+        glUniform3fv(get_uniform_location(_name), 1, reinterpret_cast<float const*>(&_value));
     }
 
     void shader::uniform_manager::set_mat4(std::string const& _name, glm::mat4 const& _value) noexcept {
-        make_active();
-        glUniformMatrix4fv(glGetUniformLocation(m_programID, _name.c_str()), 1, false, reinterpret_cast<float const*>(&_value));
+        glUniformMatrix4fv(get_uniform_location(_name), 1, false, reinterpret_cast<float const*>(&_value));
     }
 
     void shader::uniform_manager::make_active() const noexcept { glUseProgram(m_programID); }
