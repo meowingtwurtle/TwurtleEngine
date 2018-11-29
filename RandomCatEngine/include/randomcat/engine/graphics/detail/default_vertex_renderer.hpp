@@ -33,7 +33,7 @@ namespace randomcat::engine::graphics::detail {
         using vertex = _vertex_t;
 
         template<typename T>
-        void operator()(T const& _t) const noexcept {
+        void operator()(T const& _t) const noexcept(false) {
             if (!is_forced_active()) make_active();
             render_active(_t);
         }
@@ -44,7 +44,7 @@ namespace randomcat::engine::graphics::detail {
             active_lock(active_lock const&) = delete;
             active_lock(active_lock&&) = delete;
 
-            active_lock(default_vertex_renderer const& _renderer) noexcept : m_renderer(_renderer) {
+            active_lock(default_vertex_renderer const& _renderer) noexcept(false) : m_renderer(_renderer) {
                 m_renderer.make_active();
                 m_renderer.set_forced_active();
             }
@@ -55,7 +55,7 @@ namespace randomcat::engine::graphics::detail {
             default_vertex_renderer const& m_renderer;
         };
 
-        active_lock make_active_lock() const noexcept {
+        active_lock make_active_lock() const noexcept(false) {
             return active_lock(*this);    // Constructor activates the renderer
         }
 
