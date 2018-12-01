@@ -35,8 +35,8 @@ namespace randomcat::engine::input {
 
         void set_key_up(keycode _key) noexcept { m_map[_key] = key_state::up; }
 
-        int mouse_X() const noexcept { return m_mouseX; }
-        int mouse_Y() const noexcept { return m_mouseY; }
+        int mouse_x() const noexcept { return m_mouseX; }
+        int mouse_y() const noexcept { return m_mouseY; }
 
         int rel_mouse_x() const noexcept { return m_relMouseX; }
         int rel_mouse_y() const noexcept { return m_relMouseY; }
