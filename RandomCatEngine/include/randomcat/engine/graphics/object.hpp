@@ -34,10 +34,10 @@ namespace randomcat::engine::graphics {
 
         auto const& vertices() const noexcept { return m_vertices; }
 
+        static constexpr auto sub_extractor_f = detail::vertex_extractor_f<render_triangle>;
+
     private:
         std::array<vertex, 3> m_vertices;
-
-        static constexpr auto sub_extractor_f = detail::vertex_extractor_f<render_triangle>;
     };
 
     struct render_triangle_texture {
