@@ -5,6 +5,7 @@
 #include <glm/ext.hpp>
 #include <glm/glm.hpp>
 
+#include <randomcat/engine/dir_pos.hpp>
 #include <randomcat/engine/graphics/shader.hpp>
 
 namespace randomcat::engine::graphics {
@@ -23,6 +24,22 @@ namespace randomcat::engine::graphics {
           m_maxDistance(_longDistance) {
             update_shader();
         }
+
+        void set_dir_pos(dir_yaw_pitch _d, pos_components _p) noexcept {
+            m_pos = glm::vec3{_p.x, _p.y, _p.z};
+            set_dir(_d.yaw, _d.pitch);    // This will update shader
+        }
+
+        void set_dir(dir_components _d) noexcept {
+            m_dir = as_glm(_d);
+            update_shader();
+        }
+
+        void set_dir(dir_yaw_pitch _d) noexcept { set_dir(as_components(_d)); }
+
+        void set_pos(pos_components _p) noexcept { set_pos(glm::vec3{_p.x, _p.y, _p.z}); }
+
+        void set_pos_dir(pos_and_dir_yp _dp) noexcept { set_dir_pos(_dp.dir, _dp.pos); }
 
         glm::vec3 pos() const noexcept { return m_pos; }
         void set_pos(glm::vec3 _pos) noexcept {
@@ -44,7 +61,7 @@ namespace randomcat::engine::graphics {
             update_shader();
         }
 
-        void set_dir(float _yaw, float _pitch) noexcept;
+        void set_dir(float _yaw, float _pitch) noexcept { set_dir({.yaw = _yaw, .pitch = _pitch}); }
 
         float fov() const noexcept { return m_fov; }
         void set_fov(float _fov) noexcept {
