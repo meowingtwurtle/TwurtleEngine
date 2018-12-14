@@ -78,7 +78,7 @@ namespace randomcat::engine::graphics {
         g_shaderInputsMap.emplace(std::make_pair(m_programID.value(), std::move(_inputs)));
     }
 
-    void shader::make_active() const noexcept { glUseProgram(m_programID); }
+    void shader::make_active(detail::program_id _program) noexcept { glUseProgram(_program); }
 
     shader::uniform_manager::active_lock::active_lock(detail::program_id _programID) : m_programID(std::move(_programID)) {
         auto oldActiveShader = get_active_program();

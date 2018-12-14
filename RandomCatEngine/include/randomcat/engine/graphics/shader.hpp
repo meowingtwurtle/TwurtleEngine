@@ -15,7 +15,7 @@ namespace randomcat::engine::graphics {
 
         RC_NOEXCEPT_CONSTRUCT_ASSIGN(shader);
 
-        void make_active() const noexcept;
+        void make_active() const noexcept { make_active(m_programID); }
 
         std::vector<shader_input> const& inputs() const noexcept;
 
@@ -55,5 +55,31 @@ namespace randomcat::engine::graphics {
 
     private:
         detail::program_id m_programID;
+
+        static void make_active(detail::program_id _program) noexcept;
+
+        friend class shader_view;
+    };
+
+    class shader_view {
+    public:
+        // m_inputs is safe, the shader_inputs are stored in a global map, will not be
+        // replaced until the program_id's value is reused, which the existence of
+        // this prevents.
+
+        shader_view(shader&& _other) : m_programID(std::move(_other.m_programID)), m_inputs(std::ref(_other.inputs())) {}
+
+        shader_view(shader const& _other) : m_programID(_other.m_programID), m_inputs(std::ref(_other.inputs())) {}
+
+        bool operator==(shader_view const& _other) const noexcept { return m_programID == _other.m_programID; }
+        bool operator!=(shader_view const& _other) const noexcept { return !(*this == _other); }
+
+        void make_active() const noexcept { shader::make_active(m_programID); }
+
+        std::vector<shader_input> const& inputs() const noexcept { return m_inputs; }
+
+    private:
+        detail::program_id m_programID;
+        std::reference_wrapper<std::vector<shader_input> const> m_inputs;
     };
 }    // namespace randomcat::engine::graphics
