@@ -64,16 +64,16 @@ namespace randomcat::engine::graphics {
 
     class render_object_rect_prism {
     public:
-        render_object_rect_prism(glm::vec3 _center, glm::vec3 _sides, unsigned int _texture) noexcept
+        explicit render_object_rect_prism(glm::vec3 _center, glm::vec3 _sides, unsigned int _texture) noexcept
         : render_object_rect_prism(_center, _sides, _texture, _texture, _texture, _texture, _texture, _texture) {}
-        render_object_rect_prism(glm::vec3 _center,
-                                 glm::vec3 _sides,
-                                 unsigned int _texHX,
-                                 unsigned int _texLX,
-                                 unsigned int _texHY,
-                                 unsigned int _texLY,
-                                 unsigned int _texHZ,
-                                 unsigned int _texLZ) noexcept
+        explicit render_object_rect_prism(glm::vec3 _center,
+                                          glm::vec3 _sides,
+                                          unsigned int _texHX,
+                                          unsigned int _texLX,
+                                          unsigned int _texHY,
+                                          unsigned int _texLY,
+                                          unsigned int _texHZ,
+                                          unsigned int _texLZ) noexcept
         : m_triangles(genTriangles(_center, _sides, _texHX, _texLX, _texHY, _texLY, _texHZ, _texLZ)) {}
 
         std::array<render_triangle_texture, 12> genTriangles(glm::vec3 _center,
@@ -131,10 +131,17 @@ namespace randomcat::engine::graphics {
 
     class render_object_cube : public render_object_rect_prism {
     public:
-        render_object_cube(glm::vec3 _center, float _side, unsigned int _texture) noexcept
+        explicit render_object_cube(glm::vec3 _center, float _side, unsigned int _texture) noexcept
         : render_object_cube(std::move(_center), std::move(_side), _texture, _texture, _texture, _texture, _texture, _texture) {}
 
-        render_object_cube(glm::vec3 _center, float _side, unsigned int _texHX, unsigned int _texLX, unsigned int _texHY, unsigned int _texLY, unsigned int _texHZ, unsigned int _texLZ) noexcept
+        explicit render_object_cube(glm::vec3 _center,
+                                    float _side,
+                                    unsigned int _texHX,
+                                    unsigned int _texLX,
+                                    unsigned int _texHY,
+                                    unsigned int _texLY,
+                                    unsigned int _texHZ,
+                                    unsigned int _texLZ) noexcept
         : render_object_rect_prism(std::move(_center),
                                    glm::vec3{_side, _side, _side},
                                    std::move(_texHX),

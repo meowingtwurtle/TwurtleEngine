@@ -16,11 +16,11 @@ namespace randomcat::engine::graphics {
         using object = _object_t;
         using sub_renderer = _sub_renderer_t;
 
-        transform_object_renderer(sub_renderer _subRenderer, _transform_func_t _transform) noexcept(
+        explicit transform_object_renderer(sub_renderer _subRenderer, _transform_func_t _transform) noexcept(
             std::is_nothrow_move_constructible_v<sub_renderer>&& std::is_nothrow_move_constructible_v<_transform_func_t>)
         : m_subRenderer(std::move(_subRenderer)), m_transform(std::move(_transform)) {}
 
-        transform_object_renderer(tag_t<object>, sub_renderer _subRenderer, _transform_func_t _transform) noexcept(
+        explicit transform_object_renderer(tag_t<object>, sub_renderer _subRenderer, _transform_func_t _transform) noexcept(
             noexcept(transform_object_renderer(std::move(_subRenderer), std::move(_transform))))
         : transform_object_renderer(std::move(_subRenderer), std::move(_transform)) {}
 
@@ -53,11 +53,11 @@ namespace randomcat::engine::graphics {
     public:
         using object = _object_t;
 
-        for_each_object_renderer(_render_func_t _renderFunc) noexcept(std::is_nothrow_move_constructible_v<_render_func_t>)
+        explicit for_each_object_renderer(_render_func_t _renderFunc) noexcept(std::is_nothrow_move_constructible_v<_render_func_t>)
         : m_renderFunc(std::move(_renderFunc)) {}
 
         template<typename... Ts>
-        for_each_object_renderer(tag_t<object>, _render_func_t _renderFunc) noexcept(noexcept(for_each_object_renderer(std::move(_renderFunc))))
+        explicit for_each_object_renderer(tag_t<object>, _render_func_t _renderFunc) noexcept(noexcept(for_each_object_renderer(std::move(_renderFunc))))
         : for_each_object_renderer(std::move(_renderFunc)) {}
 
         void operator()(object const& _object) const noexcept(noexcept(m_renderFunc(_object))) { m_renderFunc(_object); }

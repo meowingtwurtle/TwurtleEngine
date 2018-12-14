@@ -7,8 +7,8 @@
 namespace randomcat::engine::graphics::texture {
     class texture {
     public:
-        texture() noexcept;
-        texture(std::string _name, int _width, int _height, unsigned char* _data) noexcept;
+        explicit texture() noexcept;
+        explicit texture(std::string _name, int _width, int _height, unsigned char* _data) noexcept;
 
         std::string const& name() const noexcept { return m_name; }
         int width() const noexcept { return m_width; }

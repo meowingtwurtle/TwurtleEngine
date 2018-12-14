@@ -8,7 +8,7 @@
 namespace randomcat::engine {
     class engine {
     public:
-        engine(std::string _windowTitle = "Twurtle Engine", int _windowWidth = 600, int _windowHeight = 600) noexcept(false)
+        explicit engine(std::string _windowTitle = "Twurtle Engine", int _windowWidth = 600, int _windowHeight = 600) noexcept(false)
         : m_window{std::move(_windowTitle), _windowWidth, _windowHeight} {
             graphics::detail::set_render_context(m_window);
         }

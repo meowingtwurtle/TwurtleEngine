@@ -16,7 +16,7 @@ namespace randomcat::engine::graphics::detail {
     template<typename _vertex_t>
     class default_vertex_renderer {
     public:
-        default_vertex_renderer(shader_view _shader) noexcept : m_shader(std::move(_shader)) {
+        explicit default_vertex_renderer(shader_view _shader) noexcept : m_shader(std::move(_shader)) {
             glBindVertexArray(m_vao);
             glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 
@@ -26,7 +26,7 @@ namespace randomcat::engine::graphics::detail {
             }
         }
 
-        default_vertex_renderer(tag_t<_vertex_t>, shader_view _shader) noexcept : default_vertex_renderer(std::move(_shader)) {}
+        explicit default_vertex_renderer(tag_t<_vertex_t>, shader_view _shader) noexcept : default_vertex_renderer(std::move(_shader)) {}
 
         RC_NOEXCEPT_CONSTRUCT_ASSIGN(default_vertex_renderer);
 

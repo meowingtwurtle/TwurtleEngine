@@ -11,7 +11,7 @@
 namespace randomcat::engine::graphics {
     class shader {
     public:
-        shader(char const* _vertex, char const* _fragment, std::vector<shader_input> _inputs) noexcept(false);
+        explicit shader(char const* _vertex, char const* _fragment, std::vector<shader_input> _inputs) noexcept(false);
 
         RC_NOEXCEPT_CONSTRUCT_ASSIGN(shader);
 
