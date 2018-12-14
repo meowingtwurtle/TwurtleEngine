@@ -22,24 +22,25 @@ namespace randomcat::engine::graphics {
         bool operator==(shader const& _other) const noexcept { return m_programID == _other.m_programID; }
         bool operator!=(shader const& _other) const noexcept { return !(*this == _other); }
 
-        class uniform_manager {
+        class const_uniform_manager {
         public:
-            explicit uniform_manager(detail::program_id _programID) : m_programID(std::move(_programID)) {}
+            explicit const_uniform_manager(detail::program_id _programID) : m_programID(std::move(_programID)) {}
 
             // You agree not to change that active program during calls to these
             // functions. These functions will re-activate the previous shader after
             // completion.
 
-            void set_bool(std::string_view _name, bool _value) noexcept;
-            void set_int(std::string_view _name, int _value) noexcept;
-            void set_float(std::string_view _name, float _value) noexcept;
-            void set_vec3(std::string_view _name, glm::vec3 const& _value) noexcept;
-            void set_mat4(std::string_view _name, glm::mat4 const& _value) noexcept;
+            bool get_bool(std::string_view _name) const noexcept;
+            int get_int(std::string_view _name) const noexcept;
+            float get_float(std::string_view _name) const noexcept;
+            glm::vec3 get_vec3(std::string_view _name) const noexcept;
+            glm::mat4 get_mat4(std::string_view _name) const noexcept;
+
+        protected:
+            GLint get_uniform_location(std::string_view _name) const noexcept;
 
         private:
             detail::program_id m_programID;
-            GLint get_uniform_location(std::string_view _name) const noexcept;
-            void make_active() const noexcept;
 
             class active_lock {
             public:
@@ -53,8 +54,27 @@ namespace randomcat::engine::graphics {
                 std::optional<GLuint> m_oldID = std::nullopt;
                 detail::program_id m_programID;
             };
+
+        protected:
+            active_lock make_active_lock() const noexcept { return active_lock(m_programID); }
         };
 
+        class uniform_manager : public const_uniform_manager {
+        public:
+            explicit uniform_manager(detail::program_id _programID) : const_uniform_manager(std::move(_programID)) {}
+
+            // You agree not to change that active program during calls to these
+            // functions. These functions will re-activate the previous shader after
+            // completion.
+
+            void set_bool(std::string_view _name, bool _value) noexcept;
+            void set_int(std::string_view _name, int _value) noexcept;
+            void set_float(std::string_view _name, float _value) noexcept;
+            void set_vec3(std::string_view _name, glm::vec3 const& _value) noexcept;
+            void set_mat4(std::string_view _name, glm::mat4 const& _value) noexcept;
+        };
+
+        const_uniform_manager uniforms() const { return const_uniform_manager(m_programID); }
         uniform_manager uniforms() { return uniform_manager(m_programID); }
 
     private:
@@ -81,6 +101,8 @@ namespace randomcat::engine::graphics {
         void make_active() const noexcept { shader::make_active(m_programID); }
 
         std::vector<shader_input> const& inputs() const noexcept { return m_inputs; }
+
+        shader::const_uniform_manager uniforms() const noexcept { return shader::const_uniform_manager(m_programID); }
 
     private:
         detail::program_id m_programID;
