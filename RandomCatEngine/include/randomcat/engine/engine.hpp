@@ -3,6 +3,7 @@
 #include <chrono>
 #include <memory>
 
+#include <randomcat/engine/graphics/global_gl_calls.hpp>
 #include <randomcat/engine/graphics/window.hpp>
 #include <randomcat/engine/init.hpp>
 
@@ -12,6 +13,7 @@ namespace randomcat::engine {
         explicit engine(std::string _windowTitle = "Twurtle Engine", int _windowWidth = 600, int _windowHeight = 600) noexcept(false)
         : m_window{std::move(_windowTitle), _windowWidth, _windowHeight}, startTime{fetch_current_raw_time()}, lastTickTime{startTime}, currentTickTime{startTime} {
             graphics::detail::set_render_context(m_window);
+            graphics::enable_depth_test();
         }
 
         engine(engine const&) = delete;
@@ -20,6 +22,7 @@ namespace randomcat::engine {
         void tick() noexcept {
             lastTickTime = std::move(currentTickTime);
             currentTickTime = fetch_current_raw_time();
+            graphics::clear_graphics();
         }
 
         std::chrono::milliseconds start_time() const noexcept { return startTime; }
