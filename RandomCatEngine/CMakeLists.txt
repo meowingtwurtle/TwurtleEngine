@@ -11,5 +11,5 @@ find_package(GLEW REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(OpenGL REQUIRED)
 
-target_link_libraries(RandomCatEngine ${GLEW_LIBRARY} ${GLEW_LIB} ${SDL2_LIBRARIES} glm)
+target_link_libraries(RandomCatEngine ${GLEW_LIBRARY} ${GLEW_LIB} ${SDL2_LIBRARIES} glm stb)
 target_compile_options(RandomCatEngine PRIVATE -Wall -Wextra)

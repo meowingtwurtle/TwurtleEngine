@@ -1,7 +1,8 @@
 #include <exception>
 
+#include <stb/stb_image.hpp>
+
 #include <randomcat/engine/detail/log.hpp>
-#include <randomcat/engine/graphics/texture/stb_image.hpp>
 #include <randomcat/engine/graphics/texture/texture_manager.hpp>
 
 namespace randomcat::engine::graphics::texture {
