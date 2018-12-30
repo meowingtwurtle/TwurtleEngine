@@ -13,9 +13,10 @@
 // I must put definitions here because of stupid C++ template rules.
 
 namespace randomcat::engine::graphics::detail {
-    template<typename _vertex_t>
     class default_vertex_renderer {
     public:
+        using vertex = detail::default_vertex;
+
         explicit default_vertex_renderer(shader_view _shader) noexcept : m_shader(std::move(_shader)) {
             glBindVertexArray(m_vao);
             glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
@@ -26,11 +27,7 @@ namespace randomcat::engine::graphics::detail {
             }
         }
 
-        explicit default_vertex_renderer(tag_t<_vertex_t>, shader_view _shader) noexcept : default_vertex_renderer(std::move(_shader)) {}
-
         RC_NOEXCEPT_CONSTRUCT_ASSIGN(default_vertex_renderer);
-
-        using vertex = _vertex_t;
 
         template<typename T>
         void operator()(T const& _t) const noexcept(false) {
@@ -90,7 +87,7 @@ namespace randomcat::engine::graphics::detail {
 
         template<typename _container_t, bool_if_t<is_vertex_container_v<_container_t>> = true>
         void render_active(_container_t const& _vertices) const noexcept {
-            glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(_vertex_t), _vertices.data(), GL_DYNAMIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(vertex), _vertices.data(), GL_DYNAMIC_DRAW);
             glDrawArrays(GL_TRIANGLES, 0, _vertices.size());
         }
 
