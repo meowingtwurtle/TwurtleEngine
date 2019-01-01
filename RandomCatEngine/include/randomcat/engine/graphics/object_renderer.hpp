@@ -37,13 +37,13 @@ namespace randomcat::engine::graphics {
     };
 
     template<typename _object_t, typename _sub_renderer_t, typename _sub_object_extractor_t = decltype(_object_t::sub_extractor_f)>
-    static inline auto make_decomposing_renderer(_sub_renderer_t _subRenderer, _sub_object_extractor_t _subExtractor = _object_t::sub_extractor_f) noexcept(
+    inline auto make_decomposing_renderer(_sub_renderer_t _subRenderer, _sub_object_extractor_t _subExtractor = _object_t::sub_extractor_f) noexcept(
         noexcept(transform_object_renderer<_object_t, _sub_renderer_t, _sub_object_extractor_t>(std::move(_subRenderer), std::move(_subExtractor)))) {
         return transform_object_renderer<_object_t, _sub_renderer_t, _sub_object_extractor_t>(std::move(_subRenderer), std::move(_subExtractor));
     }
 
     template<typename _object_t, typename _sub_renderer_t, typename _sub_object_extractor_t = decltype(_object_t::sub_extractor_f)>
-    static inline auto make_decomposing_renderer(tag_t<_object_t>, _sub_renderer_t _subRenderer, _sub_object_extractor_t _subExtractor = _object_t::sub_extractor_f) noexcept(
+    inline auto make_decomposing_renderer(tag_t<_object_t>, _sub_renderer_t _subRenderer, _sub_object_extractor_t _subExtractor = _object_t::sub_extractor_f) noexcept(
         noexcept(make_decomposing_renderer<_object_t, _sub_renderer_t, _sub_object_extractor_t>(std::move(_subRenderer), std::move(_subExtractor)))) {
         return make_decomposing_renderer<_object_t, _sub_renderer_t, _sub_object_extractor_t>(std::move(_subRenderer), std::move(_subExtractor));
     }

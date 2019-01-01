@@ -30,28 +30,28 @@ namespace randomcat::engine {
         dir_components dir;
     };
 
-    inline static constexpr pos_components pos(glm::vec3 vec) noexcept { return {vec.x, vec.y, vec.z}; }
+    inline constexpr pos_components pos(glm::vec3 vec) noexcept { return {vec.x, vec.y, vec.z}; }
 
-    inline static constexpr dir_components dir(glm::vec3 dir) noexcept { return {dir.x, dir.y, dir.z}; }
+    inline constexpr dir_components dir(glm::vec3 dir) noexcept { return {dir.x, dir.y, dir.z}; }
 
-    inline static constexpr pos_components pos(float x, float y, float z) noexcept { return {x, y, z}; }
+    inline constexpr pos_components pos(float x, float y, float z) noexcept { return {x, y, z}; }
 
-    inline static constexpr dir_components dir(float x, float y, float z) noexcept { return {x, y, z}; }
+    inline constexpr dir_components dir(float x, float y, float z) noexcept { return {x, y, z}; }
 
     // Identity functions - constrain types and help express intent without naming
     // types
 
-    inline static constexpr pos_components pos(pos_components p) noexcept { return p; }
+    inline constexpr pos_components pos(pos_components p) noexcept { return p; }
 
-    inline static constexpr dir_components dir(dir_components d) noexcept { return d; }
+    inline constexpr dir_components dir(dir_components d) noexcept { return d; }
 
-    inline static constexpr dir_yaw_pitch dir(dir_yaw_pitch d) noexcept { return d; }
+    inline constexpr dir_yaw_pitch dir(dir_yaw_pitch d) noexcept { return d; }
 
     // Conversion functions - help express intent
 
-    inline static glm::vec3 as_glm(dir_components d) noexcept { return {d.x, d.y, d.z}; }
+    inline glm::vec3 as_glm(dir_components d) noexcept { return {d.x, d.y, d.z}; }
 
-    inline static dir_components as_components(dir_yaw_pitch d) noexcept {
+    inline dir_components as_components(dir_yaw_pitch d) noexcept {
         auto x = static_cast<float>(cos(glm::radians(d.pitch)) * cos(glm::radians(d.yaw)));
         auto y = static_cast<float>(sin(glm::radians(d.pitch)));
         auto z = static_cast<float>(cos(glm::radians(d.pitch)) * sin(glm::radians(d.yaw)));
@@ -59,7 +59,7 @@ namespace randomcat::engine {
         return {x, y, z};
     }
 
-    inline static glm::vec3 as_glm(dir_yaw_pitch d) noexcept { return as_glm(as_components(d)); }
+    inline glm::vec3 as_glm(dir_yaw_pitch d) noexcept { return as_glm(as_components(d)); }
 
-    inline static glm::vec3 as_glm(pos_components p) noexcept { return {p.x, p.y, p.z}; }
+    inline glm::vec3 as_glm(pos_components p) noexcept { return {p.x, p.y, p.z}; }
 }    // namespace randomcat::engine
