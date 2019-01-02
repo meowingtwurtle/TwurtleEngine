@@ -4,7 +4,7 @@
 
 namespace randomcat::engine::graphics {
     namespace {
-        static constexpr const char* const DEFAULT_VERTEX_SHADER = R"(
+        constexpr const char* const DEFAULT_VERTEX_SHADER = R"(
             #version 330 core
             layout (location = 0) in vec3 aPos;
             layout (location = 1) in vec2 aTexCoord;
@@ -22,7 +22,7 @@ namespace randomcat::engine::graphics {
                 layerNum = aLayerNum;
             }
         )";
-        static constexpr const char* const DEFAULT_FRAGMENT_SHADER = R"(
+        constexpr const char* const DEFAULT_FRAGMENT_SHADER = R"(
             #version 330 core
             out vec4 FragColor;
               
