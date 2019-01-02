@@ -7,13 +7,13 @@
 namespace randomcat::engine::graphics::texture {
     class texture {
     public:
-        explicit texture() noexcept;
-        explicit texture(std::string _name, int _width, int _height, unsigned char* _data) noexcept;
+        explicit texture(std::string _name, int _width, int _height, unsigned char* _data) noexcept
+        : m_name(std::move(_name)), m_width(_width), m_height(_height), m_data(_data), m_underlying(std::make_shared<underlying>(_data)) {}
 
         std::string const& name() const noexcept { return m_name; }
         int width() const noexcept { return m_width; }
         int height() const noexcept { return m_height; }
-        unsigned char const* data() const noexcept { return m_underlying->m_data; }
+        unsigned char const* data() const noexcept { return m_data; }
 
     private:
         struct underlying {
@@ -25,6 +25,7 @@ namespace randomcat::engine::graphics::texture {
         std::string m_name;
         int m_width;
         int m_height;
+        unsigned char* m_data;
         std::shared_ptr<underlying> m_underlying;
     };
 
