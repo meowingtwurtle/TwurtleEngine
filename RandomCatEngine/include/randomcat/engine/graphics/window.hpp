@@ -13,9 +13,17 @@
 namespace randomcat::engine::graphics {
     class window {
     public:
-        explicit window(std::string _title = "Twurtle Engine", int _width = 600, int _height = 600) noexcept;
+        explicit window(std::string _title = "Twurtle Engine", int _width = 600, int _height = 600) noexcept
+        : m_title(std::move(_title)), m_size{_width, _height} {
+            m_window = SDL_CreateWindow(m_title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, _width, _height, SDL_WINDOW_OPENGL);
 
-        ~window() noexcept;
+            log::info << "Window created with title \"" << m_title << "\".";
+        }
+
+        ~window() noexcept {
+            SDL_DestroyWindow(m_window);
+            log::info << "Window destroyed with title \"" << m_title << "\".";
+        }
 
         window(window const&) = delete;
         window(window&&) = delete;
