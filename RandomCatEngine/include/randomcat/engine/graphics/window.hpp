@@ -22,7 +22,7 @@ namespace randomcat::engine::graphics {
 
         ~window() noexcept {
             SDL_DestroyWindow(m_window);
-            log::info << "Window destroyed with title \"" << m_title << "\".";
+            log::info << "Window with title \"" << m_title << "\" destroyed.";
         }
 
         window(window const&) = delete;
