@@ -54,26 +54,28 @@ namespace randomcat::engine::graphics {
             }
         }
 
-        program_id programID{};
-
         {
-            glAttachShader(programID, vertexID);
-            glAttachShader(programID, fragmentID);
-            glLinkProgram(programID);
+            program_id programID{};
 
-            int success = 0;
-            glGetProgramiv(programID, GL_LINK_STATUS, &success);
+            {
+                glAttachShader(programID, vertexID);
+                glAttachShader(programID, fragmentID);
+                glLinkProgram(programID);
 
-            if (!success) {
-                constexpr int BUFFER_LEN = 512;
-                std::array<char, BUFFER_LEN> errorBuffer{};
+                int success = 0;
+                glGetProgramiv(programID, GL_LINK_STATUS, &success);
 
-                glGetProgramInfoLog(programID, BUFFER_LEN, nullptr, errorBuffer.data());
-                throw std::runtime_error{std::string{"Error linking shader:"} + errorBuffer.data()};
+                if (!success) {
+                    constexpr int BUFFER_LEN = 512;
+                    std::array<char, BUFFER_LEN> errorBuffer{};
+
+                    glGetProgramInfoLog(programID, BUFFER_LEN, nullptr, errorBuffer.data());
+                    throw std::runtime_error{std::string{"Error linking shader:"} + errorBuffer.data()};
+                }
             }
-        }
 
-        m_programID = programID;
+            m_programID = std::move(programID);
+        }
 
         g_shaderInputsMap.emplace(std::make_pair(m_programID.value(), std::move(_inputs)));
     }
