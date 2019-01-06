@@ -1,51 +1,46 @@
 #pragma once
 
 namespace randomcat::engine::graphics {
+    namespace detail {
+        inline detail::shader_id compile_shader(GLenum _type, char const* _source) noexcept(false) {
+            auto shaderID = detail::shader_id(_type);
 
-    template<typename Vertex>
-    shader<Vertex>::shader(char const* _vertex, char const* _fragment, std::vector<shader_input> _inputs) {
-        detail::shader_id vertexID{GL_VERTEX_SHADER};
-
-        {
-            glShaderSource(vertexID, 1, &_vertex, nullptr);
-            glCompileShader(vertexID);
+            glShaderSource(shaderID, 1, &_source, nullptr);
+            glCompileShader(shaderID);
 
             int success = 0;
-            glGetShaderiv(vertexID, GL_COMPILE_STATUS, &success);
+            glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);
 
             if (!success) {
                 constexpr int BUFFER_LEN = 512;
-                std::array<char, BUFFER_LEN> errorBuffer{};
-                glGetShaderInfoLog(vertexID, BUFFER_LEN, nullptr, errorBuffer.data());
 
-                throw std::runtime_error{std::string{"Error compiling vertex shader:"} + errorBuffer.data()};
+                std::array<char, BUFFER_LEN> errorBuffer{};
+                glGetShaderInfoLog(shaderID, BUFFER_LEN, nullptr, errorBuffer.data());
+
+                throw std::runtime_error{std::string{"Error compiling shader: "} + errorBuffer.data()};
             }
+
+            return shaderID;
         }
 
-        detail::shader_id fragmentID{GL_FRAGMENT_SHADER};
-
-        {
-            glShaderSource(fragmentID, 1, &_fragment, nullptr);
-            glCompileShader(fragmentID);
-
-            int success = 0;
-            glGetShaderiv(vertexID, GL_COMPILE_STATUS, &success);
-
-            if (!success) {
-                constexpr int BUFFER_LEN = 512;
-                std::array<char, BUFFER_LEN> errorBuffer{};
-                glGetShaderInfoLog(fragmentID, BUFFER_LEN, nullptr, errorBuffer.data());
-
-                throw std::runtime_error{std::string{"Error compiling fragment shader:"} + errorBuffer.data()};
-            }
+        inline decltype(auto) compile_vertex_shader(char const* _source) noexcept(noexcept(compile_shader(GL_VERTEX_SHADER, _source))) {
+            return compile_shader(GL_VERTEX_SHADER, _source);
         }
 
-        {
-            detail::program_id programID{};
+        inline decltype(auto) compile_fragment_shader(char const* _source) noexcept(noexcept(compile_shader(GL_FRAGMENT_SHADER, _source))) {
+            return compile_shader(GL_FRAGMENT_SHADER, _source);
+        }
+
+        template<typename... Shaders>
+        inline detail::program_id link_program(Shaders const&... _shaders) noexcept(false) {
+            static_assert((std::is_same_v<Shaders, detail::shader_id> && ...), "Arguments must all be shader_ids");
+
+            detail::program_id programID;
 
             {
-                glAttachShader(programID, vertexID);
-                glAttachShader(programID, fragmentID);
+                // Attach all shaders
+                ((glAttachShader(programID, _shaders)), ...);
+
                 glLinkProgram(programID);
 
                 int success = 0;
@@ -56,13 +51,17 @@ namespace randomcat::engine::graphics {
                     std::array<char, BUFFER_LEN> errorBuffer{};
 
                     glGetProgramInfoLog(programID, BUFFER_LEN, nullptr, errorBuffer.data());
-                    throw std::runtime_error{std::string{"Error linking shader:"} + errorBuffer.data()};
+                    throw std::runtime_error{std::string{"Error linking program: "} + errorBuffer.data()};
                 }
             }
 
-            m_programID = std::move(programID);
+            return programID;
         }
+    }    // namespace detail
 
+    template<typename Vertex>
+    shader<Vertex>::shader(char const* _vertex, char const* _fragment, std::vector<shader_input> _inputs)
+    : m_programID(detail::link_program(detail::compile_vertex_shader(_vertex), detail::compile_fragment_shader(_fragment))) {
         detail::global_shader_inputs_map().emplace(std::make_pair(m_programID.value(), std::move(_inputs)));
     }
 
