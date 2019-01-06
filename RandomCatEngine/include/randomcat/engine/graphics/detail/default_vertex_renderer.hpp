@@ -13,11 +13,12 @@
 // I must put definitions here because of stupid C++ template rules.
 
 namespace randomcat::engine::graphics::detail {
-    class default_vertex_renderer {
+    template<typename Vertex>
+    class vertex_renderer {
     public:
-        using vertex = detail::default_vertex;
+        using vertex = Vertex;
 
-        explicit default_vertex_renderer(shader_view<vertex> _shader) noexcept : m_shader(std::move(_shader)) {
+        explicit vertex_renderer(shader_view<vertex> _shader) noexcept : m_shader(std::move(_shader)) {
             glBindVertexArray(m_vao);
             glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 
@@ -27,7 +28,7 @@ namespace randomcat::engine::graphics::detail {
             }
         }
 
-        RC_NOEXCEPT_CONSTRUCT_ASSIGN(default_vertex_renderer);
+        RC_NOEXCEPT_CONSTRUCT_ASSIGN(vertex_renderer);
 
         template<typename T>
         void operator()(T const& _t) const noexcept(false) {
@@ -41,7 +42,7 @@ namespace randomcat::engine::graphics::detail {
             active_lock(active_lock const&) = delete;
             active_lock(active_lock&&) = delete;
 
-            active_lock(default_vertex_renderer const& _renderer) noexcept(false) : m_renderer(_renderer) {
+            active_lock(vertex_renderer const& _renderer) noexcept(false) : m_renderer(_renderer) {
                 m_renderer.make_active();
                 m_renderer.set_forced_active();
             }
@@ -49,7 +50,7 @@ namespace randomcat::engine::graphics::detail {
             ~active_lock() noexcept { m_renderer.release_forced_active(); }
 
         private:
-            default_vertex_renderer const& m_renderer;
+            vertex_renderer const& m_renderer;
         };
 
         active_lock make_active_lock() const noexcept(false) {
@@ -110,4 +111,6 @@ namespace randomcat::engine::graphics::detail {
         vbo_id m_vbo;
         shader_view<vertex> m_shader;
     };
+
+    using default_vertex_renderer = vertex_renderer<detail::default_vertex>;
 }    // namespace randomcat::engine::graphics::detail
