@@ -11,14 +11,10 @@
 namespace randomcat::engine::graphics {
     class camera {
     public:
-        explicit camera(shader::uniform_manager _uniforms,
-                        glm::vec3 _pos = glm::vec3{0.0f},
-                        glm::vec3 _dir = glm::vec3{0.0f},
-                        float _fov = 45.0f,
-                        float _aspectRatio = 1.0f) noexcept
+        explicit camera(shader_uniform_manager _uniforms, glm::vec3 _pos = glm::vec3{0.0f}, glm::vec3 _dir = glm::vec3{0.0f}, float _fov = 45.0f, float _aspectRatio = 1.0f) noexcept
         : camera(std::move(_uniforms), std::move(_pos), std::move(_dir), std::move(_fov), std::move(_aspectRatio), 0.1f, 100.0f) {}
 
-        explicit camera(shader::uniform_manager _uniforms, glm::vec3 _pos, glm::vec3 _dir, float _fov, float _aspectRatio, float _shortDistance, float _longDistance) noexcept
+        explicit camera(shader_uniform_manager _uniforms, glm::vec3 _pos, glm::vec3 _dir, float _fov, float _aspectRatio, float _shortDistance, float _longDistance) noexcept
         : m_uniforms(std::move(_uniforms)),
           m_pos(_pos),
           m_dir(_dir),
@@ -90,7 +86,7 @@ namespace randomcat::engine::graphics {
     private:
         void update_shader() noexcept;
 
-        shader::uniform_manager m_uniforms;
+        shader_uniform_manager m_uniforms;
 
         glm::vec3 m_pos;
         glm::vec3 m_dir;

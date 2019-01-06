@@ -82,7 +82,7 @@ namespace randomcat::engine::graphics {
 
     void shader::make_active(detail::program_id _program) noexcept { glUseProgram(_program); }
 
-    shader::const_uniform_manager::active_lock::active_lock(detail::program_id _programID) noexcept : m_programID(std::move(_programID)) {
+    const_shader_uniform_manager::active_lock::active_lock(detail::program_id _programID) noexcept : m_programID(std::move(_programID)) {
         auto oldActiveShader = get_active_program();
         if (m_programID.value() != oldActiveShader) {
             m_oldID = oldActiveShader;
@@ -90,23 +90,23 @@ namespace randomcat::engine::graphics {
         }
     }
 
-    shader::const_uniform_manager::active_lock::~active_lock() noexcept {
+    const_shader_uniform_manager::active_lock::~active_lock() noexcept {
         if (m_oldID.has_value()) set_active_program(*m_oldID);
     }
 
-    GLuint shader::const_uniform_manager::active_lock::get_active_program() noexcept {
+    GLuint const_shader_uniform_manager::active_lock::get_active_program() noexcept {
         GLint value;
         glGetIntegerv(GL_CURRENT_PROGRAM, &value);
         return static_cast<uint>(value);
     }
 
-    void shader::const_uniform_manager::active_lock::set_active_program(GLuint _id) noexcept { glUseProgram(_id); }
+    void const_shader_uniform_manager::active_lock::set_active_program(GLuint _id) noexcept { glUseProgram(_id); }
 
-    GLint shader::const_uniform_manager::get_uniform_location(std::string_view _name) const noexcept {
+    GLint const_shader_uniform_manager::get_uniform_location(std::string_view _name) const noexcept {
         return glGetUniformLocation(m_programID, _name.data());
     }
 
-    bool shader::const_uniform_manager::get_bool(std::string_view _name) const noexcept {
+    bool const_shader_uniform_manager::get_bool(std::string_view _name) const noexcept {
         auto l = make_active_lock();
 
         GLint result;
@@ -115,7 +115,7 @@ namespace randomcat::engine::graphics {
         return static_cast<bool>(result);
     }
 
-    int shader::const_uniform_manager::get_int(std::string_view _name) const noexcept {
+    int const_shader_uniform_manager::get_int(std::string_view _name) const noexcept {
         auto l = make_active_lock();
 
         GLint result;
@@ -124,7 +124,7 @@ namespace randomcat::engine::graphics {
         return result;
     }
 
-    float shader::const_uniform_manager::get_float(std::string_view _name) const noexcept {
+    float const_shader_uniform_manager::get_float(std::string_view _name) const noexcept {
         auto l = make_active_lock();
 
         GLfloat result;
@@ -133,7 +133,7 @@ namespace randomcat::engine::graphics {
         return result;
     }
 
-    glm::vec3 shader::const_uniform_manager::get_vec3(std::string_view _name) const noexcept {
+    glm::vec3 const_shader_uniform_manager::get_vec3(std::string_view _name) const noexcept {
         auto l = make_active_lock();
 
         GLfloat result[3];
@@ -142,7 +142,7 @@ namespace randomcat::engine::graphics {
         return glm::vec3(result[0], result[1], result[2]);
     }
 
-    glm::mat4 shader::const_uniform_manager::get_mat4(std::string_view _name) const noexcept {
+    glm::mat4 const_shader_uniform_manager::get_mat4(std::string_view _name) const noexcept {
         auto l = make_active_lock();
 
         GLfloat result[16];
@@ -166,27 +166,27 @@ namespace randomcat::engine::graphics {
                          result[15]};
     }
 
-    void shader::uniform_manager::set_bool(std::string_view _name, bool _value) noexcept {
+    void shader_uniform_manager::set_bool(std::string_view _name, bool _value) noexcept {
         auto l = make_active_lock();
         glUniform1i(get_uniform_location(_name), _value);
     }
 
-    void shader::uniform_manager::set_int(std::string_view _name, int _value) noexcept {
+    void shader_uniform_manager::set_int(std::string_view _name, int _value) noexcept {
         auto l = make_active_lock();
         glUniform1i(get_uniform_location(_name), _value);
     }
 
-    void shader::uniform_manager::set_float(std::string_view _name, float _value) noexcept {
+    void shader_uniform_manager::set_float(std::string_view _name, float _value) noexcept {
         auto l = make_active_lock();
         glUniform1f(get_uniform_location(_name), _value);
     }
 
-    void shader::uniform_manager::set_vec3(std::string_view _name, glm::vec3 const& _value) noexcept {
+    void shader_uniform_manager::set_vec3(std::string_view _name, glm::vec3 const& _value) noexcept {
         auto l = make_active_lock();
         glUniform3fv(get_uniform_location(_name), 1, reinterpret_cast<float const*>(&_value));
     }
 
-    void shader::uniform_manager::set_mat4(std::string_view _name, glm::mat4 const& _value) noexcept {
+    void shader_uniform_manager::set_mat4(std::string_view _name, glm::mat4 const& _value) noexcept {
         auto l = make_active_lock();
         glUniformMatrix4fv(get_uniform_location(_name), 1, false, reinterpret_cast<float const*>(&_value));
     }
