@@ -76,11 +76,17 @@ namespace randomcat::engine::graphics {
 
         std::vector<shader_input> inputs() const noexcept { return m_inputs; }
 
-        bool operator==(shader const& _other) const noexcept { return m_programID == _other.m_programID; }
+        bool operator==(shader const& _other) const noexcept { return program() == _other.program(); }
         bool operator!=(shader const& _other) const noexcept { return !(*this == _other); }
 
-        const_shader_uniform_manager uniforms() const { return const_shader_uniform_manager(m_programID); }
-        shader_uniform_manager uniforms() { return shader_uniform_manager(m_programID); }
+        const_shader_uniform_manager uniforms() const { return const_shader_uniform_manager(program()); }
+        shader_uniform_manager uniforms() { return shader_uniform_manager(program()); }
+
+    protected:
+        explicit shader(detail::program_id _program, std::vector<shader_input> _inputs) noexcept
+        : m_programID(std::move(_program)), m_inputs(std::move(_inputs)) {}
+
+        detail::program_id program() const noexcept { return m_programID; }
 
     private:
         detail::program_id m_programID;
@@ -97,7 +103,7 @@ namespace randomcat::engine::graphics {
         // replaced until the program_id's value is reused, which the existence of
         // this prevents.
 
-        shader_view(shader<Vertex> _other) : m_programID(std::move(_other.m_programID)), m_inputs(std::move(_other.inputs())) {}
+        shader_view(shader<Vertex> _other) : shader_view(std::move(_other.program()), std::move(_other.inputs())) {}
 
         bool operator==(shader_view const& _other) const noexcept { return m_programID == _other.m_programID; }
         bool operator!=(shader_view const& _other) const noexcept { return !(*this == _other); }
@@ -107,6 +113,12 @@ namespace randomcat::engine::graphics {
         std::vector<shader_input> inputs() const noexcept { return m_inputs; }
 
         const_shader_uniform_manager uniforms() const noexcept { return const_shader_uniform_manager(m_programID); }
+
+    protected:
+        explicit shader_view(detail::program_id _program, std::vector<shader_input> _inputs)
+        : m_programID(std::move(_program)), m_inputs(std::move(_inputs)) {}
+
+        detail::program_id program() { return m_programID; }
 
     private:
         detail::program_id m_programID;
