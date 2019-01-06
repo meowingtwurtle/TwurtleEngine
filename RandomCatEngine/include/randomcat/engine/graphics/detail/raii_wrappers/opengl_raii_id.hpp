@@ -19,6 +19,10 @@ namespace randomcat::engine::graphics::detail {
     struct opengl_raii_id<_create_id_f, _destroy_id_f, _construct_args_ts...> {
         using this_t = opengl_raii_id;
 
+        // Only delete if we require construct args
+        template<bool Enable = sizeof...(_construct_args_ts), typename = std::enable_if_t<Enable>>
+        opengl_raii_id() = delete;
+
         explicit opengl_raii_id(_construct_args_ts... _args) noexcept(_create_noexcept)
         // This depends on order of fields, as m_id is referenced in deleter
         // constructor
