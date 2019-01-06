@@ -1,9 +1,10 @@
 project(engine)
 
 file(GLOB_RECURSE headers include/*.hpp)
+file(GLOB_RECURSE impl_headers include*.inl)
 file(GLOB_RECURSE sources src/*.cpp)
 
-add_library(RandomCatEngine ${sources} ${headers})
+add_library(RandomCatEngine ${sources} ${headers} ${impl_headers})
 
 target_include_directories(RandomCatEngine PUBLIC include)
 
