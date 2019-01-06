@@ -11,7 +11,7 @@ namespace randomcat::engine {
     class engine {
     public:
         explicit engine(std::string _windowTitle = "Twurtle Engine", int _windowWidth = 600, int _windowHeight = 600) noexcept(false)
-        : m_window{std::move(_windowTitle), _windowWidth, _windowHeight}, startTime{fetch_current_raw_time()}, lastTickTime{startTime}, currentTickTime{startTime} {
+        : m_window{std::move(_windowTitle), _windowWidth, _windowHeight}, m_startTime{fetch_current_raw_time()}, m_lastTickTime{m_startTime}, m_currentTickTime{m_startTime} {
             graphics::detail::set_render_context(m_window);
             graphics::enable_depth_test();
         }
@@ -20,16 +20,16 @@ namespace randomcat::engine {
         engine(engine&&) = delete;
 
         void tick() noexcept {
-            lastTickTime = std::move(currentTickTime);
-            currentTickTime = fetch_current_raw_time();
+            m_lastTickTime = std::move(m_currentTickTime);
+            m_currentTickTime = fetch_current_raw_time();
             graphics::clear_graphics();
         }
 
-        std::chrono::milliseconds start_time() const noexcept { return startTime; }
+        std::chrono::milliseconds start_time() const noexcept { return m_startTime; }
 
-        std::chrono::milliseconds previous_time() const noexcept { return lastTickTime; }
+        std::chrono::milliseconds previous_time() const noexcept { return m_lastTickTime; }
 
-        std::chrono::milliseconds current_time() const noexcept { return currentTickTime; }
+        std::chrono::milliseconds current_time() const noexcept { return m_currentTickTime; }
 
         std::chrono::milliseconds delta_time() const noexcept { return current_time() - previous_time(); }
 
@@ -44,12 +44,12 @@ namespace randomcat::engine {
         graphics::window const& window() const noexcept { return m_window; }
 
     private:
-        std::chrono::milliseconds startTime;
-        std::chrono::milliseconds lastTickTime;
-        std::chrono::milliseconds currentTickTime;
+        graphics::window m_window;
+
+        std::chrono::milliseconds m_startTime;
+        std::chrono::milliseconds m_lastTickTime;
+        std::chrono::milliseconds m_currentTickTime;
 
         std::chrono::milliseconds fetch_current_raw_time() const noexcept { return std::chrono::milliseconds{SDL_GetTicks()}; }
-
-        graphics::window m_window;
     };
 }    // namespace randomcat::engine
