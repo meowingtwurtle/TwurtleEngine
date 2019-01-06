@@ -17,7 +17,7 @@ namespace randomcat::engine::graphics::detail {
     public:
         using vertex = detail::default_vertex;
 
-        explicit default_vertex_renderer(shader_view _shader) noexcept : m_shader(std::move(_shader)) {
+        explicit default_vertex_renderer(shader_view<vertex> _shader) noexcept : m_shader(std::move(_shader)) {
             glBindVertexArray(m_vao);
             glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 
@@ -108,6 +108,6 @@ namespace randomcat::engine::graphics::detail {
         mutable bool m_isForcedActive = false;
         vao_id m_vao;
         vbo_id m_vbo;
-        shader_view m_shader;
+        shader_view<vertex> m_shader;
     };
 }    // namespace randomcat::engine::graphics::detail

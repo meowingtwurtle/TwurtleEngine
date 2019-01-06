@@ -14,73 +14,14 @@ namespace randomcat::engine::graphics {
         std::unordered_map<unsigned, std::vector<shader_input>> g_shaderInputsMap{};
     }
 
+    namespace detail {
+        void activate_program(detail::program_id _program) noexcept { glUseProgram(_program); }
+
+        std::unordered_map<unsigned, std::vector<shader_input>>& global_shader_inputs_map() noexcept { return g_shaderInputsMap; }
+    }    // namespace detail
+
     using detail::program_id;
     using detail::shader_id;
-
-    shader::shader(char const* _vertex, char const* _fragment, std::vector<shader_input> _inputs) {
-        shader_id vertexID{GL_VERTEX_SHADER};
-
-        {
-            glShaderSource(vertexID, 1, &_vertex, nullptr);
-            glCompileShader(vertexID);
-
-            int success = 0;
-            glGetShaderiv(vertexID, GL_COMPILE_STATUS, &success);
-
-            if (!success) {
-                constexpr int BUFFER_LEN = 512;
-                std::array<char, BUFFER_LEN> errorBuffer{};
-                glGetShaderInfoLog(vertexID, BUFFER_LEN, nullptr, errorBuffer.data());
-
-                throw std::runtime_error{std::string{"Error compiling vertex shader:"} + errorBuffer.data()};
-            }
-        }
-
-        shader_id fragmentID{GL_FRAGMENT_SHADER};
-
-        {
-            glShaderSource(fragmentID, 1, &_fragment, nullptr);
-            glCompileShader(fragmentID);
-
-            int success = 0;
-            glGetShaderiv(vertexID, GL_COMPILE_STATUS, &success);
-
-            if (!success) {
-                constexpr int BUFFER_LEN = 512;
-                std::array<char, BUFFER_LEN> errorBuffer{};
-                glGetShaderInfoLog(fragmentID, BUFFER_LEN, nullptr, errorBuffer.data());
-
-                throw std::runtime_error{std::string{"Error compiling fragment shader:"} + errorBuffer.data()};
-            }
-        }
-
-        {
-            program_id programID{};
-
-            {
-                glAttachShader(programID, vertexID);
-                glAttachShader(programID, fragmentID);
-                glLinkProgram(programID);
-
-                int success = 0;
-                glGetProgramiv(programID, GL_LINK_STATUS, &success);
-
-                if (!success) {
-                    constexpr int BUFFER_LEN = 512;
-                    std::array<char, BUFFER_LEN> errorBuffer{};
-
-                    glGetProgramInfoLog(programID, BUFFER_LEN, nullptr, errorBuffer.data());
-                    throw std::runtime_error{std::string{"Error linking shader:"} + errorBuffer.data()};
-                }
-            }
-
-            m_programID = std::move(programID);
-        }
-
-        g_shaderInputsMap.emplace(std::make_pair(m_programID.value(), std::move(_inputs)));
-    }
-
-    void shader::make_active(detail::program_id _program) noexcept { glUseProgram(_program); }
 
     const_shader_uniform_manager::active_lock::active_lock(detail::program_id _programID) noexcept : m_programID(std::move(_programID)) {
         auto oldActiveShader = get_active_program();
@@ -190,6 +131,4 @@ namespace randomcat::engine::graphics {
         auto l = make_active_lock();
         glUniformMatrix4fv(get_uniform_location(_name), 1, false, reinterpret_cast<float const*>(&_value));
     }
-
-    std::vector<shader_input> const& shader::inputs() const noexcept { return g_shaderInputsMap.at(m_programID); }
 }    // namespace randomcat::engine::graphics

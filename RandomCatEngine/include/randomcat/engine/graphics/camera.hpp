@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 
 #include <randomcat/engine/dir_pos.hpp>
+#include <randomcat/engine/graphics/detail/default_vertex.hpp>
 #include <randomcat/engine/graphics/shader.hpp>
 
 namespace randomcat::engine::graphics {
@@ -81,7 +82,7 @@ namespace randomcat::engine::graphics {
             update_shader();
         }
 
-        static shader camera_shader();
+        static shader<detail::default_vertex> camera_shader();
 
     private:
         void update_shader() noexcept;
