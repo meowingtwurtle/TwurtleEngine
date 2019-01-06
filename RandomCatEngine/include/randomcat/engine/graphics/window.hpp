@@ -14,7 +14,7 @@ namespace randomcat::engine::graphics {
     class window {
     public:
         explicit window(std::string _title = "Twurtle Engine", int _width = 600, int _height = 600) noexcept
-        : m_title(std::move(_title)), m_size{_width, _height} {
+        : m_title(std::move(_title)), m_width{_width}, m_height{_height} {
             m_window = SDL_CreateWindow(m_title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, _width, _height, SDL_WINDOW_OPENGL);
 
             log::info << "Window created with title \"" << m_title << "\".";
@@ -28,12 +28,14 @@ namespace randomcat::engine::graphics {
         window(window const&) = delete;
         window(window&&) = delete;
 
-        glm::ivec2 size() const noexcept { return m_size; }
-
-        void set_size(glm::ivec2 _size) noexcept {
-            m_size = std::move(_size);
-            SDL_SetWindowSize(m_window, m_size.x, m_size.y);
+        void set_size(int _width, int _height) noexcept {
+            m_width = _width;
+            m_height = _height;
+            SDL_SetWindowSize(m_window, m_width, m_height);
         }
+
+        int width() const noexcept { return m_width; }
+        int height() const noexcept { return m_height; }
 
         std::string title() const noexcept { return m_title; }
 
@@ -49,7 +51,8 @@ namespace randomcat::engine::graphics {
     private:
         SDL_Window* m_window;
         std::string m_title;
-        glm::ivec2 m_size;
+        int m_width;
+        int m_height;
 
         friend void randomcat::engine::graphics::detail::set_render_context(window const&);
     };
