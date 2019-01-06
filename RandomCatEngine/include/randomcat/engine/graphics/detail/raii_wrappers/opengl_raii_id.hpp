@@ -2,8 +2,6 @@
 
 #include <memory>
 
-#include <randomcat/engine/detail/noexcept_util.hpp>
-
 namespace randomcat::engine::graphics::detail {
     template<auto, auto, typename...>
     struct opengl_raii_id;
@@ -27,8 +25,6 @@ namespace randomcat::engine::graphics::detail {
         // This depends on order of fields, as m_id is referenced in deleter
         // constructor
         : m_id(_create_id_f(_args...)), m_deleter(std::make_shared<deleter>(m_id)) {}
-
-        RC_NOEXCEPT_CONSTRUCT_ASSIGN(opengl_raii_id);
 
         opengl_raw_id value() const noexcept { return m_id; }
         /* implicit */ operator opengl_raw_id() const { return value(); }
