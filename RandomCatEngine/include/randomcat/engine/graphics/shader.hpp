@@ -12,8 +12,7 @@
 namespace randomcat::engine::graphics {
     namespace detail {
         void activate_program(detail::program_id _program) noexcept;
-        std::unordered_map<unsigned, std::vector<shader_input>>& global_shader_inputs_map() noexcept;
-    }    // namespace detail
+    }
 
     class const_shader_uniform_manager {
     public:
@@ -74,11 +73,9 @@ namespace randomcat::engine::graphics {
 
         explicit shader(char const* _vertex, char const* _fragment, std::vector<shader_input> _inputs) noexcept(false);
 
-        RC_NOEXCEPT_CONSTRUCT_ASSIGN(shader);
-
         void make_active() const noexcept { detail::activate_program(m_programID); }
 
-        std::vector<shader_input> const& inputs() const noexcept;
+        std::vector<shader_input> inputs() const noexcept { return m_inputs; }
 
         bool operator==(shader const& _other) const noexcept { return m_programID == _other.m_programID; }
         bool operator!=(shader const& _other) const noexcept { return !(*this == _other); }
@@ -88,6 +85,7 @@ namespace randomcat::engine::graphics {
 
     private:
         detail::program_id m_programID;
+        std::vector<shader_input> m_inputs;
 
         template<typename>
         friend class shader_view;
@@ -100,22 +98,20 @@ namespace randomcat::engine::graphics {
         // replaced until the program_id's value is reused, which the existence of
         // this prevents.
 
-        shader_view(shader<Vertex>&& _other) : m_programID(std::move(_other.m_programID)), m_inputs(std::ref(_other.inputs())) {}
-
-        shader_view(shader<Vertex> const& _other) : m_programID(_other.m_programID), m_inputs(std::ref(_other.inputs())) {}
+        shader_view(shader<Vertex> _other) : m_programID(std::move(_other.m_programID)), m_inputs(std::move(_other.inputs())) {}
 
         bool operator==(shader_view const& _other) const noexcept { return m_programID == _other.m_programID; }
         bool operator!=(shader_view const& _other) const noexcept { return !(*this == _other); }
 
         void make_active() const noexcept { detail::activate_program(m_programID); }
 
-        std::vector<shader_input> const& inputs() const noexcept { return m_inputs; }
+        std::vector<shader_input> inputs() const noexcept { return m_inputs; }
 
         const_shader_uniform_manager uniforms() const noexcept { return const_shader_uniform_manager(m_programID); }
 
     private:
         detail::program_id m_programID;
-        std::reference_wrapper<std::vector<shader_input> const> m_inputs;
+        std::vector<shader_input> m_inputs;
     };
 }    // namespace randomcat::engine::graphics
 

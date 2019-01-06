@@ -10,14 +10,8 @@
 namespace randomcat::engine::graphics {
     using detail::default_vertex;
 
-    namespace {
-        std::unordered_map<unsigned, std::vector<shader_input>> g_shaderInputsMap{};
-    }
-
     namespace detail {
         void activate_program(detail::program_id _program) noexcept { glUseProgram(_program); }
-
-        std::unordered_map<unsigned, std::vector<shader_input>>& global_shader_inputs_map() noexcept { return g_shaderInputsMap; }
     }    // namespace detail
 
     using detail::program_id;

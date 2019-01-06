@@ -28,11 +28,11 @@ namespace randomcat::engine::graphics::detail {
             }
         }
 
-        RC_NOEXCEPT_CONSTRUCT_ASSIGN(vertex_renderer);
-
         template<typename T>
         void operator()(T const& _t) const noexcept(false) {
-            if (!is_forced_active()) make_active();
+            std::optional<active_lock> lock = std::nullopt;
+            if (!is_forced_active()) lock.emplace(*this);
+
             render_active(_t);
         }
 

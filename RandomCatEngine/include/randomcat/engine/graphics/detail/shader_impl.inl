@@ -61,12 +61,6 @@ namespace randomcat::engine::graphics {
 
     template<typename Vertex>
     shader<Vertex>::shader(char const* _vertex, char const* _fragment, std::vector<shader_input> _inputs)
-    : m_programID(detail::link_program(detail::compile_vertex_shader(_vertex), detail::compile_fragment_shader(_fragment))) {
-        detail::global_shader_inputs_map().emplace(std::make_pair(m_programID.value(), std::move(_inputs)));
-    }
-
-    template<typename Vertex>
-    std::vector<shader_input> const& shader<Vertex>::inputs() const noexcept {
-        return detail::global_shader_inputs_map().at(m_programID);
-    }
+    : m_programID(detail::link_program(detail::compile_vertex_shader(_vertex), detail::compile_fragment_shader(_fragment))),
+      m_inputs(std::move(_inputs)) {}
 }    // namespace randomcat::engine::graphics
