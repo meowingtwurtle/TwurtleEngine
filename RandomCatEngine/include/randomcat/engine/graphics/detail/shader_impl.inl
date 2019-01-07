@@ -57,9 +57,74 @@ namespace randomcat::engine::graphics {
 
             return programID;
         }
+
+        inline GLuint program_binary_size(detail::program_id const& _program) {
+            GLint size;
+            glGetProgramiv(_program, GL_PROGRAM_BINARY_LENGTH, &size);
+            return GLuint(size);
+        }
     }    // namespace detail
 
     template<typename Vertex>
     shader<Vertex>::shader(char const* _vertex, char const* _fragment, std::vector<shader_input> _inputs)
     : shader(detail::link_program(detail::compile_vertex_shader(_vertex), detail::compile_fragment_shader(_fragment)), std::move(_inputs)) {}
+
+    namespace detail {
+        inline detail::program_id clone_program(detail::program_id const& _program) noexcept {
+            auto const programSize = program_binary_size(_program);
+            auto binary = std::vector<char>(programSize);
+            GLenum binaryFormat;
+
+            glGetProgramBinary(_program, programSize, nullptr, &binaryFormat, binary.data());
+
+            auto newProgram = detail::program_id();
+            glProgramBinary(newProgram, binaryFormat, binary.data(), programSize);
+
+            return newProgram;
+        }
+    }    // namespace detail
+
+    template<typename Vertex>
+    template<typename NewVertex>
+    shader<NewVertex> shader<Vertex>::reinterpret_vertex_and_inputs(std::vector<shader_input> _inputs) const noexcept {
+        return shader<NewVertex>(detail::clone_program(program()), std::move(_inputs));
+    }
+
+    template<typename Vertex>
+    shader<Vertex> shader<Vertex>::reinterpret_inputs(std::vector<shader_input> _inputs) const noexcept {
+        return reinterpret_vertex_and_inputs<Vertex>(std::move(_inputs));
+    }
+
+    template<typename Vertex>
+    template<typename NewVertex>
+    shader<NewVertex> shader<Vertex>::reinterpret_vertex() const noexcept {
+        return reinterpret_vertex_and_inputs<NewVertex>(inputs());
+    }
+
+    template<typename Vertex>
+    shader<Vertex> shader<Vertex>::clone() const noexcept {
+        return reinterpret_vertex<Vertex>();
+    }
+
+    template<typename Vertex>
+    template<typename NewVertex>
+    shader<NewVertex> shader_view<Vertex>::reinterpret_vertex_and_inputs(std::vector<shader_input> _inputs) const noexcept {
+        return shader<NewVertex>(detail::clone_program(program()), std::move(_inputs));
+    }
+
+    template<typename Vertex>
+    shader<Vertex> shader_view<Vertex>::reinterpret_inputs(std::vector<shader_input> _inputs) const noexcept {
+        return reinterpret_vertex_and_inputs<Vertex>(std::move(_inputs));
+    }
+
+    template<typename Vertex>
+    template<typename NewVertex>
+    shader<NewVertex> shader_view<Vertex>::reinterpret_vertex() const noexcept {
+        return reinterpret_vertex_and_inputs<NewVertex>(inputs());
+    }
+
+    template<typename Vertex>
+    shader<Vertex> shader_view<Vertex>::clone() const noexcept {
+        return reinterpret_vertex<Vertex>();
+    }
 }    // namespace randomcat::engine::graphics

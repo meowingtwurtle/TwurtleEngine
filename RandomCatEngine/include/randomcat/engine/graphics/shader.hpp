@@ -82,6 +82,16 @@ namespace randomcat::engine::graphics {
         const_shader_uniform_manager uniforms() const { return const_shader_uniform_manager(program()); }
         shader_uniform_manager uniforms() { return shader_uniform_manager(program()); }
 
+        template<typename NewVertex>
+        shader<NewVertex> reinterpret_vertex_and_inputs(std::vector<shader_input> _inputs) const noexcept;
+
+        shader<Vertex> reinterpret_inputs(std::vector<shader_input> _inputs) const noexcept;
+
+        template<typename NewVertex>
+        shader<NewVertex> reinterpret_vertex() const noexcept;
+
+        shader clone() const noexcept;
+
     protected:
         explicit shader(detail::program_id _program, std::vector<shader_input> _inputs) noexcept
         : m_programID(std::move(_program)), m_inputs(std::move(_inputs)) {}
@@ -113,6 +123,16 @@ namespace randomcat::engine::graphics {
         std::vector<shader_input> inputs() const noexcept { return m_inputs; }
 
         const_shader_uniform_manager uniforms() const noexcept { return const_shader_uniform_manager(m_programID); }
+
+        template<typename NewVertex>
+        shader<NewVertex> reinterpret_vertex_and_inputs(std::vector<shader_input> _inputs) const noexcept;
+
+        shader<Vertex> reinterpret_inputs(std::vector<shader_input> _inputs) const noexcept;
+
+        template<typename NewVertex>
+        shader<NewVertex> reinterpret_vertex() const noexcept;
+
+        shader<Vertex> clone() const noexcept;
 
     protected:
         explicit shader_view(detail::program_id _program, std::vector<shader_input> _inputs)
