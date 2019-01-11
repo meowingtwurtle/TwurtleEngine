@@ -5,13 +5,18 @@
 
 #include <randomcat/engine/detail/log.hpp>
 #include <randomcat/engine/graphics/detail/default_vertex.hpp>
+#include <randomcat/engine/graphics/detail/gl_error_guard.hpp>
 #include <randomcat/engine/graphics/shader.hpp>
 
 namespace randomcat::engine::graphics {
     using detail::default_vertex;
 
     namespace detail {
-        void activate_program(detail::program_id _program) noexcept { glUseProgram(_program); }
+        void activate_program(detail::program_id _program) noexcept {
+            RC_GL_ERROR_GUARD("activating program");
+
+            glUseProgram(_program);
+        }
     }    // namespace detail
 
     using detail::program_id;
@@ -30,18 +35,28 @@ namespace randomcat::engine::graphics {
     }
 
     GLuint const_shader_uniform_manager::active_lock::get_active_program() noexcept {
+        RC_GL_ERROR_GUARD("getting active program");
+
         GLint value;
         glGetIntegerv(GL_CURRENT_PROGRAM, &value);
         return static_cast<uint>(value);
     }
 
-    void const_shader_uniform_manager::active_lock::set_active_program(GLuint _id) noexcept { glUseProgram(_id); }
+    void const_shader_uniform_manager::active_lock::set_active_program(GLuint _id) noexcept {
+        RC_GL_ERROR_GUARD("activating program");
+
+        glUseProgram(_id);
+    }
 
     GLint const_shader_uniform_manager::get_uniform_location(std::string_view _name) const noexcept {
+        RC_GL_ERROR_GUARD("getting uniform location");
+
         return glGetUniformLocation(m_programID, _name.data());
     }
 
     bool const_shader_uniform_manager::get_bool(std::string_view _name) const noexcept {
+        RC_GL_ERROR_GUARD("getting bool uniform");
+
         auto l = make_active_lock();
 
         GLint result;
@@ -51,6 +66,8 @@ namespace randomcat::engine::graphics {
     }
 
     int const_shader_uniform_manager::get_int(std::string_view _name) const noexcept {
+        RC_GL_ERROR_GUARD("getting int uniform");
+
         auto l = make_active_lock();
 
         GLint result;
@@ -60,6 +77,8 @@ namespace randomcat::engine::graphics {
     }
 
     float const_shader_uniform_manager::get_float(std::string_view _name) const noexcept {
+        RC_GL_ERROR_GUARD("getting float uniform");
+
         auto l = make_active_lock();
 
         GLfloat result;
@@ -69,6 +88,8 @@ namespace randomcat::engine::graphics {
     }
 
     glm::vec3 const_shader_uniform_manager::get_vec3(std::string_view _name) const noexcept {
+        RC_GL_ERROR_GUARD("getting vec3 uniform");
+
         auto l = make_active_lock();
 
         GLfloat result[3];
@@ -78,6 +99,8 @@ namespace randomcat::engine::graphics {
     }
 
     glm::mat4 const_shader_uniform_manager::get_mat4(std::string_view _name) const noexcept {
+        RC_GL_ERROR_GUARD("getting mat4 uniform");
+
         auto l = make_active_lock();
 
         GLfloat result[16];
@@ -102,26 +125,36 @@ namespace randomcat::engine::graphics {
     }
 
     void shader_uniform_manager::set_bool(std::string_view _name, bool _value) noexcept {
+        RC_GL_ERROR_GUARD("setting bool uniform");
+
         auto l = make_active_lock();
         glUniform1i(get_uniform_location(_name), _value);
     }
 
     void shader_uniform_manager::set_int(std::string_view _name, int _value) noexcept {
+        RC_GL_ERROR_GUARD("setting int uniform");
+
         auto l = make_active_lock();
         glUniform1i(get_uniform_location(_name), _value);
     }
 
     void shader_uniform_manager::set_float(std::string_view _name, float _value) noexcept {
+        RC_GL_ERROR_GUARD("setting float uniform");
+
         auto l = make_active_lock();
         glUniform1f(get_uniform_location(_name), _value);
     }
 
     void shader_uniform_manager::set_vec3(std::string_view _name, glm::vec3 const& _value) noexcept {
+        RC_GL_ERROR_GUARD("setting vec3 uniform");
+
         auto l = make_active_lock();
         glUniform3fv(get_uniform_location(_name), 1, reinterpret_cast<float const*>(&_value));
     }
 
     void shader_uniform_manager::set_mat4(std::string_view _name, glm::mat4 const& _value) noexcept {
+        RC_GL_ERROR_GUARD("setting mat4 uniform");
+
         auto l = make_active_lock();
         glUniformMatrix4fv(get_uniform_location(_name), 1, false, reinterpret_cast<float const*>(&_value));
     }

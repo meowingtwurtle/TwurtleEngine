@@ -4,6 +4,7 @@
 #include <type_traits>
 #include <vector>
 
+#include <randomcat/engine/graphics/detail/gl_error_guard.hpp>
 #include <randomcat/engine/graphics/detail/raii_wrappers/vao_raii.hpp>
 #include <randomcat/engine/graphics/detail/raii_wrappers/vbo_raii.hpp>
 #include <randomcat/engine/graphics/shader.hpp>
@@ -17,6 +18,8 @@ namespace randomcat::engine::graphics::detail {
         using vertex = Vertex;
 
         explicit vertex_renderer(shader_view<vertex> _shader) noexcept : m_shader(std::move(_shader)) {
+            RC_GL_ERROR_GUARD("initializing vertex renderer");
+
             glBindVertexArray(m_vao);
             glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 
@@ -70,6 +73,8 @@ namespace randomcat::engine::graphics::detail {
         using bool_if_t = std::enable_if_t<V, bool>;
 
         void make_active() const noexcept {
+            RC_GL_ERROR_GUARD("activating vertex renderer");
+
             m_shader.make_active();
             glBindVertexArray(m_vao);
             glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
@@ -86,6 +91,8 @@ namespace randomcat::engine::graphics::detail {
 
         template<typename _container_t, bool_if_t<is_vertex_container_v<_container_t>> = true>
         void render_active(_container_t const& _vertices) const noexcept {
+            RC_GL_ERROR_GUARD("vertex renderer rendering");
+
             glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(vertex), _vertices.data(), GL_DYNAMIC_DRAW);
             glDrawArrays(GL_TRIANGLES, 0, _vertices.size());
         }

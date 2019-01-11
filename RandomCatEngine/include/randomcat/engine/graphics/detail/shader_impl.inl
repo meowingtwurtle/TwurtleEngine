@@ -1,8 +1,12 @@
 #pragma once
 
+#include <randomcat/engine/graphics/detail/gl_error_guard.hpp>
+
 namespace randomcat::engine::graphics {
     namespace detail {
         inline detail::shader_id compile_shader(GLenum _type, char const* _source) noexcept(false) {
+            RC_GL_ERROR_GUARD("compiling shader");
+
             auto shaderID = detail::shader_id(_type);
 
             glShaderSource(shaderID, 1, &_source, nullptr);
@@ -35,6 +39,8 @@ namespace randomcat::engine::graphics {
         inline detail::program_id link_program(Shaders const&... _shaders) noexcept(false) {
             static_assert((std::is_same_v<Shaders, detail::shader_id> && ...), "Arguments must all be shader_ids");
 
+            RC_GL_ERROR_GUARD("linking program");
+
             detail::program_id programID;
 
             {
@@ -59,6 +65,8 @@ namespace randomcat::engine::graphics {
         }
 
         inline GLuint program_binary_size(detail::program_id const& _program) {
+            RC_GL_ERROR_GUARD("getting program size");
+
             GLint size;
             glGetProgramiv(_program, GL_PROGRAM_BINARY_LENGTH, &size);
             return GLuint(size);
@@ -71,6 +79,8 @@ namespace randomcat::engine::graphics {
 
     namespace detail {
         inline detail::program_id clone_program(detail::program_id const& _program) noexcept {
+            RC_GL_ERROR_GUARD("cloning program");
+
             auto const programSize = program_binary_size(_program);
             auto binary = std::vector<char>(programSize);
             GLenum binaryFormat;
