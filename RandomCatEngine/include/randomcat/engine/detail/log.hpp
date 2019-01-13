@@ -1,6 +1,5 @@
 #pragma once
 
-#include <atomic>
 #include <chrono>
 #include <functional>
 #include <iomanip>
@@ -11,8 +10,7 @@ namespace randomcat::engine::log {
     enum class log_type : uint8_t { INFO, WARN, ERROR };
 
     namespace detail {
-        inline std::atomic<std::reference_wrapper<std::ostream>> g_logStream = std::atomic<std::reference_wrapper<std::ostream>>(std::clog);
-        inline std::atomic_flag g_isNotFirstLog = ATOMIC_FLAG_INIT;
+        inline std::reference_wrapper<std::ostream> g_logStream = std::reference_wrapper<std::ostream>(std::clog);
 
         inline std::string log_type_header(log_type _logType) noexcept {
             switch (_logType) {
@@ -41,7 +39,7 @@ namespace randomcat::engine::log {
 
             template<typename T>
             log_impl operator<<(T const& _val) noexcept {
-                auto& outStream = g_logStream.load(std::memory_order_acquire).get();
+                auto& outStream = g_logStream.get();
 
                 try {
                     std::ostringstream tempOut;
@@ -59,7 +57,7 @@ namespace randomcat::engine::log {
 
                     replace_newlines(outString, log_header_cont());
 
-                    outStream << ((isFirst && g_isNotFirstLog.test_and_set()) ? "\n" : "") << outString;
+                    outStream << (isFirst ? "\n" : "") << outString;
                 } catch (...) {
                     // Drop error, logging is not vital
                     outStream << "<LOG ERROR>";
@@ -108,7 +106,7 @@ namespace randomcat::engine::log {
 
     inline void log(log_type _type, std::string_view _message) noexcept { log(std::move(_type)) << std::move(_message); }
 
-    inline void set_log_stream(std::ostream& _stream) { detail::g_logStream.store(std::ref(_stream), std::memory_order_release); }
+    inline void set_log_stream(std::ostream& _stream) { detail::g_logStream = std::ref(_stream); }
 
     inline auto info = log(log_type::INFO);
     inline auto warn = log(log_type::WARN);
