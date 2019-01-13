@@ -7,6 +7,7 @@ namespace randomcat::engine::graphics::detail {
     struct opengl_raii_id;
 
     using opengl_raw_id = uint32_t;
+    static_assert(std::is_integral_v<opengl_raw_id>);
 
     template<typename... _construct_args_ts,
              typename... _create_args_ts,

@@ -6,8 +6,7 @@
 #include <randomcat/engine/graphics/detail/raii_wrappers/opengl_raii_id.hpp>
 
 namespace randomcat::engine::graphics::detail {
-    template<typename Tag>
-    inline decltype(auto) makeBuffer() noexcept {
+    inline decltype(auto) raw_make_buffer() noexcept {
         RC_GL_ERROR_GUARD("creating buffer id");
 
         unsigned id;
@@ -15,13 +14,22 @@ namespace randomcat::engine::graphics::detail {
         return opengl_raw_id{id};
     }
 
-    template<typename Tag>
-    inline void destroyBuffer(opengl_raw_id _id) noexcept {
+    inline void raw_destroy_buffer(opengl_raw_id _id) noexcept {
         RC_GL_ERROR_GUARD("destroying buffer");
 
         glDeleteBuffers(1, &_id);
     }
 
     template<typename Tag>
-    using buffer_id = opengl_raii_id<makeBuffer<Tag>, destroyBuffer<Tag>>;
+    inline decltype(auto) make_buffer() noexcept(noexcept(raw_make_buffer())) {
+        return raw_make_buffer();
+    }
+
+    template<typename Tag>
+    inline decltype(auto) destroy_buffer(opengl_raw_id _id) noexcept(noexcept(raw_destroy_buffer(_id))) {
+        return raw_destroy_buffer(_id);
+    }
+
+    template<typename Tag>
+    using buffer_id = opengl_raii_id<make_buffer<Tag>, destroy_buffer<Tag>>;
 }    // namespace randomcat::engine::graphics::detail
