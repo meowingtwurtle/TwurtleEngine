@@ -7,8 +7,6 @@
 namespace randomcat::engine::input {
     class input_state {
     public:
-        void update() noexcept;
-
         bool key_is_down(keycode _key) const noexcept {
             auto const it = m_map.find(_key);
 
