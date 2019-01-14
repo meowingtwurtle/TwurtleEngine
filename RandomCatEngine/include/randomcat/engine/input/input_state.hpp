@@ -7,21 +7,28 @@
 namespace randomcat::engine::input {
     class input_state {
     public:
-        bool key_is_down(keycode _key) const noexcept {
-            auto const it = m_map.find(_key);
+        enum class key_state { up, down, held };
 
-            return it != m_map.end() && it->second != key_state::up;
+        bool key_is_down(keycode _key) const noexcept {
+            auto keyState = get_key_state(_key);
+            return keyState == key_state::down || keyState == key_state::held;
         }
 
         bool key_is_up(keycode _key) const noexcept {
-            auto const it = m_map.find(_key);
-
-            return it != m_map.end() && it->second == key_state::up;
+            auto keyState = get_key_state(_key);
+            return keyState == std::nullopt || keyState == key_state::up;
         }
-        bool key_is_held(keycode _key) const noexcept {
+
+        bool key_is_held(keycode _key) const noexcept { return get_key_state(_key) == key_state::held; }
+
+        std::optional<key_state> get_key_state(keycode _key) const noexcept {
             auto const it = m_map.find(_key);
 
-            return it != m_map.end() && it->second == key_state::held;
+            if (it != m_map.end()) {
+                return it->second;
+            } else {
+                return std::nullopt;
+            }
         }
 
         void set_key_down(keycode _key) noexcept {
@@ -33,23 +40,28 @@ namespace randomcat::engine::input {
 
         void set_key_up(keycode _key) noexcept { m_map[_key] = key_state::up; }
 
+        int& mouse_x() noexcept { return m_mouseX; }
+        int& mouse_y() noexcept { return m_mouseY; }
+
         int mouse_x() const noexcept { return m_mouseX; }
         int mouse_y() const noexcept { return m_mouseY; }
+
+        int& rel_mouse_x() noexcept { return m_relMouseX; }
+        int& rel_mouse_y() noexcept { return m_relMouseY; }
 
         int rel_mouse_x() const noexcept { return m_relMouseX; }
         int rel_mouse_y() const noexcept { return m_relMouseY; }
 
+        bool& quit_received() noexcept { return m_shouldQuit; }
         bool quit_received() const noexcept { return m_shouldQuit; }
 
-    private:
         void down_to_held() noexcept {
             for (auto& entry : m_map) {
                 if (entry.second == key_state::down) entry.second = key_state::held;
             }
         }
 
-        enum class key_state { up, down, held };
-
+    private:
         int m_mouseX = 0;
         int m_mouseY = 0;
 
