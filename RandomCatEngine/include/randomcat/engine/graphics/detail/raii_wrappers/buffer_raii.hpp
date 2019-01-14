@@ -31,5 +31,5 @@ namespace randomcat::engine::graphics::detail {
     }
 
     template<typename Tag>
-    using buffer_id = opengl_raii_id<make_buffer<Tag>, destroy_buffer<Tag>>;
+    using unique_buffer_id = unique_opengl_raii_id<make_buffer<Tag>, destroy_buffer<Tag>>;
 }    // namespace randomcat::engine::graphics::detail

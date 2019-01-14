@@ -30,6 +30,6 @@ namespace randomcat::engine::graphics::detail {
         glDeleteProgram(_id);
     }
 
-    using shader_id = opengl_raii_id<make_shader, destroy_shader, GLenum>;
-    using program_id = opengl_raii_id<make_program, destroy_program>;
+    using unique_shader_id = unique_opengl_raii_id<make_shader, destroy_shader, GLenum>;
+    using shared_program_id = shared_opengl_raii_id<make_program, destroy_program>;
 }    // namespace randomcat::engine::graphics::detail

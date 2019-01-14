@@ -12,17 +12,17 @@ namespace randomcat::engine::graphics {
     using detail::default_vertex;
 
     namespace detail {
-        void activate_program(detail::program_id _program) noexcept {
+        void activate_program(detail::shared_program_id const& _program) noexcept {
             RC_GL_ERROR_GUARD("activating program");
 
             glUseProgram(_program);
         }
     }    // namespace detail
 
-    using detail::program_id;
-    using detail::shader_id;
+    using detail::shared_program_id;
+    using detail::unique_shader_id;
 
-    const_shader_uniform_manager::active_lock::active_lock(detail::program_id _programID) noexcept : m_programID(std::move(_programID)) {
+    const_shader_uniform_manager::active_lock::active_lock(detail::shared_program_id const& _programID) noexcept : m_programID(_programID) {
         auto oldActiveShader = get_active_program();
         if (m_programID.value() != oldActiveShader) {
             m_oldID = oldActiveShader;
@@ -51,7 +51,7 @@ namespace randomcat::engine::graphics {
     GLint const_shader_uniform_manager::get_uniform_location(std::string_view _name) const noexcept {
         RC_GL_ERROR_GUARD("getting uniform location");
 
-        return glGetUniformLocation(m_programID, _name.data());
+        return glGetUniformLocation(program(), _name.data());
     }
 
     bool const_shader_uniform_manager::get_bool(std::string_view _name) const noexcept {
@@ -60,7 +60,7 @@ namespace randomcat::engine::graphics {
         auto l = make_active_lock();
 
         GLint result;
-        glGetnUniformiv(m_programID, get_uniform_location(_name), 1, &result);
+        glGetnUniformiv(program(), get_uniform_location(_name), 1, &result);
 
         return static_cast<bool>(result);
     }
@@ -71,7 +71,7 @@ namespace randomcat::engine::graphics {
         auto l = make_active_lock();
 
         GLint result;
-        glGetnUniformiv(m_programID, get_uniform_location(_name), 1, &result);
+        glGetnUniformiv(program(), get_uniform_location(_name), 1, &result);
 
         return result;
     }
@@ -82,7 +82,7 @@ namespace randomcat::engine::graphics {
         auto l = make_active_lock();
 
         GLfloat result;
-        glGetnUniformfv(m_programID, get_uniform_location(_name), 1, &result);
+        glGetnUniformfv(program(), get_uniform_location(_name), 1, &result);
 
         return result;
     }
@@ -93,7 +93,7 @@ namespace randomcat::engine::graphics {
         auto l = make_active_lock();
 
         GLfloat result[3];
-        glGetnUniformfv(m_programID, get_uniform_location(_name), 3, result);
+        glGetnUniformfv(program(), get_uniform_location(_name), 3, result);
 
         return glm::vec3(result[0], result[1], result[2]);
     }
@@ -104,7 +104,7 @@ namespace randomcat::engine::graphics {
         auto l = make_active_lock();
 
         GLfloat result[16];
-        glGetnUniformfv(m_programID, get_uniform_location(_name), 16, result);
+        glGetnUniformfv(program(), get_uniform_location(_name), 16, result);
 
         return glm::mat4{result[0],
                          result[1],

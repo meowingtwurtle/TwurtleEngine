@@ -20,5 +20,5 @@ namespace randomcat::engine::graphics::detail {
         glDeleteVertexArrays(1, &_id);
     }
 
-    using vao_id = opengl_raii_id<make_vao, destroy_vao>;
+    using unique_vao_id = unique_opengl_raii_id<make_vao, destroy_vao>;
 }    // namespace randomcat::engine::graphics::detail

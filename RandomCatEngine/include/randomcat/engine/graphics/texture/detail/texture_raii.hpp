@@ -22,5 +22,5 @@ namespace randomcat::engine::graphics::texture::detail {
         glDeleteTextures(1, &_id);
     }
 
-    using texture_id = randomcat::engine::graphics::detail::opengl_raii_id<createTexture, deleteTexture>;
+    using unique_texture_id = graphics::detail::unique_opengl_raii_id<createTexture, deleteTexture>;
 }    // namespace randomcat::engine::graphics::texture::detail

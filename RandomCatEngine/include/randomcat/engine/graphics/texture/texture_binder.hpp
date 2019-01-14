@@ -8,7 +8,7 @@
 
 namespace randomcat::engine::graphics::texture {
     struct texture_array {
-        detail::texture_id id;
+        detail::unique_texture_id id;
         int width;
         int height;
         int layers;
@@ -17,11 +17,11 @@ namespace randomcat::engine::graphics::texture {
     texture_array gen_texture_array(int _width, int _height, int _layers) noexcept {
         RC_GL_ERROR_GUARD("generating texture array");
 
-        detail::texture_id id;
+        detail::unique_texture_id id;
         glBindTexture(GL_TEXTURE_2D_ARRAY, id);
         glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, _width, _height, _layers);
 
-        return {id, _width, _height, _layers};
+        return {std::move(id), _width, _height, _layers};
     }
 
     void bind_texture_array_layer(texture_array const& _array, int _layer, texture const& _texture) noexcept {

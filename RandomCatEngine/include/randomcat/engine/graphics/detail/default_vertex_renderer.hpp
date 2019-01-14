@@ -17,6 +17,9 @@ namespace randomcat::engine::graphics::detail {
     public:
         using vertex = Vertex;
 
+        vertex_renderer(vertex_renderer const&) = delete;
+        vertex_renderer(vertex_renderer&&) = delete;
+
         explicit vertex_renderer(shader_view<vertex> _shader) noexcept : m_shader(std::move(_shader)) {
             RC_GL_ERROR_GUARD("initializing vertex renderer");
 
@@ -112,8 +115,8 @@ namespace randomcat::engine::graphics::detail {
         bool is_forced_active() const noexcept { return m_isForcedActive; }
 
         mutable bool m_isForcedActive = false;
-        vao_id m_vao;
-        vbo_id m_vbo;
+        unique_vao_id m_vao;
+        unique_vbo_id m_vbo;
         shader_view<vertex> m_shader;
     };
 

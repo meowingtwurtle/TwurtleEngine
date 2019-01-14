@@ -7,5 +7,5 @@
 namespace randomcat::engine::graphics::detail {
     struct vbo_tag {};
 
-    using vbo_id = buffer_id<vbo_tag>;
+    using unique_vbo_id = unique_buffer_id<vbo_tag>;
 }    // namespace randomcat::engine::graphics::detail

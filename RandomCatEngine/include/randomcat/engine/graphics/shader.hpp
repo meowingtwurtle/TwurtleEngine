@@ -10,12 +10,12 @@
 
 namespace randomcat::engine::graphics {
     namespace detail {
-        void activate_program(detail::program_id _program) noexcept;
+        void activate_program(detail::shared_program_id const& _program) noexcept;
     }
 
     class const_shader_uniform_manager {
     public:
-        explicit const_shader_uniform_manager(detail::program_id _programID) : m_programID(std::move(_programID)) {}
+        explicit const_shader_uniform_manager(detail::shared_program_id const& _programID) noexcept : m_programID(std::ref(_programID)) {}
 
         // You agree not to change that active program during calls to these
         // functions. These functions will re-activate the previous shader after
@@ -29,13 +29,17 @@ namespace randomcat::engine::graphics {
 
     protected:
         GLint get_uniform_location(std::string_view _name) const noexcept;
+        detail::shared_program_id const& program() const noexcept { return m_programID; }
 
     private:
-        detail::program_id m_programID;
+        std::reference_wrapper<detail::shared_program_id const> m_programID;
 
         class active_lock {
         public:
-            active_lock(detail::program_id _programID) noexcept;
+            active_lock(active_lock const&) = delete;
+            active_lock(active_lock&&) = delete;
+
+            active_lock(detail::shared_program_id const& _programID) noexcept;
             ~active_lock() noexcept;
 
         private:
@@ -43,7 +47,7 @@ namespace randomcat::engine::graphics {
             static void set_active_program(GLuint _id) noexcept;
 
             std::optional<GLuint> m_oldID = std::nullopt;
-            detail::program_id m_programID;
+            detail::shared_program_id const& m_programID;
         };
 
     protected:
@@ -52,7 +56,7 @@ namespace randomcat::engine::graphics {
 
     class shader_uniform_manager : public const_shader_uniform_manager {
     public:
-        explicit shader_uniform_manager(detail::program_id _programID) : const_shader_uniform_manager(std::move(_programID)) {}
+        explicit shader_uniform_manager(detail::shared_program_id const& _programID) noexcept : const_shader_uniform_manager(_programID) {}
 
         // You agree not to change that active program during calls to these
         // functions. These functions will re-activate the previous shader after
@@ -69,6 +73,9 @@ namespace randomcat::engine::graphics {
     class shader {
     public:
         using vertex = Vertex;
+
+        shader(shader const&) = delete;
+        shader(shader&&) = default;
 
         explicit shader(char const* _vertex, char const* _fragment, std::vector<shader_input> _inputs) noexcept(false);
 
@@ -93,13 +100,13 @@ namespace randomcat::engine::graphics {
         shader clone() const noexcept;
 
     protected:
-        explicit shader(detail::program_id _program, std::vector<shader_input> _inputs) noexcept
+        explicit shader(detail::shared_program_id _program, std::vector<shader_input> _inputs) noexcept
         : m_programID(std::move(_program)), m_inputs(std::move(_inputs)) {}
 
-        detail::program_id program() const noexcept { return m_programID; }
+        detail::shared_program_id const& program() const noexcept { return m_programID; }
 
     private:
-        detail::program_id m_programID;
+        detail::shared_program_id m_programID;
         std::vector<shader_input> m_inputs;
 
         template<typename>
@@ -110,10 +117,10 @@ namespace randomcat::engine::graphics {
     class shader_view {
     public:
         // m_inputs is safe, the shader_inputs are stored in a global map, will not be
-        // replaced until the program_id's value is reused, which the existence of
-        // this prevents.
+        // replaced until the shared_program_id's value is reused, which the existence
+        // of this prevents.
 
-        shader_view(shader<Vertex> _other) : shader_view(std::move(_other.program()), std::move(_other.inputs())) {}
+        shader_view(shader<Vertex> const& _other) : shader_view(_other.program(), _other.inputs()) {}
 
         bool operator==(shader_view const& _other) const noexcept { return m_programID == _other.m_programID; }
         bool operator!=(shader_view const& _other) const noexcept { return !(*this == _other); }
@@ -135,13 +142,13 @@ namespace randomcat::engine::graphics {
         shader<Vertex> clone() const noexcept;
 
     protected:
-        explicit shader_view(detail::program_id _program, std::vector<shader_input> _inputs)
+        explicit shader_view(detail::shared_program_id _program, std::vector<shader_input> _inputs)
         : m_programID(std::move(_program)), m_inputs(std::move(_inputs)) {}
 
-        detail::program_id program() { return m_programID; }
+        detail::shared_program_id const& program() { return m_programID; }
 
     private:
-        detail::program_id m_programID;
+        detail::shared_program_id m_programID;
         std::vector<shader_input> m_inputs;
     };
 }    // namespace randomcat::engine::graphics

@@ -3,29 +3,30 @@
 #include <memory>
 
 namespace randomcat::engine::graphics::detail {
-    template<auto, auto, typename...>
-    struct opengl_raii_id;
+    template<bool copyable, auto, auto, typename...>
+    struct basic_opengl_raii_id;
 
     using opengl_raw_id = uint32_t;
     static_assert(std::is_integral_v<opengl_raw_id>);
 
-    template<typename... _construct_args_ts,
+    template<bool _is_shared,
+             typename... _construct_args_ts,
              typename... _create_args_ts,
              bool _create_noexcept,
              opengl_raw_id (*_create_id_f)(_create_args_ts...) noexcept(_create_noexcept),
              bool _destroy_noexcept,
              void (*_destroy_id_f)(opengl_raw_id) noexcept(_destroy_noexcept)>
-    struct opengl_raii_id<_create_id_f, _destroy_id_f, _construct_args_ts...> {
-        using this_t = opengl_raii_id;
+    struct basic_opengl_raii_id<_is_shared, _create_id_f, _destroy_id_f, _construct_args_ts...> {
+        using this_t = basic_opengl_raii_id;
 
         // Only delete if we require construct args
         template<bool Enable = sizeof...(_construct_args_ts), typename = std::enable_if_t<Enable>>
-        opengl_raii_id() = delete;
+        basic_opengl_raii_id() = delete;
 
-        explicit opengl_raii_id(_construct_args_ts... _args) noexcept(_create_noexcept)
+        explicit basic_opengl_raii_id(_construct_args_ts... _args) noexcept(_create_noexcept)
         // This depends on order of fields, as m_id is referenced in deleter
         // constructor
-        : m_id(_create_id_f(_args...)), m_deleter(std::make_shared<deleter>(m_id)) {}
+        : m_id(_create_id_f(_args...)), m_deleter(std::make_unique<deleter>(m_id)) {}
 
         opengl_raw_id value() const noexcept { return m_id; }
         /* implicit */ operator opengl_raw_id() const { return value(); }
@@ -47,6 +48,12 @@ namespace randomcat::engine::graphics::detail {
             opengl_raw_id m_id;
         };
 
-        std::shared_ptr<deleter> m_deleter;
+        std::conditional_t<_is_shared, std::shared_ptr<deleter>, std::unique_ptr<deleter>> m_deleter;
     };
+
+    template<auto _create_id_f, auto _destroy_id_f, typename... _construct_args_ts>
+    using unique_opengl_raii_id = basic_opengl_raii_id<false, _create_id_f, _destroy_id_f, _construct_args_ts...>;
+
+    template<auto _create_id_f, auto _destroy_id_f, typename... _construct_args_ts>
+    using shared_opengl_raii_id = basic_opengl_raii_id<true, _create_id_f, _destroy_id_f, _construct_args_ts...>;
 }    // namespace randomcat::engine::graphics::detail

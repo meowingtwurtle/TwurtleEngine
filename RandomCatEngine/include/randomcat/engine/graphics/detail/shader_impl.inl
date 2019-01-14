@@ -4,10 +4,10 @@
 
 namespace randomcat::engine::graphics {
     namespace detail {
-        inline detail::shader_id compile_shader(GLenum _type, char const* _source) noexcept(false) {
+        inline detail::unique_shader_id compile_shader(GLenum _type, char const* _source) noexcept(false) {
             RC_GL_ERROR_GUARD("compiling shader");
 
-            auto shaderID = detail::shader_id(_type);
+            auto shaderID = detail::unique_shader_id(_type);
 
             glShaderSource(shaderID, 1, &_source, nullptr);
             glCompileShader(shaderID);
@@ -36,12 +36,12 @@ namespace randomcat::engine::graphics {
         }
 
         template<typename... Shaders>
-        inline detail::program_id link_program(Shaders const&... _shaders) noexcept(false) {
-            static_assert((std::is_same_v<Shaders, detail::shader_id> && ...), "Arguments must all be shader_ids");
+        inline detail::shared_program_id link_program(Shaders const&... _shaders) noexcept(false) {
+            static_assert((std::is_same_v<Shaders, detail::unique_shader_id> && ...), "Arguments must all be shader_ids");
 
             RC_GL_ERROR_GUARD("linking program");
 
-            detail::program_id programID;
+            detail::shared_program_id programID;
 
             {
                 // Attach all shaders
@@ -64,7 +64,7 @@ namespace randomcat::engine::graphics {
             return programID;
         }
 
-        inline GLuint program_binary_size(detail::program_id const& _program) {
+        inline GLuint program_binary_size(detail::shared_program_id const& _program) {
             RC_GL_ERROR_GUARD("getting program size");
 
             GLint size;
@@ -78,7 +78,7 @@ namespace randomcat::engine::graphics {
     : shader(detail::link_program(detail::compile_vertex_shader(_vertex), detail::compile_fragment_shader(_fragment)), std::move(_inputs)) {}
 
     namespace detail {
-        inline detail::program_id clone_program(detail::program_id const& _program) noexcept {
+        inline detail::shared_program_id clone_program(detail::shared_program_id const& _program) noexcept {
             RC_GL_ERROR_GUARD("cloning program");
 
             auto const programSize = program_binary_size(_program);
@@ -87,7 +87,7 @@ namespace randomcat::engine::graphics {
 
             glGetProgramBinary(_program, programSize, nullptr, &binaryFormat, binary.data());
 
-            auto newProgram = detail::program_id();
+            auto newProgram = detail::shared_program_id();
             glProgramBinary(newProgram, binaryFormat, binary.data(), programSize);
 
             return newProgram;
