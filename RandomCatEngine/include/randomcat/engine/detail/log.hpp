@@ -34,8 +34,6 @@ namespace randomcat::engine::log {
 
             log_impl(log_impl const&) = delete;
             log_impl(log_impl&&) = delete;
-            log_impl operator=(log_impl const&) = delete;
-            log_impl operator=(log_impl&&) = delete;
 
             template<typename T>
             log_impl operator<<(T const& _val) noexcept {

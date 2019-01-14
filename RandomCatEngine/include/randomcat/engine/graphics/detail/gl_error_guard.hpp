@@ -13,6 +13,9 @@ namespace randomcat::engine::graphics::detail {
         explicit gl_error_guard() : gl_error_guard("[UNKNOWN]") {}
         explicit gl_error_guard(std::string _doingWhat) : m_errorString("Error encountered while " + _doingWhat) {}
 
+        gl_error_guard(gl_error_guard const&) = delete;
+        gl_error_guard(gl_error_guard&&) = delete;
+
         ~gl_error_guard() {
             GLenum error;
             while ((error = glGetError()) != GL_NO_ERROR) { log::error << m_errorString << ": " << error_string(error) << "!"; }
