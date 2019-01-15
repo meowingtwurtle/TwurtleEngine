@@ -66,7 +66,7 @@ namespace randomcat::engine::log {
                 return log_impl(m_logType, cont_type::continued);
             }
 
-            void replace_newlines(std::string& _str, std::string_view _replacement) const noexcept(false) {
+            void replace_newlines(std::string& _str, std::string_view _replacement) const noexcept(!"string::replace not noexcept") {
                 auto newLinePos = _str.find('\n');
 
                 while (newLinePos != std::string::npos) {
@@ -81,7 +81,7 @@ namespace randomcat::engine::log {
             }
 
         private:
-            std::string log_header() noexcept(false) {
+            std::string log_header() noexcept(!"Ostreaming not noexcept") {
                 std::ostringstream fullMessage{};
                 time_t systemTime = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
                 auto formatTime = *std::localtime(&systemTime);

@@ -1,5 +1,5 @@
 #pragma once
 
 namespace randomcat::engine::graphics {
-    void init() noexcept(false);
+    void init() noexcept;
 }

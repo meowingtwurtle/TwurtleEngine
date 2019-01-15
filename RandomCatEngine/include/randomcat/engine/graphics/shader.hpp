@@ -76,9 +76,9 @@ namespace randomcat::engine::graphics {
         using vertex = Vertex;
 
         shader(shader const&) = delete;
-        shader(shader&&) = default;
+        shader(shader&&) noexcept = default;
 
-        explicit shader(char const* _vertex, char const* _fragment, std::vector<shader_input> _inputs) noexcept(false);
+        explicit shader(char const* _vertex, char const* _fragment, std::vector<shader_input> _inputs) noexcept(!"Throws on error");
 
         void make_active() const noexcept { detail::activate_program(m_programID); }
 
@@ -123,7 +123,8 @@ namespace randomcat::engine::graphics {
         // replaced until the shared_program_id's value is reused, which the existence
         // of this prevents.
 
-        /* implicit */ shader_view(shader<Vertex> const& _other) noexcept(false) : shader_view(_other.program(), _other.inputs()) {}
+        /* implicit */ shader_view(shader<Vertex> const& _other) noexcept(!"Copying vector")
+        : shader_view(_other.program(), _other.inputs()) {}
 
         bool operator==(shader_view const& _other) const noexcept { return m_programID == _other.m_programID; }
         bool operator!=(shader_view const& _other) const noexcept { return !(*this == _other); }
@@ -146,7 +147,7 @@ namespace randomcat::engine::graphics {
         shader<Vertex> clone() const noexcept;
 
     protected:
-        explicit shader_view(detail::shared_program_id _program, std::vector<shader_input> _inputs) noexcept(false)
+        explicit shader_view(detail::shared_program_id _program, std::vector<shader_input> _inputs) noexcept(!"Copying vector")
         : m_programID(std::move(_program)), m_inputs(std::move(_inputs)) {}
 
         detail::shared_program_id program() noexcept { return m_programID; }

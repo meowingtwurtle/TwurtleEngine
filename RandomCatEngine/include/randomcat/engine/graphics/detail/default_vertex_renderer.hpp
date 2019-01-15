@@ -33,7 +33,7 @@ namespace randomcat::engine::graphics::detail {
         }
 
         template<typename T>
-        void operator()(T const& _t) const noexcept(false) {
+        void operator()(T const& _t) const noexcept {
             std::optional<active_lock> lock = std::nullopt;
             if (!is_forced_active()) lock.emplace(*this);
 
@@ -46,7 +46,7 @@ namespace randomcat::engine::graphics::detail {
             active_lock(active_lock const&) = delete;
             active_lock(active_lock&&) = delete;
 
-            active_lock(vertex_renderer const& _renderer) noexcept(false) : m_renderer(_renderer) {
+            active_lock(vertex_renderer const& _renderer) noexcept(!"Throws on error") : m_renderer(_renderer) {
                 m_renderer.make_active();
                 m_renderer.set_forced_active();
             }
@@ -57,7 +57,7 @@ namespace randomcat::engine::graphics::detail {
             vertex_renderer const& m_renderer;
         };
 
-        active_lock make_active_lock() const noexcept(false) {
+        active_lock make_active_lock() const noexcept(!"Throws on error") {
             return active_lock(*this);    // Constructor activates the renderer
         }
 
@@ -105,7 +105,7 @@ namespace randomcat::engine::graphics::detail {
             std::for_each(begin(_t), end(_t), [this](auto const& x) { render_active(x); });
         }
 
-        void set_forced_active() const noexcept(false) {
+        void set_forced_active() const noexcept(!"Throws on error") {
             if (is_forced_active()) throw std::runtime_error("Cannot double-force active.");
             m_isForcedActive = true;
         }

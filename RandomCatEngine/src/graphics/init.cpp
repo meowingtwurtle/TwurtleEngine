@@ -9,7 +9,7 @@ namespace randomcat::engine::graphics {
         bool g_initDone = false;
     }
 
-    void init() {
+    void init() noexcept {
         if (g_initDone) { log::warn("Graphics init called when already initialized!"); }
 
         g_initDone = true;
