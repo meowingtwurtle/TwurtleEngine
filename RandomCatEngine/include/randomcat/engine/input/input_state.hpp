@@ -56,7 +56,7 @@ namespace randomcat::engine::input {
         bool quit_received() const noexcept { return m_shouldQuit; }
 
         void down_to_held() noexcept {
-            for (auto& entry : m_map) {
+            for (auto&& entry : m_map) {
                 if (entry.second == key_state::down) entry.second = key_state::held;
             }
         }

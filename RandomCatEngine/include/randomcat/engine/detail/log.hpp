@@ -12,14 +12,16 @@ namespace randomcat::engine::log {
     namespace detail {
         inline std::reference_wrapper<std::ostream> g_logStream = std::reference_wrapper<std::ostream>(std::clog);
 
-        inline std::string log_type_header(log_type _logType) noexcept {
+        inline std::string_view log_type_header(log_type _logType) noexcept {
+            using std::string_view_literals::operator""sv;
+
             switch (_logType) {
-                case log_type::INFO: return "[INFO]";
-                case log_type::WARN: return "[WARN]";
-                case log_type::ERROR: return "[ERROR]";
+                case log_type::INFO: return "[INFO]"sv;
+                case log_type::WARN: return "[WARN]"sv;
+                case log_type::ERROR: return "[ERROR]"sv;
             }
 
-            return "[INVALID]";
+            return "[INVALID]"sv;
         }
 
         // Client code shall not use this type except as the result of library-provided
@@ -64,7 +66,7 @@ namespace randomcat::engine::log {
                 return log_impl(m_logType, cont_type::continued);
             }
 
-            void replace_newlines(std::string& _str, std::string const& _replacement) const noexcept(false) {
+            void replace_newlines(std::string& _str, std::string_view _replacement) const noexcept(false) {
                 auto newLinePos = _str.find('\n');
 
                 while (newLinePos != std::string::npos) {
@@ -89,7 +91,10 @@ namespace randomcat::engine::log {
                 return fullMessage.str();
             }
 
-            static std::string log_header_cont() noexcept(false) { return "\n[CONT] "; }
+            static std::string_view log_header_cont() noexcept {
+                using std::string_view_literals::operator""sv;
+                return "\n[CONT] "sv;
+            }
 
             log_type m_logType;
             cont_type m_contType;
@@ -104,7 +109,7 @@ namespace randomcat::engine::log {
 
     inline void log(log_type _type, std::string_view _message) noexcept { log(std::move(_type)) << std::move(_message); }
 
-    inline void set_log_stream(std::ostream& _stream) { detail::g_logStream = std::ref(_stream); }
+    inline void set_log_stream(std::ostream& _stream) noexcept { detail::g_logStream = std::ref(_stream); }
 
     inline auto info = log(log_type::INFO);
     inline auto warn = log(log_type::WARN);

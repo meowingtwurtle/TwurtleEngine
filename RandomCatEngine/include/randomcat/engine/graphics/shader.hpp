@@ -87,10 +87,10 @@ namespace randomcat::engine::graphics {
         bool operator==(shader const& _other) const noexcept { return program() == _other.program(); }
         bool operator!=(shader const& _other) const noexcept { return !(*this == _other); }
 
-        shader_uniform_manager uniforms() { return shader_uniform_manager(program()); }
-        decltype(auto) uniforms() const { return const_uniforms(); }
+        shader_uniform_manager uniforms() noexcept { return shader_uniform_manager(program()); }
+        decltype(auto) uniforms() const noexcept { return const_uniforms(); }
 
-        const_shader_uniform_manager const_uniforms() const { return const_shader_uniform_manager(program()); }
+        const_shader_uniform_manager const_uniforms() const noexcept { return const_shader_uniform_manager(program()); }
 
         template<typename NewVertex>
         shader<NewVertex> reinterpret_vertex_and_inputs(std::vector<shader_input> _inputs) const noexcept;
@@ -123,7 +123,7 @@ namespace randomcat::engine::graphics {
         // replaced until the shared_program_id's value is reused, which the existence
         // of this prevents.
 
-        /* implicit */ shader_view(shader<Vertex> const& _other) : shader_view(_other.program(), _other.inputs()) {}
+        /* implicit */ shader_view(shader<Vertex> const& _other) noexcept(false) : shader_view(_other.program(), _other.inputs()) {}
 
         bool operator==(shader_view const& _other) const noexcept { return m_programID == _other.m_programID; }
         bool operator!=(shader_view const& _other) const noexcept { return !(*this == _other); }
@@ -146,10 +146,10 @@ namespace randomcat::engine::graphics {
         shader<Vertex> clone() const noexcept;
 
     protected:
-        explicit shader_view(detail::shared_program_id _program, std::vector<shader_input> _inputs)
+        explicit shader_view(detail::shared_program_id _program, std::vector<shader_input> _inputs) noexcept(false)
         : m_programID(std::move(_program)), m_inputs(std::move(_inputs)) {}
 
-        detail::shared_program_id program() { return m_programID; }
+        detail::shared_program_id program() noexcept { return m_programID; }
 
     private:
         detail::shared_program_id m_programID;
