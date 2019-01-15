@@ -39,7 +39,7 @@ namespace randomcat::engine::graphics {
             active_lock(active_lock const&) = delete;
             active_lock(active_lock&&) = delete;
 
-            active_lock(detail::shared_program_id const& _programID) noexcept;
+            explicit active_lock(detail::shared_program_id const& _programID) noexcept;
             ~active_lock() noexcept;
 
         private:
@@ -123,7 +123,7 @@ namespace randomcat::engine::graphics {
         // replaced until the shared_program_id's value is reused, which the existence
         // of this prevents.
 
-        shader_view(shader<Vertex> const& _other) : shader_view(_other.program(), _other.inputs()) {}
+        /* implicit */ shader_view(shader<Vertex> const& _other) : shader_view(_other.program(), _other.inputs()) {}
 
         bool operator==(shader_view const& _other) const noexcept { return m_programID == _other.m_programID; }
         bool operator!=(shader_view const& _other) const noexcept { return !(*this == _other); }
