@@ -149,7 +149,7 @@ namespace randomcat::engine::graphics {
         explicit shader_view(detail::shared_program_id _program, std::vector<shader_input> _inputs)
         : m_programID(std::move(_program)), m_inputs(std::move(_inputs)) {}
 
-        detail::shared_program_id const& program() { return m_programID; }
+        detail::shared_program_id program() { return m_programID; }
 
     private:
         detail::shared_program_id m_programID;
