@@ -86,8 +86,10 @@ namespace randomcat::engine::graphics {
         bool operator==(shader const& _other) const noexcept { return program() == _other.program(); }
         bool operator!=(shader const& _other) const noexcept { return !(*this == _other); }
 
-        const_shader_uniform_manager uniforms() const { return const_shader_uniform_manager(program()); }
         shader_uniform_manager uniforms() { return shader_uniform_manager(program()); }
+        decltype(auto) uniforms() const { return const_uniforms(); }
+
+        const_shader_uniform_manager const_uniforms() const { return const_shader_uniform_manager(program()); }
 
         template<typename NewVertex>
         shader<NewVertex> reinterpret_vertex_and_inputs(std::vector<shader_input> _inputs) const noexcept;
@@ -130,6 +132,7 @@ namespace randomcat::engine::graphics {
         std::vector<shader_input> inputs() const noexcept { return m_inputs; }
 
         const_shader_uniform_manager uniforms() const noexcept { return const_shader_uniform_manager(m_programID); }
+        decltype(auto) const_uniforms() const noexcept { return uniforms(); }
 
         template<typename NewVertex>
         shader<NewVertex> reinterpret_vertex_and_inputs(std::vector<shader_input> _inputs) const noexcept;
