@@ -15,7 +15,7 @@ namespace randomcat::engine::graphics {
 
     class const_shader_uniform_manager {
     public:
-        explicit const_shader_uniform_manager(detail::shared_program_id const& _programID) noexcept : m_programID(std::ref(_programID)) {}
+        explicit const_shader_uniform_manager(detail::shared_program_id _programID) noexcept : m_programID(std::move(_programID)) {}
 
         // You agree not to change that active program during calls to these
         // functions. These functions will re-activate the previous shader after
@@ -29,10 +29,10 @@ namespace randomcat::engine::graphics {
 
     protected:
         GLint get_uniform_location(std::string_view _name) const noexcept;
-        detail::shared_program_id const& program() const noexcept { return m_programID; }
+        detail::shared_program_id program() const noexcept { return m_programID; }
 
     private:
-        std::reference_wrapper<detail::shared_program_id const> m_programID;
+        detail::shared_program_id m_programID;
 
         class active_lock {
         public:
@@ -56,7 +56,8 @@ namespace randomcat::engine::graphics {
 
     class shader_uniform_manager : public const_shader_uniform_manager {
     public:
-        explicit shader_uniform_manager(detail::shared_program_id const& _programID) noexcept : const_shader_uniform_manager(_programID) {}
+        explicit shader_uniform_manager(detail::shared_program_id _programID) noexcept
+        : const_shader_uniform_manager(std::move(_programID)) {}
 
         // You agree not to change that active program during calls to these
         // functions. These functions will re-activate the previous shader after
