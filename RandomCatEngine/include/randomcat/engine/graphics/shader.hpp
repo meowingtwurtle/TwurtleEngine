@@ -78,6 +78,8 @@ namespace randomcat::engine::graphics {
         shader(shader const&) = delete;
         shader(shader&&) noexcept = default;
 
+        shader& operator=(shader&&) noexcept = default;
+
         explicit shader(char const* _vertex, char const* _fragment, std::vector<shader_input> _inputs) noexcept(!"Throws on error");
 
         void make_active() const noexcept { detail::activate_program(m_programID); }

@@ -20,6 +20,8 @@ namespace randomcat::engine::graphics::detail {
         vertex_renderer(vertex_renderer const&) = delete;
         vertex_renderer(vertex_renderer&&) noexcept = default;
 
+        vertex_renderer& operator=(vertex_renderer&&) noexcept = default;
+
         explicit vertex_renderer(shader_view<vertex> _shader) noexcept : m_shader(std::move(_shader)) {
             RC_GL_ERROR_GUARD("initializing vertex renderer");
 
