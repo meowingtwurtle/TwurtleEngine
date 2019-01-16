@@ -14,22 +14,27 @@ namespace randomcat::engine::graphics {
         void activate_program(gl_raii_detail::shared_program_id const& _program) noexcept;
     }
 
+    namespace shader_detail {
+        struct shader_no_such_uniform_error_tag {};
+    }    // namespace shader_detail
+    using shader_no_such_uniform_error = util_detail::tag_exception<shader_detail::shader_no_such_uniform_error_tag>;
+
     class const_shader_uniform_manager {
     public:
         explicit const_shader_uniform_manager(gl_raii_detail::shared_program_id _programID) noexcept : m_programID(std::move(_programID)) {}
 
-        // You agree not to change that active program during calls to these
-        // functions. These functions will re-activate the previous shader after
-        // completion.
+        // These functions will re-activate the previous shader after completion.
+        // These functions will throw shader_no_such_uniform_error if the referenced
+        // uniform does not exist
 
-        bool get_bool(std::string const& _name) const noexcept;
-        int get_int(std::string const& _name) const noexcept;
-        float get_float(std::string const& _name) const noexcept;
-        glm::vec3 get_vec3(std::string const& _name) const noexcept;
-        glm::mat4 get_mat4(std::string const& _name) const noexcept;
+        bool get_bool(std::string const& _name) const noexcept(!"Throws if uniform not found");
+        int get_int(std::string const& _name) const noexcept(!"Throws if uniform not found");
+        float get_float(std::string const& _name) const noexcept(!"Throws if uniform not found");
+        glm::vec3 get_vec3(std::string const& _name) const noexcept(!"Throws if uniform not found");
+        glm::mat4 get_mat4(std::string const& _name) const noexcept(!"Throws if uniform not found");
 
     protected:
-        GLint get_uniform_location(std::string const& _name) const noexcept;
+        GLint get_uniform_location(std::string const& _name) const noexcept(!"Throws if uniform not found");
         gl_raii_detail::shared_program_id program() const noexcept { return m_programID; }
 
     private:
@@ -60,15 +65,15 @@ namespace randomcat::engine::graphics {
         explicit shader_uniform_manager(gl_raii_detail::shared_program_id _programID) noexcept
         : const_shader_uniform_manager(std::move(_programID)) {}
 
-        // You agree not to change that active program during calls to these
-        // functions. These functions will re-activate the previous shader after
-        // completion.
+        // These functions will re-activate the previous shader after completion.
+        // These functions will throw shader_no_such_uniform_error if the referenced
+        // uniform does not exist
 
-        void set_bool(std::string const& _name, bool _value) noexcept;
-        void set_int(std::string const& _name, int _value) noexcept;
-        void set_float(std::string const& _name, float _value) noexcept;
-        void set_vec3(std::string const& _name, glm::vec3 const& _value) noexcept;
-        void set_mat4(std::string const& _name, glm::mat4 const& _value) noexcept;
+        void set_bool(std::string const& _name, bool _value) noexcept(!"Throws if uniform not found");
+        void set_int(std::string const& _name, int _value) noexcept(!"Throws if uniform not found");
+        void set_float(std::string const& _name, float _value) noexcept(!"Throws if uniform not found");
+        void set_vec3(std::string const& _name, glm::vec3 const& _value) noexcept(!"Throws if uniform not found");
+        void set_mat4(std::string const& _name, glm::mat4 const& _value) noexcept(!"Throws if uniform not found");
     };
 
     namespace shader_detail {
