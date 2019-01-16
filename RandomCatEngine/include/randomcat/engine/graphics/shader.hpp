@@ -22,14 +22,14 @@ namespace randomcat::engine::graphics {
         // functions. These functions will re-activate the previous shader after
         // completion.
 
-        bool get_bool(std::string_view _name) const noexcept;
-        int get_int(std::string_view _name) const noexcept;
-        float get_float(std::string_view _name) const noexcept;
-        glm::vec3 get_vec3(std::string_view _name) const noexcept;
-        glm::mat4 get_mat4(std::string_view _name) const noexcept;
+        bool get_bool(std::string const& _name) const noexcept;
+        int get_int(std::string const& _name) const noexcept;
+        float get_float(std::string const& _name) const noexcept;
+        glm::vec3 get_vec3(std::string const& _name) const noexcept;
+        glm::mat4 get_mat4(std::string const& _name) const noexcept;
 
     protected:
-        GLint get_uniform_location(std::string_view _name) const noexcept;
+        GLint get_uniform_location(std::string const& _name) const noexcept;
         gl_raii_detail::shared_program_id program() const noexcept { return m_programID; }
 
     private:
@@ -64,11 +64,11 @@ namespace randomcat::engine::graphics {
         // functions. These functions will re-activate the previous shader after
         // completion.
 
-        void set_bool(std::string_view _name, bool _value) noexcept;
-        void set_int(std::string_view _name, int _value) noexcept;
-        void set_float(std::string_view _name, float _value) noexcept;
-        void set_vec3(std::string_view _name, glm::vec3 const& _value) noexcept;
-        void set_mat4(std::string_view _name, glm::mat4 const& _value) noexcept;
+        void set_bool(std::string const& _name, bool _value) noexcept;
+        void set_int(std::string const& _name, int _value) noexcept;
+        void set_float(std::string const& _name, float _value) noexcept;
+        void set_vec3(std::string const& _name, glm::vec3 const& _value) noexcept;
+        void set_mat4(std::string const& _name, glm::mat4 const& _value) noexcept;
     };
 
     namespace shader_detail {
