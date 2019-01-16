@@ -5,7 +5,7 @@
 #include <randomcat/engine/graphics/detail/gl_error_guard.hpp>
 #include <randomcat/engine/graphics/detail/raii_wrappers/opengl_raii_id.hpp>
 
-namespace randomcat::engine::graphics::detail {
+namespace randomcat::engine::graphics::gl_raii_detail {
     inline decltype(auto) make_vao() noexcept {
         RC_GL_ERROR_GUARD("creating vao id");
 
@@ -21,4 +21,4 @@ namespace randomcat::engine::graphics::detail {
     }
 
     using unique_vao_id = unique_opengl_raii_id<make_vao, destroy_vao>;
-}    // namespace randomcat::engine::graphics::detail
+}    // namespace randomcat::engine::graphics::gl_raii_detail

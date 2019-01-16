@@ -7,7 +7,7 @@
 
 #include <randomcat/engine/detail/log.hpp>
 
-namespace randomcat::engine::graphics::detail {
+namespace randomcat::engine::graphics::gl_detail {
     class gl_error_guard {
     public:
         explicit gl_error_guard() : gl_error_guard("[UNKNOWN]") {}
@@ -39,8 +39,8 @@ namespace randomcat::engine::graphics::detail {
 
         std::string m_errorString;
     };
-}    // namespace randomcat::engine::graphics::detail
+}    // namespace randomcat::engine::graphics::gl_detail
 
-#define RC_GL_ERROR_GUARD_IMPL_Y(num, state) ::randomcat::engine::graphics::detail::gl_error_guard g##num(state);
+#define RC_GL_ERROR_GUARD_IMPL_Y(num, state) ::randomcat::engine::graphics::gl_detail::gl_error_guard g##num(state);
 #define RC_GL_ERROR_GUARD_IMPL_X(num, state) RC_GL_ERROR_GUARD_IMPL_Y(num, state)
 #define RC_GL_ERROR_GUARD(state) RC_GL_ERROR_GUARD_IMPL_X(__COUNTER__, state)

@@ -5,8 +5,8 @@
 #include <randomcat/engine/graphics/detail/gl_error_guard.hpp>
 #include <randomcat/engine/graphics/detail/raii_wrappers/opengl_raii_id.hpp>
 
-namespace randomcat::engine::graphics::texture::detail {
-    using opengl_raw_id = randomcat::engine::graphics::detail::opengl_raw_id;
+namespace randomcat::engine::graphics::texture::gl_raii_detail {
+    using opengl_raw_id = graphics::gl_raii_detail::opengl_raw_id;
 
     inline opengl_raw_id createTexture() noexcept {
         RC_GL_ERROR_GUARD("creating texture id");
@@ -22,5 +22,5 @@ namespace randomcat::engine::graphics::texture::detail {
         glDeleteTextures(1, &_id);
     }
 
-    using unique_texture_id = graphics::detail::unique_opengl_raii_id<createTexture, deleteTexture>;
-}    // namespace randomcat::engine::graphics::texture::detail
+    using unique_texture_id = graphics::gl_raii_detail::unique_opengl_raii_id<createTexture, deleteTexture>;
+}    // namespace randomcat::engine::graphics::texture::gl_raii_detail

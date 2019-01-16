@@ -121,8 +121,8 @@ namespace randomcat::engine::graphics::detail {
         bool is_forced_active() const noexcept { return m_isForcedActive; }
 
         mutable bool m_isForcedActive = false;
-        unique_vao_id m_vao;
-        unique_vbo_id m_vbo;
+        gl_raii_detail::unique_vao_id m_vao;
+        gl_raii_detail::unique_vbo_id m_vbo;
         shader_view<vertex> m_shader;
     };
 

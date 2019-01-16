@@ -8,7 +8,7 @@
 
 namespace randomcat::engine::graphics::texture {
     struct texture_array {
-        detail::unique_texture_id id;
+        gl_raii_detail::unique_texture_id id;
         int width;
         int height;
         int layers;
@@ -17,7 +17,7 @@ namespace randomcat::engine::graphics::texture {
     texture_array gen_texture_array(int _width, int _height, int _layers) noexcept {
         RC_GL_ERROR_GUARD("generating texture array");
 
-        detail::unique_texture_id id;
+        gl_raii_detail::unique_texture_id id;
         glBindTexture(GL_TEXTURE_2D_ARRAY, id);
         glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, _width, _height, _layers);
 

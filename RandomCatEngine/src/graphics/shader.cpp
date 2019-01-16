@@ -12,17 +12,18 @@ namespace randomcat::engine::graphics {
     using detail::default_vertex;
 
     namespace detail {
-        void activate_program(detail::shared_program_id const& _program) noexcept {
+        void activate_program(gl_raii_detail::shared_program_id const& _program) noexcept {
             RC_GL_ERROR_GUARD("activating program");
 
             glUseProgram(_program);
         }
     }    // namespace detail
 
-    using detail::shared_program_id;
-    using detail::unique_shader_id;
+    using gl_raii_detail::shared_program_id;
+    using gl_raii_detail::unique_shader_id;
 
-    const_shader_uniform_manager::active_lock::active_lock(detail::shared_program_id const& _programID) noexcept : m_programID(_programID) {
+    const_shader_uniform_manager::active_lock::active_lock(gl_raii_detail::shared_program_id const& _programID) noexcept
+    : m_programID(_programID) {
         auto oldActiveShader = get_active_program();
         if (m_programID.value() != oldActiveShader) {
             m_oldID = oldActiveShader;

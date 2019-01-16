@@ -2,7 +2,7 @@
 
 #include <memory>
 
-namespace randomcat::engine::graphics::detail {
+namespace randomcat::engine::graphics::gl_raii_detail {
     template<bool copyable, auto, auto, typename...>
     struct basic_opengl_raii_id;
 
@@ -56,4 +56,4 @@ namespace randomcat::engine::graphics::detail {
 
     template<auto _create_id_f, auto _destroy_id_f, typename... _construct_args_ts>
     using shared_opengl_raii_id = basic_opengl_raii_id<true, _create_id_f, _destroy_id_f, _construct_args_ts...>;
-}    // namespace randomcat::engine::graphics::detail
+}    // namespace randomcat::engine::graphics::gl_raii_detail
