@@ -9,7 +9,7 @@
 namespace randomcat::engine::log {
     enum class log_type : uint8_t { INFO, WARN, ERROR };
 
-    namespace detail {
+    namespace log_detail {
         inline std::reference_wrapper<std::ostream> g_logStream = std::reference_wrapper<std::ostream>(std::clog);
 
         inline std::string_view log_type_header(log_type _logType) noexcept {
@@ -99,17 +99,17 @@ namespace randomcat::engine::log {
             log_type m_logType;
             cont_type m_contType;
         };
-    }    // namespace detail
+    }    // namespace log_detail
 
     // Client code shall not store any result of this function
     // Guaranteed to be of a type such that:
     // - Any ostreamable type can be logged with the stream insertion operator
     // - Any ostreamable type can be logged with the function call operator
-    inline auto log(log_type _type) noexcept { return detail::log_impl(std::move(_type)); }
+    inline auto log(log_type _type) noexcept { return log_detail::log_impl(std::move(_type)); }
 
     inline void log(log_type _type, std::string_view _message) noexcept { log(std::move(_type)) << std::move(_message); }
 
-    inline void set_log_stream(std::ostream& _stream) noexcept { detail::g_logStream = std::ref(_stream); }
+    inline void set_log_stream(std::ostream& _stream) noexcept { log_detail::g_logStream = std::ref(_stream); }
 
     inline auto info = log(log_type::INFO);
     inline auto warn = log(log_type::WARN);

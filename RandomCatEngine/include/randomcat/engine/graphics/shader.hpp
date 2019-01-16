@@ -10,7 +10,7 @@
 #include <randomcat/engine/graphics/shader_input.hpp>
 
 namespace randomcat::engine::graphics {
-    namespace detail {
+    namespace shader_detail {
         void activate_program(gl_raii_detail::shared_program_id const& _program) noexcept;
     }
 
@@ -71,10 +71,10 @@ namespace randomcat::engine::graphics {
         void set_mat4(std::string_view _name, glm::mat4 const& _value) noexcept;
     };
 
-    namespace detail {
+    namespace shader_detail {
         struct shader_init_error_tag {};
-    }    // namespace detail
-    using shader_init_error = randomcat::engine::detail::tag_exception<detail::shader_init_error_tag>;
+    }    // namespace shader_detail
+    using shader_init_error = randomcat::engine::util_detail::tag_exception<shader_detail::shader_init_error_tag>;
 
     template<typename Vertex>
     class shader {
@@ -88,7 +88,7 @@ namespace randomcat::engine::graphics {
 
         explicit shader(char const* _vertex, char const* _fragment, std::vector<shader_input> _inputs) noexcept(!"Throws on error");
 
-        void make_active() const noexcept { detail::activate_program(m_programID); }
+        void make_active() const noexcept { shader_detail::activate_program(m_programID); }
 
         std::vector<shader_input> inputs() const noexcept { return m_inputs; }
 
@@ -137,7 +137,7 @@ namespace randomcat::engine::graphics {
         bool operator==(shader_view const& _other) const noexcept { return m_programID == _other.m_programID; }
         bool operator!=(shader_view const& _other) const noexcept { return !(*this == _other); }
 
-        void make_active() const noexcept { detail::activate_program(m_programID); }
+        void make_active() const noexcept { shader_detail::activate_program(m_programID); }
 
         std::vector<shader_input> inputs() const noexcept { return m_inputs; }
 

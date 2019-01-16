@@ -13,7 +13,7 @@ namespace randomcat::engine {
     public:
         explicit controller(std::string _windowTitle = "Twurtle Engine", int _windowWidth = 600, int _windowHeight = 600) noexcept
         : m_window{std::move(_windowTitle), _windowWidth, _windowHeight}, m_startTime{fetch_current_raw_time()}, m_lastTickTime{m_startTime}, m_currentTickTime{m_startTime} {
-            graphics::detail::set_render_context(m_window);
+            graphics::gl_detail::set_render_context(m_window);
             graphics::enable_depth_test();
         }
 

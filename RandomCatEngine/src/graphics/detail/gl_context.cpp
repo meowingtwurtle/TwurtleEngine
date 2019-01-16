@@ -8,7 +8,7 @@
 #include <randomcat/engine/graphics/detail/gl_context.hpp>
 #include <randomcat/engine/graphics/window.hpp>
 
-namespace randomcat::engine::graphics::detail {
+namespace randomcat::engine::graphics::gl_detail {
     namespace {
         SDL_GLContext g_context = nullptr;
     }
@@ -30,4 +30,4 @@ namespace randomcat::engine::graphics::detail {
 
         log::info("New GL context created.");
     }
-}    // namespace randomcat::engine::graphics::detail
+}    // namespace randomcat::engine::graphics::gl_detail

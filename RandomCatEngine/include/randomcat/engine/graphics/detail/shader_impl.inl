@@ -3,7 +3,7 @@
 #include <randomcat/engine/graphics/detail/gl_error_guard.hpp>
 
 namespace randomcat::engine::graphics {
-    namespace detail {
+    namespace shader_detail {
         inline gl_raii_detail::unique_shader_id compile_shader(GLenum _type, char const* _source) noexcept(false) {
             RC_GL_ERROR_GUARD("compiling shader");
 
@@ -71,13 +71,14 @@ namespace randomcat::engine::graphics {
             glGetProgramiv(_program, GL_PROGRAM_BINARY_LENGTH, &size);
             return GLuint(size);
         }
-    }    // namespace detail
+    }    // namespace shader_detail
 
     template<typename Vertex>
     shader<Vertex>::shader(char const* _vertex, char const* _fragment, std::vector<shader_input> _inputs)
-    : shader(detail::link_program(detail::compile_vertex_shader(_vertex), detail::compile_fragment_shader(_fragment)), std::move(_inputs)) {}
+    : shader(shader_detail::link_program(shader_detail::compile_vertex_shader(_vertex), shader_detail::compile_fragment_shader(_fragment)),
+             std::move(_inputs)) {}
 
-    namespace detail {
+    namespace shader_detail {
         inline gl_raii_detail::shared_program_id clone_program(gl_raii_detail::shared_program_id const& _program) noexcept {
             RC_GL_ERROR_GUARD("cloning program");
 
@@ -92,12 +93,12 @@ namespace randomcat::engine::graphics {
 
             return newProgram;
         }
-    }    // namespace detail
+    }    // namespace shader_detail
 
     template<typename Vertex>
     template<typename NewVertex>
     shader<NewVertex> shader<Vertex>::reinterpret_vertex_and_inputs(std::vector<shader_input> _inputs) const noexcept {
-        return shader<NewVertex>(detail::clone_program(program()), std::move(_inputs));
+        return shader<NewVertex>(shader_detail::clone_program(program()), std::move(_inputs));
     }
 
     template<typename Vertex>
@@ -119,7 +120,7 @@ namespace randomcat::engine::graphics {
     template<typename Vertex>
     template<typename NewVertex>
     shader<NewVertex> shader_view<Vertex>::reinterpret_vertex_and_inputs(std::vector<shader_input> _inputs) const noexcept {
-        return shader<NewVertex>(detail::clone_program(program()), std::move(_inputs));
+        return shader<NewVertex>(shader_detail::clone_program(program()), std::move(_inputs));
     }
 
     template<typename Vertex>

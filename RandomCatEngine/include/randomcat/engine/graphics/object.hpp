@@ -7,7 +7,7 @@
 #include <randomcat/engine/graphics/detail/default_vertex.hpp>
 
 namespace randomcat::engine::graphics {
-    namespace detail {
+    namespace object_detail {
         template<typename T>
         static constexpr auto vertex_extractor_f = [](auto const& x) noexcept(noexcept(x.vertices())) -> decltype(auto) {
             static_assert(std::is_same_v<decltype(x), T const&>);
@@ -19,7 +19,7 @@ namespace randomcat::engine::graphics {
             static_assert(std::is_same_v<decltype(x), T const&>);
             return x.components();
         };
-    }    // namespace detail
+    }    // namespace object_detail
 
     class render_triangle {
     public:
@@ -34,7 +34,7 @@ namespace randomcat::engine::graphics {
 
         auto const& vertices() const noexcept { return m_vertices; }
 
-        static constexpr auto sub_extractor_f = detail::vertex_extractor_f<render_triangle>;
+        static constexpr auto sub_extractor_f = object_detail::vertex_extractor_f<render_triangle>;
 
     private:
         std::array<vertex, 3> m_vertices;
@@ -47,7 +47,7 @@ namespace randomcat::engine::graphics {
 
         decltype(auto) vertices() const noexcept { return shape.vertices(); }
 
-        static constexpr auto sub_extractor_f = detail::vertex_extractor_f<render_triangle_texture>;
+        static constexpr auto sub_extractor_f = object_detail::vertex_extractor_f<render_triangle_texture>;
     };
 
     class render_object_triangle {
@@ -56,7 +56,7 @@ namespace randomcat::engine::graphics {
 
         auto const& components() const noexcept { return m_triangle; }
 
-        static constexpr auto sub_extractor_f = detail::component_extractor_f<render_object_triangle>;
+        static constexpr auto sub_extractor_f = object_detail::component_extractor_f<render_object_triangle>;
 
     private:
         std::array<render_triangle_texture, 1> m_triangle;
@@ -123,7 +123,7 @@ namespace randomcat::engine::graphics {
 
         auto const& components() const noexcept { return m_triangles; }
 
-        static constexpr auto sub_extractor_f = detail::component_extractor_f<render_object_rect_prism>;
+        static constexpr auto sub_extractor_f = object_detail::component_extractor_f<render_object_rect_prism>;
 
     private:
         std::array<render_triangle_texture, 12> m_triangles;
@@ -151,6 +151,6 @@ namespace randomcat::engine::graphics {
                                    std::move(_texHZ),
                                    std::move(_texLZ)) {}
 
-        static constexpr auto sub_extractor_f = detail::component_extractor_f<render_object_cube>;
+        static constexpr auto sub_extractor_f = object_detail::component_extractor_f<render_object_cube>;
     };
 }    // namespace randomcat::engine::graphics

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace randomcat::engine::detail {
+namespace randomcat::engine::util_detail {
     template<typename Tag>
     struct tag_exception : std::exception {
     public:
@@ -11,4 +11,4 @@ namespace randomcat::engine::detail {
     private:
         std::string m_error;
     };
-}    // namespace randomcat::engine::detail
+}    // namespace randomcat::engine::util_detail

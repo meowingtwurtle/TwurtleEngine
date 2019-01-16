@@ -11,7 +11,7 @@
 
 // I must put definitions here because of stupid C++ template rules.
 
-namespace randomcat::engine::graphics::detail {
+namespace randomcat::engine::graphics {
     struct vertex_renderer_double_lock_error : std::exception {
         char const* what() const noexcept override { return "Cannot double lock vertex renderer"; }
     };
@@ -127,4 +127,4 @@ namespace randomcat::engine::graphics::detail {
     };
 
     using default_vertex_renderer = vertex_renderer<default_vertex>;
-}    // namespace randomcat::engine::graphics::detail
+}    // namespace randomcat::engine::graphics

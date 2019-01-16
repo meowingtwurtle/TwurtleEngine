@@ -9,13 +9,13 @@
 #include <randomcat/engine/graphics/shader.hpp>
 
 namespace randomcat::engine::graphics {
-    namespace detail {
+    namespace shader_detail {
         void activate_program(gl_raii_detail::shared_program_id const& _program) noexcept {
             RC_GL_ERROR_GUARD("activating program");
 
             glUseProgram(_program);
         }
-    }    // namespace detail
+    }    // namespace shader_detail
 
     using gl_raii_detail::shared_program_id;
     using gl_raii_detail::unique_shader_id;

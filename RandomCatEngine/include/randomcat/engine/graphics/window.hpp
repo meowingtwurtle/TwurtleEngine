@@ -54,6 +54,6 @@ namespace randomcat::engine::graphics {
         int m_width;
         int m_height;
 
-        friend void randomcat::engine::graphics::detail::set_render_context(window const&);
+        friend void randomcat::engine::graphics::gl_detail::set_render_context(window const&);
     };
 }    // namespace randomcat::engine::graphics
