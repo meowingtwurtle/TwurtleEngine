@@ -43,6 +43,9 @@ namespace randomcat::engine::graphics::gl_raii_detail {
         struct deleter {
             deleter(opengl_raw_id _id) noexcept : m_id(_id) {}
 
+            deleter(deleter const&) = delete;
+            deleter(deleter&&) = delete;
+
             ~deleter() noexcept(_destroy_noexcept) { _destroy_id_f(m_id); }
 
             opengl_raw_id m_id;
