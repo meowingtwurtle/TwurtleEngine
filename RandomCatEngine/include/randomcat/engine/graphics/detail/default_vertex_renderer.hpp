@@ -12,6 +12,10 @@
 // I must put definitions here because of stupid C++ template rules.
 
 namespace randomcat::engine::graphics::detail {
+    struct vertex_renderer_double_lock_error : std::exception {
+        char const* what() const noexcept override { return "Cannot double lock vertex renderer"; }
+    };
+
     template<typename Vertex>
     class vertex_renderer {
     public:
@@ -108,7 +112,7 @@ namespace randomcat::engine::graphics::detail {
         }
 
         void set_forced_active() const noexcept(!"Throws on error") {
-            if (is_forced_active()) throw std::runtime_error("Cannot double-force active.");
+            if (is_forced_active()) throw vertex_renderer_double_lock_error();
             m_isForcedActive = true;
         }
 

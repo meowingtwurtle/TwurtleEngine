@@ -4,6 +4,8 @@
 #include <string>
 #include <unordered_map>
 
+#include <randomcat/engine/detail/tag_exception.hpp>
+
 namespace randomcat::engine::graphics::texture {
     class texture {
     public:
@@ -28,6 +30,16 @@ namespace randomcat::engine::graphics::texture {
         unsigned char* m_data;
         std::shared_ptr<underlying> m_underlying;
     };
+
+    namespace detail {
+        struct texture_load_error_tag {};
+    }    // namespace detail
+    using texture_load_error = randomcat::engine::detail::tag_exception<detail::texture_load_error_tag>;
+
+    namespace detail {
+        struct no_such_texture_error_tag {};
+    }    // namespace detail
+    using no_such_texture_error = randomcat::engine::detail::tag_exception<detail::no_such_texture_error_tag>;
 
     class texture_manager {
     public:

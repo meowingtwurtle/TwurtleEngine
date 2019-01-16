@@ -5,6 +5,7 @@
 
 #include <glm/glm.hpp>
 
+#include <randomcat/engine/detail/tag_exception.hpp>
 #include <randomcat/engine/graphics/detail/raii_wrappers/shader_program_raii.hpp>
 #include <randomcat/engine/graphics/shader_input.hpp>
 
@@ -69,6 +70,11 @@ namespace randomcat::engine::graphics {
         void set_vec3(std::string_view _name, glm::vec3 const& _value) noexcept;
         void set_mat4(std::string_view _name, glm::mat4 const& _value) noexcept;
     };
+
+    namespace detail {
+        struct shader_init_error_tag {};
+    }    // namespace detail
+    using shader_init_error = randomcat::engine::detail::tag_exception<detail::shader_init_error_tag>;
 
     template<typename Vertex>
     class shader {

@@ -21,7 +21,7 @@ namespace randomcat::engine::graphics {
                 std::array<char, BUFFER_LEN> errorBuffer{};
                 glGetShaderInfoLog(shaderID, BUFFER_LEN, nullptr, errorBuffer.data());
 
-                throw std::runtime_error{std::string{"Error compiling shader: "} + errorBuffer.data()};
+                throw shader_init_error{std::string{"Error compiling shader: "} + errorBuffer.data()};
             }
 
             return shaderID;
@@ -57,7 +57,7 @@ namespace randomcat::engine::graphics {
                     std::array<char, BUFFER_LEN> errorBuffer{};
 
                     glGetProgramInfoLog(programID, BUFFER_LEN, nullptr, errorBuffer.data());
-                    throw std::runtime_error{std::string{"Error linking program: "} + errorBuffer.data()};
+                    throw shader_init_error{std::string{"Error linking program: "} + errorBuffer.data()};
                 }
             }
 

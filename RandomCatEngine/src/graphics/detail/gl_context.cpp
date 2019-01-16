@@ -21,11 +21,11 @@ namespace randomcat::engine::graphics::detail {
 
         g_context = SDL_GL_CreateContext(_window.m_window);
 
-        if (!g_context) { throw std::runtime_error{std::string{"Error creating GL context: "} + SDL_GetError()}; }
+        if (!g_context) { throw render_context_init_error{std::string{"Error creating GL context: "} + SDL_GetError()}; }
 
         auto glewErr = glewInit();
         if (glewErr != GLEW_OK) {
-            throw std::runtime_error{"Error initializing GLEW:" + std::string{reinterpret_cast<char const*>(glewGetErrorString(glewErr))}};
+            throw render_context_init_error{"Error initializing GLEW: " + std::string{reinterpret_cast<char const*>(glewGetErrorString(glewErr))}};
         }
 
         log::info("New GL context created.");

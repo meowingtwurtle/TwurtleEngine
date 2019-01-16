@@ -22,7 +22,7 @@ namespace randomcat::engine {
 
         log::info("Beginning initialization...");
 
-        if (SDL_Init(SDL_INIT_EVERYTHING)) { throw std::runtime_error{std::string{"Error initializing SDL: "} + SDL_GetError()}; }
+        if (SDL_Init(SDL_INIT_EVERYTHING)) { throw init_error{std::string{"Error initializing SDL: "} + SDL_GetError()}; }
 
         graphics::init();
 

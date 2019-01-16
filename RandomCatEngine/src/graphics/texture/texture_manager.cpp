@@ -15,7 +15,7 @@ namespace randomcat::engine::graphics::texture {
         int width, height, burn;
         auto data = stbi_load(_path.c_str(), &width, &height, &burn, STBI_rgb_alpha);
 
-        if (data == nullptr) { throw std::runtime_error{"Unable to load texture with path: " + _path}; }
+        if (data == nullptr) { throw texture_load_error{"Unable to load texture with path: " + _path}; }
 
         m_textureMap.insert({_path, texture{_path, width, height, data}});
 
@@ -25,7 +25,7 @@ namespace randomcat::engine::graphics::texture {
     texture const& texture_manager::get_texture(std::string const& _path) const {
         auto it = m_textureMap.find(_path);
 
-        if (it == m_textureMap.end()) { throw std::runtime_error{"No texture registered with path: " + _path}; }
+        if (it == m_textureMap.end()) { throw no_such_texture_error{"No texture registered with path: " + _path}; }
 
         return it->second;
     }
