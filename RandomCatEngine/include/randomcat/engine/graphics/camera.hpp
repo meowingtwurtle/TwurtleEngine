@@ -82,7 +82,7 @@ namespace randomcat::engine::graphics {
             update_shader();
         }
 
-        static shader<detail::default_vertex> camera_shader();
+        static shader<default_vertex> camera_shader();
 
     private:
         void update_shader() noexcept;

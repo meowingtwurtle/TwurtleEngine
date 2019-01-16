@@ -23,7 +23,7 @@ namespace randomcat::engine::graphics {
 
     class render_triangle {
     public:
-        using vertex = detail::default_vertex;
+        using vertex = default_vertex;
 
         render_triangle(vertex _posA, vertex _posB, vertex _posC) noexcept
         : posA(std::move(_posA)), posB(std::move(_posB)), posC(std::move(_posC)), m_vertices{posA, posB, posC} {}
@@ -85,8 +85,8 @@ namespace randomcat::engine::graphics {
                                                              unsigned int _texHZ,
                                                              unsigned int _texLZ) const {
             auto const makeTriangle = [&](glm::vec3 posA, glm::vec3 posB, glm::vec3 posC, unsigned int tex, auto const& toTexCoord) {
-                return render_triangle_texture{render_triangle{detail::default_vertex{_center + (posA * _sides), toTexCoord(posA), tex},
-                                                               detail::default_vertex{_center + (posB * _sides), toTexCoord(posB), tex},
+                return render_triangle_texture{render_triangle{default_vertex{_center + (posA * _sides), toTexCoord(posA), tex},
+                                                               default_vertex{_center + (posB * _sides), toTexCoord(posB), tex},
                                                                {_center + (posC * _sides), toTexCoord(posC), tex}},
                                                tex};
             };

@@ -9,8 +9,6 @@
 #include <randomcat/engine/graphics/shader.hpp>
 
 namespace randomcat::engine::graphics {
-    using detail::default_vertex;
-
     namespace detail {
         void activate_program(gl_raii_detail::shared_program_id const& _program) noexcept {
             RC_GL_ERROR_GUARD("activating program");

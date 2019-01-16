@@ -38,8 +38,6 @@ namespace randomcat::engine::graphics {
         )";
     }    // namespace
 
-    using detail::default_vertex;
-
     shader<default_vertex> camera::camera_shader() {
         shader<default_vertex> ourShader(DEFAULT_VERTEX_SHADER,
                                          DEFAULT_FRAGMENT_SHADER,

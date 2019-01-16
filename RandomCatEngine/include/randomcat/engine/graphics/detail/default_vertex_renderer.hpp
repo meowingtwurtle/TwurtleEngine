@@ -126,5 +126,5 @@ namespace randomcat::engine::graphics::detail {
         shader_view<vertex> m_shader;
     };
 
-    using default_vertex_renderer = vertex_renderer<detail::default_vertex>;
+    using default_vertex_renderer = vertex_renderer<default_vertex>;
 }    // namespace randomcat::engine::graphics::detail
