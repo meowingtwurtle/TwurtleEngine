@@ -9,16 +9,16 @@
 #include <randomcat/engine/input/input_state.hpp>
 
 namespace randomcat::engine {
-    class engine {
+    class controller {
     public:
-        explicit engine(std::string _windowTitle = "Twurtle Engine", int _windowWidth = 600, int _windowHeight = 600) noexcept
+        explicit controller(std::string _windowTitle = "Twurtle Engine", int _windowWidth = 600, int _windowHeight = 600) noexcept
         : m_window{std::move(_windowTitle), _windowWidth, _windowHeight}, m_startTime{fetch_current_raw_time()}, m_lastTickTime{m_startTime}, m_currentTickTime{m_startTime} {
             graphics::detail::set_render_context(m_window);
             graphics::enable_depth_test();
         }
 
-        engine(engine const&) = delete;
-        engine(engine&&) = delete;
+        controller(controller const&) = delete;
+        controller(controller&&) = delete;
 
         void tick() noexcept {
             update_input_state();
