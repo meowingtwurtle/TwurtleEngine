@@ -34,12 +34,12 @@ namespace randomcat::engine::graphics::texture {
     namespace texture_detail {
         struct texture_load_error_tag {};
     }    // namespace texture_detail
-    using texture_load_error = randomcat::engine::util_detail::tag_exception<texture_detail::texture_load_error_tag>;
+    using texture_load_error = util_detail::tag_exception<texture_detail::texture_load_error_tag>;
 
     namespace texture_detail {
         struct no_such_texture_error_tag {};
     }    // namespace texture_detail
-    using no_such_texture_error = randomcat::engine::util_detail::tag_exception<texture_detail::no_such_texture_error_tag>;
+    using no_such_texture_error = util_detail::tag_exception<texture_detail::no_such_texture_error_tag>;
 
     class texture_manager {
     public:

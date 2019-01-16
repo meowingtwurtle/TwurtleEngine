@@ -74,7 +74,7 @@ namespace randomcat::engine::graphics {
     namespace shader_detail {
         struct shader_init_error_tag {};
     }    // namespace shader_detail
-    using shader_init_error = randomcat::engine::util_detail::tag_exception<shader_detail::shader_init_error_tag>;
+    using shader_init_error = util_detail::tag_exception<shader_detail::shader_init_error_tag>;
 
     template<typename Vertex>
     class shader {
