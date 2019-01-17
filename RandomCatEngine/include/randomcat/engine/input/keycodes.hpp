@@ -5,8 +5,8 @@
 #include <SDL2/SDL.h>
 
 #define RC_KC_DEF(symbol, sdl_name)                                                                                                        \
-    static constexpr keycode const keycode_##symbol = SDLK_##sdl_name;                                                                     \
-    static constexpr auto const kc_##symbol = keycode_##symbol;
+    static constexpr keycode const keycode_##symbol [[maybe_unused]] = SDLK_##sdl_name;                                                    \
+    static constexpr auto const kc_##symbol [[maybe_unused]] = keycode_##symbol;
 
 #define RC_KC_DEF_SAME(symbol) RC_KC_DEF(symbol, symbol)
 
