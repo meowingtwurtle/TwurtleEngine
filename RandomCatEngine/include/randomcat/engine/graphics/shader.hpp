@@ -132,10 +132,6 @@ namespace randomcat::engine::graphics {
     template<typename Vertex>
     class shader_view {
     public:
-        // m_inputs is safe, the shader_inputs are stored in a global map, will not be
-        // replaced until the shared_program_id's value is reused, which the existence
-        // of this prevents.
-
         /* implicit */ shader_view(shader<Vertex> const& _other) noexcept(!"Copying vector")
         : shader_view(_other.program(), _other.inputs()) {}
 
