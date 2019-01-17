@@ -119,7 +119,7 @@ namespace randomcat::engine::graphics {
         explicit shader(gl_raii_detail::shared_program_id _program, std::vector<shader_input> _inputs) noexcept
         : m_programID(std::move(_program)), m_inputs(std::move(_inputs)) {}
 
-        gl_raii_detail::shared_program_id const& program() const noexcept { return m_programID; }
+        gl_raii_detail::shared_program_id program() const noexcept { return m_programID; }
 
     private:
         gl_raii_detail::shared_program_id m_programID;
@@ -163,7 +163,7 @@ namespace randomcat::engine::graphics {
         explicit shader_view(gl_raii_detail::shared_program_id _program, std::vector<shader_input> _inputs) noexcept(!"Copying vector")
         : m_programID(std::move(_program)), m_inputs(std::move(_inputs)) {}
 
-        gl_raii_detail::shared_program_id program() noexcept { return m_programID; }
+        gl_raii_detail::shared_program_id program() const noexcept { return m_programID; }
 
     private:
         gl_raii_detail::shared_program_id m_programID;
