@@ -73,8 +73,8 @@ namespace randomcat::engine::graphics {
         }
     }    // namespace shader_detail
 
-    template<typename Vertex>
-    shader<Vertex>::shader(char const* _vertex, char const* _fragment, std::vector<shader_input> _inputs)
+    template<typename Vertex, typename Capabilities>
+    shader<Vertex, Capabilities>::shader(char const* _vertex, char const* _fragment, std::vector<shader_input> _inputs)
     : shader(shader_detail::link_program(shader_detail::compile_vertex_shader(_vertex), shader_detail::compile_fragment_shader(_fragment)),
              std::move(_inputs)) {}
 
@@ -95,47 +95,47 @@ namespace randomcat::engine::graphics {
         }
     }    // namespace shader_detail
 
-    template<typename Vertex>
+    template<typename Vertex, typename Capabilities>
     template<typename NewVertex>
-    shader<NewVertex> shader<Vertex>::reinterpret_vertex_and_inputs(std::vector<shader_input> _inputs) const noexcept {
-        return shader<NewVertex>(shader_detail::clone_program(program()), std::move(_inputs));
+    shader<NewVertex, Capabilities> shader<Vertex, Capabilities>::reinterpret_vertex_and_inputs(std::vector<shader_input> _inputs) const noexcept {
+        return shader<NewVertex, Capabilities>(shader_detail::clone_program(program()), std::move(_inputs));
     }
 
-    template<typename Vertex>
-    shader<Vertex> shader<Vertex>::reinterpret_inputs(std::vector<shader_input> _inputs) const noexcept {
+    template<typename Vertex, typename Capabilities>
+    shader<Vertex, Capabilities> shader<Vertex, Capabilities>::reinterpret_inputs(std::vector<shader_input> _inputs) const noexcept {
         return reinterpret_vertex_and_inputs<Vertex>(std::move(_inputs));
     }
 
-    template<typename Vertex>
+    template<typename Vertex, typename Capabilities>
     template<typename NewVertex>
-    shader<NewVertex> shader<Vertex>::reinterpret_vertex() const noexcept {
+    shader<NewVertex, Capabilities> shader<Vertex, Capabilities>::reinterpret_vertex() const noexcept {
         return reinterpret_vertex_and_inputs<NewVertex>(inputs());
     }
 
-    template<typename Vertex>
-    shader<Vertex> shader<Vertex>::clone() const noexcept {
+    template<typename Vertex, typename Capabilities>
+    shader<Vertex, Capabilities> shader<Vertex, Capabilities>::clone() const noexcept {
         return reinterpret_vertex<Vertex>();
     }
 
-    template<typename Vertex>
+    template<typename Vertex, typename Capabilities>
     template<typename NewVertex>
-    shader<NewVertex> shader_view<Vertex>::reinterpret_vertex_and_inputs(std::vector<shader_input> _inputs) const noexcept {
-        return shader<NewVertex>(shader_detail::clone_program(program()), std::move(_inputs));
+    shader<NewVertex, Capabilities> shader_view<Vertex, Capabilities>::reinterpret_vertex_and_inputs(std::vector<shader_input> _inputs) const noexcept {
+        return shader<NewVertex, Capabilities>(shader_detail::clone_program(program()), std::move(_inputs));
     }
 
-    template<typename Vertex>
-    shader<Vertex> shader_view<Vertex>::reinterpret_inputs(std::vector<shader_input> _inputs) const noexcept {
+    template<typename Vertex, typename Capabilities>
+    shader<Vertex, Capabilities> shader_view<Vertex, Capabilities>::reinterpret_inputs(std::vector<shader_input> _inputs) const noexcept {
         return reinterpret_vertex_and_inputs<Vertex>(std::move(_inputs));
     }
 
-    template<typename Vertex>
+    template<typename Vertex, typename Capabilities>
     template<typename NewVertex>
-    shader<NewVertex> shader_view<Vertex>::reinterpret_vertex() const noexcept {
+    shader<NewVertex, Capabilities> shader_view<Vertex, Capabilities>::reinterpret_vertex() const noexcept {
         return reinterpret_vertex_and_inputs<NewVertex>(inputs());
     }
 
-    template<typename Vertex>
-    shader<Vertex> shader_view<Vertex>::clone() const noexcept {
+    template<typename Vertex, typename Capabilities>
+    shader<Vertex, Capabilities> shader_view<Vertex, Capabilities>::clone() const noexcept {
         return reinterpret_vertex<Vertex>();
     }
 }    // namespace randomcat::engine::graphics

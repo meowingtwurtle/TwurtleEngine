@@ -8,6 +8,7 @@
 #include <randomcat/engine/detail/tag_exception.hpp>
 #include <randomcat/engine/graphics/detail/raii_wrappers/shader_program_raii.hpp>
 #include <randomcat/engine/graphics/shader_input.hpp>
+#include <randomcat/type_container/type_list.hpp>
 
 namespace randomcat::engine::graphics {
     namespace shader_detail {
@@ -81,15 +82,26 @@ namespace randomcat::engine::graphics {
     }    // namespace shader_detail
     using shader_init_error = util_detail::tag_exception<shader_detail::shader_init_error_tag>;
 
-    template<typename Vertex>
+    template<typename... Ts>
+    using shader_capabilities = type_container::type_list<Ts...>;
+
+    using shader_no_capabilities = type_container::empty_type_list;
+
+    template<typename Vertex, typename UniformCapabilities = shader_no_capabilities>
     class shader {
     public:
+        static_assert(type_container::is_type_list_v<UniformCapabilities>, "UniformCapabilities must be a type_list");
+
         using vertex = Vertex;
 
         shader(shader const&) = delete;
         shader(shader&&) noexcept = default;
 
         shader& operator=(shader&&) noexcept = default;
+
+        template<typename OtherCapabilities, typename = std::enable_if_t<type_container::type_list_is_sub_list_of_v<UniformCapabilities, OtherCapabilities>>>
+        /* implicit */ shader(shader<Vertex, OtherCapabilities>&& _other) noexcept
+        : m_programID(std::move(_other.program())), m_inputs(std::move(_other.inputs())) {}
 
         explicit shader(char const* _vertex, char const* _fragment, std::vector<shader_input> _inputs) noexcept(!"Throws on error");
 
@@ -106,14 +118,24 @@ namespace randomcat::engine::graphics {
         const_shader_uniform_manager const_uniforms() const noexcept { return const_shader_uniform_manager(program()); }
 
         template<typename NewVertex>
-        shader<NewVertex> reinterpret_vertex_and_inputs(std::vector<shader_input> _inputs) const noexcept;
+        shader<NewVertex, UniformCapabilities> reinterpret_vertex_and_inputs(std::vector<shader_input> _inputs) const noexcept;
 
-        shader<Vertex> reinterpret_inputs(std::vector<shader_input> _inputs) const noexcept;
+        shader<Vertex, UniformCapabilities> reinterpret_inputs(std::vector<shader_input> _inputs) const noexcept;
 
         template<typename NewVertex>
-        shader<NewVertex> reinterpret_vertex() const noexcept;
+        shader<NewVertex, UniformCapabilities> reinterpret_vertex() const noexcept;
 
         shader clone() const noexcept;
+
+        template<typename UniformManager, typename = std::enable_if_t<type_container::type_list_contains_v<UniformCapabilities, UniformManager>>>
+        UniformManager uniforms_as() noexcept(noexcept(UniformManager(uniforms()))) {
+            return UniformManager(uniforms());
+        }
+
+        template<typename UniformManager, typename = std::enable_if_t<type_container::type_list_contains_v<UniformCapabilities, UniformManager>>>
+        UniformManager uniforms_as() const noexcept(noexcept(UniformManager(uniforms()))) {
+            return UniformManager(const_uniforms());
+        }
 
     protected:
         explicit shader(gl_raii_detail::shared_program_id _program, std::vector<shader_input> _inputs) noexcept
@@ -125,14 +147,19 @@ namespace randomcat::engine::graphics {
         gl_raii_detail::shared_program_id m_programID;
         std::vector<shader_input> m_inputs;
 
-        template<typename>
+        template<typename, typename>
         friend class shader_view;
     };
 
-    template<typename Vertex>
+    template<typename Vertex, typename UniformCapabilities = shader_no_capabilities>
     class shader_view {
     public:
-        /* implicit */ shader_view(shader<Vertex> const& _other) noexcept(!"Copying vector")
+        template<typename OtherCapabilities, typename = std::enable_if_t<type_container::type_list_is_sub_list_of_v<UniformCapabilities, OtherCapabilities>>>
+        /* implicit */ shader_view(shader<Vertex, OtherCapabilities> const& _other) noexcept(!"Copying vector")
+        : shader_view(_other.program(), _other.inputs()) {}
+
+        template<typename OtherCapabilities, typename = std::enable_if_t<type_container::type_list_is_sub_list_of_v<UniformCapabilities, OtherCapabilities>>>
+        /* implicit */ shader_view(shader_view<Vertex, OtherCapabilities> const& _other) noexcept(!"Copying vector")
         : shader_view(_other.program(), _other.inputs()) {}
 
         bool operator==(shader_view const& _other) const noexcept { return m_programID == _other.m_programID; }
@@ -146,14 +173,19 @@ namespace randomcat::engine::graphics {
         decltype(auto) const_uniforms() const noexcept { return uniforms(); }
 
         template<typename NewVertex>
-        shader<NewVertex> reinterpret_vertex_and_inputs(std::vector<shader_input> _inputs) const noexcept;
+        shader<NewVertex, UniformCapabilities> reinterpret_vertex_and_inputs(std::vector<shader_input> _inputs) const noexcept;
 
-        shader<Vertex> reinterpret_inputs(std::vector<shader_input> _inputs) const noexcept;
+        shader<Vertex, UniformCapabilities> reinterpret_inputs(std::vector<shader_input> _inputs) const noexcept;
 
         template<typename NewVertex>
-        shader<NewVertex> reinterpret_vertex() const noexcept;
+        shader<NewVertex, UniformCapabilities> reinterpret_vertex() const noexcept;
 
-        shader<Vertex> clone() const noexcept;
+        shader<Vertex, UniformCapabilities> clone() const noexcept;
+
+        template<typename UniformManager, typename = std::enable_if_t<type_container::type_list_contains_v<UniformCapabilities, UniformManager>>>
+        UniformManager uniforms_as() const noexcept(noexcept(UniformManager(uniforms()))) {
+            return UniformManager(const_uniforms());
+        }
 
     protected:
         explicit shader_view(gl_raii_detail::shared_program_id _program, std::vector<shader_input> _inputs) noexcept(!"Copying vector")
