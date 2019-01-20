@@ -8,7 +8,7 @@ namespace randomcat::engine {
         float pitch;
     };
 
-    struct dir_components {
+    struct dir_facing {
         float x;
         float y;
         float z;
@@ -20,38 +20,9 @@ namespace randomcat::engine {
         float z;
     };
 
-    struct pos_and_dir_yp {
-        pos_components pos;
-        dir_yaw_pitch dir;
-    };
+    inline glm::vec3 as_glm(dir_facing d) noexcept { return {d.x, d.y, d.z}; }
 
-    struct pos_and_dir_comp {
-        pos_components pos;
-        dir_components dir;
-    };
-
-    inline constexpr pos_components pos(glm::vec3 vec) noexcept { return {vec.x, vec.y, vec.z}; }
-
-    inline constexpr dir_components dir(glm::vec3 dir) noexcept { return {dir.x, dir.y, dir.z}; }
-
-    inline constexpr pos_components pos(float x, float y, float z) noexcept { return {x, y, z}; }
-
-    inline constexpr dir_components dir(float x, float y, float z) noexcept { return {x, y, z}; }
-
-    // Identity functions - constrain types and help express intent without naming
-    // types
-
-    inline constexpr pos_components pos(pos_components p) noexcept { return p; }
-
-    inline constexpr dir_components dir(dir_components d) noexcept { return d; }
-
-    inline constexpr dir_yaw_pitch dir(dir_yaw_pitch d) noexcept { return d; }
-
-    // Conversion functions - help express intent
-
-    inline glm::vec3 as_glm(dir_components d) noexcept { return {d.x, d.y, d.z}; }
-
-    inline dir_components as_components(dir_yaw_pitch d) noexcept {
+    inline dir_facing as_components(dir_yaw_pitch d) noexcept {
         auto x = static_cast<float>(cos(glm::radians(d.pitch)) * cos(glm::radians(d.yaw)));
         auto y = static_cast<float>(sin(glm::radians(d.pitch)));
         auto z = static_cast<float>(cos(glm::radians(d.pitch)) * sin(glm::radians(d.yaw)));
@@ -62,4 +33,45 @@ namespace randomcat::engine {
     inline glm::vec3 as_glm(dir_yaw_pitch d) noexcept { return as_glm(as_components(d)); }
 
     inline glm::vec3 as_glm(pos_components p) noexcept { return {p.x, p.y, p.z}; }
+
+    class position {
+    public:
+        /* implicit */ position(pos_components _pos) noexcept : m_pos(_pos) {}
+        explicit position(glm::vec3 _pos) noexcept : m_pos{_pos.x, _pos.y, _pos.z} {}
+
+        /* implicit */ operator pos_components() const noexcept { return components(); }
+        pos_components components() const noexcept { return m_pos; }
+
+        float x() const noexcept { return m_pos.x; }
+        float y() const noexcept { return m_pos.y; }
+        float z() const noexcept { return m_pos.z; }
+
+        glm::vec3 as_glm() const noexcept { return engine::as_glm(m_pos); }
+
+    private:
+        pos_components m_pos;
+    };
+
+    inline glm::vec3 as_glm(position _pos) noexcept { return _pos.as_glm(); }
+
+    class direction {
+    public:
+        /* implicit */ direction(dir_facing _dir) noexcept : m_dir(std::move(_dir)) {}
+        /* implicit */ direction(dir_yaw_pitch _dir) noexcept : m_dir(engine::as_components(_dir)) {}
+        explicit direction(glm::vec3 _dir) noexcept : m_dir{.x = _dir.x, .y = _dir.y, .z = _dir.z} {}
+
+        /* implicit */ operator dir_facing() const noexcept { return components(); }
+        dir_facing components() const noexcept { return m_dir; }
+
+        glm::vec3 as_glm() const noexcept { return engine::as_glm(m_dir); }
+
+        float facing_x() const noexcept { return m_dir.x; }
+        float facing_y() const noexcept { return m_dir.y; }
+        float facing_z() const noexcept { return m_dir.z; }
+
+    private:
+        dir_facing m_dir;
+    };
+
+    inline glm::vec3 as_glm(direction _dir) noexcept { return _dir.as_glm(); }
 }    // namespace randomcat::engine

@@ -31,7 +31,7 @@ namespace randomcat::engine::graphics {
             set_dir(_d.yaw, _d.pitch);    // This will update shader
         }
 
-        void set_dir(dir_components _d) noexcept {
+        void set_dir(dir_facing _d) noexcept {
             m_dir = as_glm(_d);
             update_shader();
         }
@@ -39,8 +39,6 @@ namespace randomcat::engine::graphics {
         void set_dir(dir_yaw_pitch _d) noexcept { set_dir(as_components(_d)); }
 
         void set_pos(pos_components _p) noexcept { set_pos(glm::vec3{_p.x, _p.y, _p.z}); }
-
-        void set_pos_dir(pos_and_dir_yp _dp) noexcept { set_dir_pos(_dp.dir, _dp.pos); }
 
         glm::vec3 pos() const noexcept { return m_pos; }
         void set_pos(glm::vec3 _pos) noexcept {
