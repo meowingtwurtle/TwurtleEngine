@@ -69,6 +69,22 @@ namespace randomcat::engine {
         float facing_y() const noexcept { return m_dir.y; }
         float facing_z() const noexcept { return m_dir.z; }
 
+        /* implicit */ operator dir_yaw_pitch() const noexcept { return yaw_pitch(); }
+
+        dir_yaw_pitch yaw_pitch() const noexcept {
+            auto pitch = glm::asin(facing_y());
+            ;
+            auto cosPitch = glm::cos(pitch);
+
+            auto yaw = glm::atan(facing_z() / cosPitch, facing_x() / cosPitch);
+
+            return {.yaw = yaw, .pitch = pitch};
+        }
+
+        float yaw() const noexcept { return yaw_pitch().yaw; }
+
+        float pitch() const noexcept { return yaw_pitch().pitch; }
+
     private:
         dir_facing m_dir;
     };
