@@ -5,6 +5,7 @@
 #include <randomcat/engine/input/keycodes.hpp>
 
 namespace randomcat::engine::input {
+    // Note: key_state is presumed to be "up" until set.
     class input_state {
     public:
         enum class key_state { up, down, held };
@@ -16,18 +17,18 @@ namespace randomcat::engine::input {
 
         bool key_is_up(keycode _key) const noexcept {
             auto keyState = get_key_state(_key);
-            return keyState == std::nullopt || keyState == key_state::up;
+            return keyState == key_state::up;
         }
 
         bool key_is_held(keycode _key) const noexcept { return get_key_state(_key) == key_state::held; }
 
-        std::optional<key_state> get_key_state(keycode _key) const noexcept {
+        key_state get_key_state(keycode _key) const noexcept {
             auto const it = m_map.find(_key);
 
             if (it != m_map.end()) {
                 return it->second;
             } else {
-                return std::nullopt;
+                return key_state::up;
             }
         }
 
