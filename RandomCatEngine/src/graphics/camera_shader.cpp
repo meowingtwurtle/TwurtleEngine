@@ -38,12 +38,13 @@ namespace randomcat::engine::graphics {
         )";
     }    // namespace
 
-    shader<default_vertex> camera::camera_shader() {
-        shader<default_vertex> ourShader(DEFAULT_VERTEX_SHADER,
-                                         DEFAULT_FRAGMENT_SHADER,
-                                         {{0, 3, GL_FLOAT, false, sizeof(default_vertex), reinterpret_cast<void*>(offsetof(default_vertex, location))},
-                                          {1, 2, GL_FLOAT, false, sizeof(default_vertex), reinterpret_cast<void*>(offsetof(default_vertex, texCoord))},
-                                          {2, 1, GL_INT, false, sizeof(default_vertex), reinterpret_cast<void*>(offsetof(default_vertex, layerNum))}});
+    shader<default_vertex, shader_capabilities<camera>> camera::camera_shader() {
+        shader<default_vertex, shader_capabilities<camera>>
+            ourShader(DEFAULT_VERTEX_SHADER,
+                      DEFAULT_FRAGMENT_SHADER,
+                      {{0, 3, GL_FLOAT, false, sizeof(default_vertex), reinterpret_cast<void*>(offsetof(default_vertex, location))},
+                       {1, 2, GL_FLOAT, false, sizeof(default_vertex), reinterpret_cast<void*>(offsetof(default_vertex, texCoord))},
+                       {2, 1, GL_INT, false, sizeof(default_vertex), reinterpret_cast<void*>(offsetof(default_vertex, layerNum))}});
 
         shader_uniform_manager shaderUniforms = ourShader.uniforms();
         shaderUniforms.set_mat4("camera", glm::mat4{1.0f});
