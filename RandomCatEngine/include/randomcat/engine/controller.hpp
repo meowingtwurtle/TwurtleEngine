@@ -67,32 +67,32 @@ namespace randomcat::engine {
         void fetch_sdl_events() noexcept {
             input::input_state workState = std::move(m_currentInputState);
 
-            workState.rel_mouse_x() = 0;
-            workState.rel_mouse_y() = 0;
+            workState.rel_mouse_state().rel_x() = 0;
+            workState.rel_mouse_state().rel_y() = 0;
 
-            workState.down_to_held();
+            workState.keyboard_state().down_to_held();
 
             SDL_Event event;
             while (SDL_PollEvent(&event)) {
                 switch (event.type) {
                     case SDL_KEYDOWN: {
-                        workState.set_key_down(event.key.keysym.sym);
+                        workState.keyboard_state().set_key_down(event.key.keysym.sym);
 
                         break;
                     }
 
                     case SDL_KEYUP: {
-                        workState.set_key_up(event.key.keysym.sym);
+                        workState.keyboard_state().set_key_up(event.key.keysym.sym);
 
                         break;
                     }
 
                     case SDL_MOUSEMOTION: {
-                        workState.mouse_x() = event.motion.x;
-                        workState.mouse_y() = event.motion.y;
+                        workState.mouse_state().x() = event.motion.x;
+                        workState.mouse_state().y() = event.motion.y;
 
-                        workState.rel_mouse_x() += event.motion.xrel;
-                        workState.rel_mouse_y() += event.motion.yrel;
+                        workState.rel_mouse_state().rel_x() += event.motion.xrel;
+                        workState.rel_mouse_state().rel_y() += event.motion.yrel;
 
                         break;
                     }

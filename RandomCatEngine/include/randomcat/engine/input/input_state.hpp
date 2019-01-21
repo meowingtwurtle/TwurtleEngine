@@ -6,7 +6,7 @@
 
 namespace randomcat::engine::input {
     // Note: key_state is presumed to be "up" until set.
-    class input_state {
+    class keyboard_input_state {
     public:
         enum class key_state { up, down, held };
 
@@ -41,18 +41,6 @@ namespace randomcat::engine::input {
 
         void set_key_up(keycode _key) noexcept { m_map[_key] = key_state::up; }
 
-        int& mouse_x() noexcept { return m_mouseX; }
-        int& mouse_y() noexcept { return m_mouseY; }
-
-        int mouse_x() const noexcept { return m_mouseX; }
-        int mouse_y() const noexcept { return m_mouseY; }
-
-        int& rel_mouse_x() noexcept { return m_relMouseX; }
-        int& rel_mouse_y() noexcept { return m_relMouseY; }
-
-        int rel_mouse_x() const noexcept { return m_relMouseX; }
-        int rel_mouse_y() const noexcept { return m_relMouseY; }
-
         void down_to_held() noexcept {
             for (auto&& entry : m_map) {
                 if (entry.second == key_state::down) entry.second = key_state::held;
@@ -60,12 +48,49 @@ namespace randomcat::engine::input {
         }
 
     private:
+        std::unordered_map<keycode, key_state> m_map;
+    };
+
+    class mouse_input_state {
+    public:
+        int& x() noexcept { return m_mouseX; }
+        int& y() noexcept { return m_mouseY; }
+
+        int x() const noexcept { return m_mouseX; }
+        int y() const noexcept { return m_mouseY; }
+
+    private:
         int m_mouseX = 0;
         int m_mouseY = 0;
+    };
 
-        int m_relMouseX = 0;
-        int m_relMouseY = 0;
+    class relative_mouse_input_state {
+    public:
+        int& rel_x() noexcept { return m_relX; }
+        int& rel_y() noexcept { return m_relY; }
 
-        std::unordered_map<keycode, key_state> m_map;
+        int rel_x() const noexcept { return m_relX; }
+        int rel_y() const noexcept { return m_relY; }
+
+    private:
+        int m_relX = 0;
+        int m_relY = 0;
+    };
+
+    class input_state {
+    public:
+        mouse_input_state& mouse_state() noexcept { return m_mouseState; }
+        mouse_input_state mouse_state() const noexcept { return m_mouseState; }
+
+        relative_mouse_input_state& rel_mouse_state() noexcept { return m_relMouseState; }
+        relative_mouse_input_state rel_mouse_state() const noexcept { return m_relMouseState; }
+
+        keyboard_input_state& keyboard_state() noexcept { return m_keyState; }
+        keyboard_input_state keyboard_state() const noexcept { return m_keyState; }
+
+    private:
+        mouse_input_state m_mouseState;
+        relative_mouse_input_state m_relMouseState;
+        keyboard_input_state m_keyState;
     };
 }    // namespace randomcat::engine::input
