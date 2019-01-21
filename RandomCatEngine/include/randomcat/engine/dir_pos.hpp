@@ -2,10 +2,13 @@
 
 #include <glm/glm.hpp>
 
+#include <randomcat/units/default_units.hpp>
+#include <randomcat/units/units.hpp>
+
 namespace randomcat::engine {
     struct dir_yaw_pitch {
-        float yaw;
-        float pitch;
+        units::radians yaw;
+        units::radians pitch;
     };
 
     struct dir_facing {
@@ -23,9 +26,9 @@ namespace randomcat::engine {
     inline glm::vec3 as_glm(dir_facing d) noexcept { return {d.x, d.y, d.z}; }
 
     inline dir_facing as_components(dir_yaw_pitch d) noexcept {
-        auto x = static_cast<float>(cos(glm::radians(d.pitch)) * cos(glm::radians(d.yaw)));
-        auto y = static_cast<float>(sin(glm::radians(d.pitch)));
-        auto z = static_cast<float>(cos(glm::radians(d.pitch)) * sin(glm::radians(d.yaw)));
+        auto x = static_cast<float>(cos(d.pitch) * cos(d.yaw));
+        auto y = static_cast<float>(sin(d.pitch));
+        auto z = static_cast<float>(cos(d.pitch) * sin(d.yaw));
 
         return {x, y, z};
     }
@@ -72,18 +75,17 @@ namespace randomcat::engine {
         /* implicit */ operator dir_yaw_pitch() const noexcept { return yaw_pitch(); }
 
         dir_yaw_pitch yaw_pitch() const noexcept {
-            auto pitch = glm::asin(facing_y());
-            ;
-            auto cosPitch = glm::cos(pitch);
+            auto pitch = units::asin(facing_y());
+            auto cosPitch = units::cos(pitch);
 
-            auto yaw = glm::atan(facing_z() / cosPitch, facing_x() / cosPitch);
+            auto yaw = units::atan(facing_z() / cosPitch, facing_x() / cosPitch);
 
             return {.yaw = yaw, .pitch = pitch};
         }
 
-        float yaw() const noexcept { return yaw_pitch().yaw; }
+        units::radians yaw() const noexcept { return yaw_pitch().yaw; }
 
-        float pitch() const noexcept { return yaw_pitch().pitch; }
+        units::radians pitch() const noexcept { return yaw_pitch().pitch; }
 
     private:
         dir_facing m_dir;
