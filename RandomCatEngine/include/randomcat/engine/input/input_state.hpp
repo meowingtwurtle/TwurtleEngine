@@ -52,9 +52,6 @@ namespace randomcat::engine::input {
         int rel_mouse_x() const noexcept { return m_relMouseX; }
         int rel_mouse_y() const noexcept { return m_relMouseY; }
 
-        bool& quit_received() noexcept { return m_shouldQuit; }
-        bool quit_received() const noexcept { return m_shouldQuit; }
-
         void down_to_held() noexcept {
             for (auto&& entry : m_map) {
                 if (entry.second == key_state::down) entry.second = key_state::held;
@@ -67,8 +64,6 @@ namespace randomcat::engine::input {
 
         int m_relMouseX = 0;
         int m_relMouseY = 0;
-
-        bool m_shouldQuit = false;
 
         std::unordered_map<keycode, key_state> m_map;
     };

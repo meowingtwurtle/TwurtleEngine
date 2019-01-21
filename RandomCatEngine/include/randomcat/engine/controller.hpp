@@ -21,7 +21,7 @@ namespace randomcat::engine {
         controller(controller&&) = delete;
 
         void tick() noexcept {
-            update_input_state();
+            fetch_sdl_events();
 
             m_lastTickTime = std::move(m_currentTickTime);
             m_currentTickTime = fetch_current_raw_time();
@@ -49,6 +49,8 @@ namespace randomcat::engine {
         graphics::window& window() noexcept { return m_window; }
         graphics::window const& window() const noexcept { return m_window; }
 
+        bool quit_received() const noexcept { return m_quitReceived; }
+
     private:
         graphics::window m_window;
 
@@ -58,9 +60,11 @@ namespace randomcat::engine {
 
         input::input_state m_currentInputState;
 
+        bool m_quitReceived = false;
+
         std::chrono::milliseconds fetch_current_raw_time() const noexcept { return std::chrono::milliseconds{SDL_GetTicks()}; }
 
-        void update_input_state() noexcept {
+        void fetch_sdl_events() noexcept {
             input::input_state workState = std::move(m_currentInputState);
 
             workState.rel_mouse_x() = 0;
@@ -95,7 +99,7 @@ namespace randomcat::engine {
 
                     case SDL_QUIT:
                     case SDL_WINDOWEVENT_CLOSE: {
-                        workState.quit_received() = true;
+                        m_quitReceived = true;
                     }
                 }
             }
