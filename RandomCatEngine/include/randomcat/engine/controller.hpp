@@ -3,10 +3,10 @@
 #include <chrono>
 #include <memory>
 
-#include <randomcat/engine/graphics/global_gl_calls.hpp>
-#include <randomcat/engine/graphics/window.hpp>
-#include <randomcat/engine/init.hpp>
-#include <randomcat/engine/input/input_state.hpp>
+#include "randomcat/engine/graphics/global_gl_calls.hpp"
+#include "randomcat/engine/graphics/window.hpp"
+#include "randomcat/engine/init.hpp"
+#include "randomcat/engine/input/input_state.hpp"
 
 namespace randomcat::engine {
     class controller {

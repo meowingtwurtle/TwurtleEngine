@@ -4,10 +4,10 @@
 #include <type_traits>
 #include <vector>
 
-#include <randomcat/engine/graphics/detail/gl_error_guard.hpp>
-#include <randomcat/engine/graphics/detail/raii_wrappers/vao_raii.hpp>
-#include <randomcat/engine/graphics/detail/raii_wrappers/vbo_raii.hpp>
-#include <randomcat/engine/graphics/shader.hpp>
+#include "randomcat/engine/graphics/detail/gl_error_guard.hpp"
+#include "randomcat/engine/graphics/detail/raii_wrappers/vao_raii.hpp"
+#include "randomcat/engine/graphics/detail/raii_wrappers/vbo_raii.hpp"
+#include "randomcat/engine/graphics/shader.hpp"
 
 // I must put definitions here because of stupid C++ template rules.
 

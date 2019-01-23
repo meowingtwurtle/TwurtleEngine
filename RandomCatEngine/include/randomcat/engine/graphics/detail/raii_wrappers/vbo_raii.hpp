@@ -2,7 +2,7 @@
 
 #include <GL/glew.h>
 
-#include <randomcat/engine/graphics/detail/raii_wrappers/buffer_raii.hpp>
+#include "randomcat/engine/graphics/detail/raii_wrappers/buffer_raii.hpp"
 
 namespace randomcat::engine::graphics::gl_raii_detail {
     struct vbo_tag {};

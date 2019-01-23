@@ -5,9 +5,9 @@
 #include <glm/ext.hpp>
 #include <glm/glm.hpp>
 
-#include <randomcat/engine/dir_pos.hpp>
-#include <randomcat/engine/graphics/detail/default_vertex.hpp>
-#include <randomcat/engine/graphics/shader.hpp>
+#include "randomcat/engine/dir_pos.hpp"
+#include "randomcat/engine/graphics/detail/default_vertex.hpp"
+#include "randomcat/engine/graphics/shader.hpp"
 
 namespace randomcat::engine::graphics {
     struct camera_state {

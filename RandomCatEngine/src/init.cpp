@@ -1,11 +1,12 @@
+#include "randomcat/engine/graphics/init.hpp"
+
 #include <stdexcept>
 
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
 
-#include <randomcat/engine/detail/log.hpp>
-#include <randomcat/engine/graphics/init.hpp>
-#include <randomcat/engine/init.hpp>
+#include "randomcat/engine/detail/log.hpp"
+#include "randomcat/engine/init.hpp"
 
 namespace randomcat::engine {
     namespace {

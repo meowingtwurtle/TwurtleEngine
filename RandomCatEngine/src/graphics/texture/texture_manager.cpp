@@ -1,9 +1,10 @@
+#include "randomcat/engine/graphics/texture/texture_manager.hpp"
+
 #include <exception>
 
 #include <stb/stb_image.hpp>
 
-#include <randomcat/engine/detail/log.hpp>
-#include <randomcat/engine/graphics/texture/texture_manager.hpp>
+#include "randomcat/engine/detail/log.hpp"
 
 namespace randomcat::engine::graphics::texture {
     texture::underlying::~underlying() noexcept { stbi_image_free(m_data); }

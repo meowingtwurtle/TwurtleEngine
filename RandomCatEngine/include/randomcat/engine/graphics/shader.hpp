@@ -5,10 +5,11 @@
 
 #include <glm/glm.hpp>
 
-#include <randomcat/engine/detail/tag_exception.hpp>
-#include <randomcat/engine/graphics/detail/raii_wrappers/shader_program_raii.hpp>
-#include <randomcat/engine/graphics/shader_input.hpp>
 #include <randomcat/type_container/type_list.hpp>
+
+#include "randomcat/engine/detail/tag_exception.hpp"
+#include "randomcat/engine/graphics/detail/raii_wrappers/shader_program_raii.hpp"
+#include "randomcat/engine/graphics/shader_input.hpp"
 
 namespace randomcat::engine::graphics {
     namespace shader_detail {
@@ -199,4 +200,4 @@ namespace randomcat::engine::graphics {
     };
 }    // namespace randomcat::engine::graphics
 
-#include <randomcat/engine/graphics/detail/shader_impl.inl>
+#include "randomcat/engine/graphics/detail/shader_impl.inl"

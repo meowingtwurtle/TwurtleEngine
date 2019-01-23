@@ -1,12 +1,13 @@
+#include "randomcat/engine/graphics/shader.hpp"
+
 #include <stdexcept>
 #include <unordered_map>
 
 #include <GL/glew.h>
 
-#include <randomcat/engine/detail/log.hpp>
-#include <randomcat/engine/graphics/detail/default_vertex.hpp>
-#include <randomcat/engine/graphics/detail/gl_error_guard.hpp>
-#include <randomcat/engine/graphics/shader.hpp>
+#include "randomcat/engine/detail/log.hpp"
+#include "randomcat/engine/graphics/detail/default_vertex.hpp"
+#include "randomcat/engine/graphics/detail/gl_error_guard.hpp"
 
 namespace randomcat::engine::graphics {
     namespace shader_detail {

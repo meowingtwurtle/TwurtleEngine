@@ -5,7 +5,7 @@
 
 #include <GL/glew.h>
 
-#include <randomcat/engine/detail/log.hpp>
+#include "randomcat/engine/detail/log.hpp"
 
 namespace randomcat::engine::graphics::gl_detail {
     class gl_error_guard {

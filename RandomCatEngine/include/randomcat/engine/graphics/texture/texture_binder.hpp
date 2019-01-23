@@ -2,9 +2,9 @@
 
 #include <GL/glew.h>
 
-#include <randomcat/engine/graphics/detail/gl_error_guard.hpp>
-#include <randomcat/engine/graphics/detail/raii_wrappers/texture_raii.hpp>
-#include <randomcat/engine/graphics/texture/texture_manager.hpp>
+#include "randomcat/engine/graphics/detail/gl_error_guard.hpp"
+#include "randomcat/engine/graphics/detail/raii_wrappers/texture_raii.hpp"
+#include "randomcat/engine/graphics/texture/texture_manager.hpp"
 
 namespace randomcat::engine::graphics::texture {
     struct texture_array {

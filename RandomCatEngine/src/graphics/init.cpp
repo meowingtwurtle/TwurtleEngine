@@ -1,8 +1,9 @@
+#include "randomcat/engine/graphics/init.hpp"
+
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
 
-#include <randomcat/engine/detail/log.hpp>
-#include <randomcat/engine/graphics/init.hpp>
+#include "randomcat/engine/detail/log.hpp"
 
 namespace randomcat::engine::graphics {
     namespace {

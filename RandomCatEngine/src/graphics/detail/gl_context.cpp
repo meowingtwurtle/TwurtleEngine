@@ -1,12 +1,13 @@
+#include "randomcat/engine/graphics/detail/gl_context.hpp"
+
 #include <stdexcept>
 #include <string>
 
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
 
-#include <randomcat/engine/detail/log.hpp>
-#include <randomcat/engine/graphics/detail/gl_context.hpp>
-#include <randomcat/engine/graphics/window.hpp>
+#include "randomcat/engine/detail/log.hpp"
+#include "randomcat/engine/graphics/window.hpp"
 
 namespace randomcat::engine::graphics::gl_detail {
     namespace {

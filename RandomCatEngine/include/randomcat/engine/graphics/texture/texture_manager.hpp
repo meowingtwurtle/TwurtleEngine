@@ -4,7 +4,7 @@
 #include <string>
 #include <unordered_map>
 
-#include <randomcat/engine/detail/tag_exception.hpp>
+#include "randomcat/engine/detail/tag_exception.hpp"
 
 namespace randomcat::engine::graphics::texture {
     class texture {

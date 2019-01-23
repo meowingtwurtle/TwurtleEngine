@@ -3,7 +3,7 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
-#include <randomcat/engine/graphics/detail/gl_error_guard.hpp>
+#include "randomcat/engine/graphics/detail/gl_error_guard.hpp"
 
 namespace randomcat::engine::graphics {
     /// Floats should be between 0 and 1

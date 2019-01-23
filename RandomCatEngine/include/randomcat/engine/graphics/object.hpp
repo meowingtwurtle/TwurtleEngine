@@ -4,7 +4,7 @@
 
 #include <glm/glm.hpp>
 
-#include <randomcat/engine/graphics/detail/default_vertex.hpp>
+#include "randomcat/engine/graphics/detail/default_vertex.hpp"
 
 namespace randomcat::engine::graphics {
     namespace object_detail {

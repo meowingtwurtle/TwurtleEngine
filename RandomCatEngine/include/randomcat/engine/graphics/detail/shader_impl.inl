@@ -1,6 +1,6 @@
 #pragma once
 
-#include <randomcat/engine/graphics/detail/gl_error_guard.hpp>
+#include "randomcat/engine/graphics/detail/gl_error_guard.hpp"
 
 namespace randomcat::engine::graphics {
     namespace shader_detail {

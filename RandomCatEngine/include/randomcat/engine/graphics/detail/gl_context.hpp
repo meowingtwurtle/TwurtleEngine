@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <randomcat/engine/detail/tag_exception.hpp>
+#include "randomcat/engine/detail/tag_exception.hpp"
 
 namespace randomcat::engine::graphics {
     class window;

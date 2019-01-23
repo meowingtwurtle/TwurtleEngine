@@ -2,8 +2,8 @@
 
 #include <GL/glew.h>
 
-#include <randomcat/engine/graphics/detail/gl_error_guard.hpp>
-#include <randomcat/engine/graphics/detail/raii_wrappers/opengl_raii_id.hpp>
+#include "randomcat/engine/graphics/detail/gl_error_guard.hpp"
+#include "randomcat/engine/graphics/detail/raii_wrappers/opengl_raii_id.hpp"
 
 namespace randomcat::engine::graphics::gl_raii_detail {
     inline decltype(auto) make_vao() noexcept {
