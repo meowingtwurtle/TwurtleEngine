@@ -109,22 +109,16 @@ namespace randomcat::engine::graphics {
         GLfloat result[16];
         glGetnUniformfv(program(), get_uniform_location(_name), 16, result);
 
-        return glm::mat4{result[0],
-                         result[1],
-                         result[2],
-                         result[3],
-                         result[4],
-                         result[5],
-                         result[6],
-                         result[7],
-                         result[8],
-                         result[9],
-                         result[10],
-                         result[11],
-                         result[12],
-                         result[13],
-                         result[14],
-                         result[15]};
+        // clang-format off
+
+        return glm::mat4{
+            result[0], result[1], result[2], result[3],
+            result[4], result[5], result[6], result[7],
+            result[8], result[9], result[10], result[11],
+            result[12], result[13], result[14], result[15]
+        };
+
+        // clang-format on
     }
 
     void shader_uniform_manager::set_bool(std::string const& _name, bool _value) {
