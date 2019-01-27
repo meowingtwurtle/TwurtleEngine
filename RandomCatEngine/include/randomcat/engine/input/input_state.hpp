@@ -42,7 +42,7 @@ namespace randomcat::engine::input {
         void set_key_up(keycode _key) noexcept { m_map[_key] = key_state::up; }
 
         void down_to_held() noexcept {
-            for (auto&& entry : m_map) {
+            for (auto& entry : m_map) {
                 if (entry.second == key_state::down) entry.second = key_state::held;
             }
         }
