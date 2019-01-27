@@ -9,7 +9,7 @@
 namespace randomcat::engine::graphics::texture {
     texture::underlying::~underlying() noexcept { stbi_image_free(m_data); }
 
-    texture const& texture_manager::load_texture(std::string _path) {
+    texture const& texture_manager::load_texture(std::string const& _path) {
         auto it = m_textureMap.find(_path);
         if (it != m_textureMap.end()) return it->second;
 
