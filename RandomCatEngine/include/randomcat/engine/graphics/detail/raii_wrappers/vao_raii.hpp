@@ -21,4 +21,5 @@ namespace randomcat::engine::graphics::gl_raii_detail {
     }
 
     using unique_vao_id = unique_opengl_raii_id<make_vao, destroy_vao>;
+    using shared_vao_id = shared_opengl_raii_id<make_vao, destroy_vao>;
 }    // namespace randomcat::engine::graphics::gl_raii_detail
