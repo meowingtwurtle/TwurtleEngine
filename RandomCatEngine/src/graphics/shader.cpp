@@ -21,7 +21,7 @@ namespace randomcat::engine::graphics {
     using gl_raii_detail::shared_program_id;
     using gl_raii_detail::unique_shader_id;
 
-    const_shader_uniform_manager::active_lock::active_lock(gl_raii_detail::shared_program_id const& _programID) noexcept
+    shader_detail::program_active_lock::program_active_lock(gl_raii_detail::shared_program_id const& _programID) noexcept
     : m_programID(_programID) {
         auto oldActiveShader = get_active_program();
         if (m_programID.value() != oldActiveShader) {
@@ -30,11 +30,11 @@ namespace randomcat::engine::graphics {
         }
     }
 
-    const_shader_uniform_manager::active_lock::~active_lock() noexcept {
+    shader_detail::program_active_lock::~program_active_lock() noexcept {
         if (m_oldID.has_value()) set_active_program(*m_oldID);
     }
 
-    GLuint const_shader_uniform_manager::active_lock::get_active_program() noexcept {
+    GLuint shader_detail::program_active_lock::get_active_program() noexcept {
         RC_GL_ERROR_GUARD("getting active program");
 
         GLint value;
@@ -42,117 +42,9 @@ namespace randomcat::engine::graphics {
         return static_cast<uint>(value);
     }
 
-    void const_shader_uniform_manager::active_lock::set_active_program(GLuint _id) noexcept {
+    void shader_detail::program_active_lock::set_active_program(GLuint _id) noexcept {
         RC_GL_ERROR_GUARD("activating program");
 
         glUseProgram(_id);
-    }
-
-    GLint const_shader_uniform_manager::get_uniform_location(std::string const& _name) const {
-        RC_GL_ERROR_GUARD("getting uniform location");
-
-        auto loc = glGetUniformLocation(program(), _name.c_str());
-        if (loc == -1) throw shader_no_such_uniform_error("No such uniform: " + _name);
-
-        return loc;
-    }
-
-    bool const_shader_uniform_manager::get_bool(std::string const& _name) const {
-        RC_GL_ERROR_GUARD("getting bool uniform");
-
-        auto l = make_active_lock();
-
-        GLint result;
-        glGetnUniformiv(program(), get_uniform_location(_name), 1, &result);
-
-        return static_cast<bool>(result);
-    }
-
-    int const_shader_uniform_manager::get_int(std::string const& _name) const {
-        RC_GL_ERROR_GUARD("getting int uniform");
-
-        auto l = make_active_lock();
-
-        GLint result;
-        glGetnUniformiv(program(), get_uniform_location(_name), 1, &result);
-
-        return result;
-    }
-
-    float const_shader_uniform_manager::get_float(std::string const& _name) const {
-        RC_GL_ERROR_GUARD("getting float uniform");
-
-        auto l = make_active_lock();
-
-        GLfloat result;
-        glGetnUniformfv(program(), get_uniform_location(_name), 1, &result);
-
-        return result;
-    }
-
-    glm::vec3 const_shader_uniform_manager::get_vec3(std::string const& _name) const {
-        RC_GL_ERROR_GUARD("getting vec3 uniform");
-
-        auto l = make_active_lock();
-
-        GLfloat result[3];
-        glGetnUniformfv(program(), get_uniform_location(_name), 3, result);
-
-        return glm::vec3(result[0], result[1], result[2]);
-    }
-
-    glm::mat4 const_shader_uniform_manager::get_mat4(std::string const& _name) const {
-        RC_GL_ERROR_GUARD("getting mat4 uniform");
-
-        auto l = make_active_lock();
-
-        GLfloat result[16];
-        glGetnUniformfv(program(), get_uniform_location(_name), 16, result);
-
-        // clang-format off
-
-        return glm::mat4{
-            result[0], result[1], result[2], result[3],
-            result[4], result[5], result[6], result[7],
-            result[8], result[9], result[10], result[11],
-            result[12], result[13], result[14], result[15]
-        };
-
-        // clang-format on
-    }
-
-    void shader_uniform_manager::set_bool(std::string const& _name, bool _value) {
-        RC_GL_ERROR_GUARD("setting bool uniform");
-
-        auto l = make_active_lock();
-        glUniform1i(get_uniform_location(_name), _value);
-    }
-
-    void shader_uniform_manager::set_int(std::string const& _name, int _value) {
-        RC_GL_ERROR_GUARD("setting int uniform");
-
-        auto l = make_active_lock();
-        glUniform1i(get_uniform_location(_name), _value);
-    }
-
-    void shader_uniform_manager::set_float(std::string const& _name, float _value) {
-        RC_GL_ERROR_GUARD("setting float uniform");
-
-        auto l = make_active_lock();
-        glUniform1f(get_uniform_location(_name), _value);
-    }
-
-    void shader_uniform_manager::set_vec3(std::string const& _name, glm::vec3 const& _value) {
-        RC_GL_ERROR_GUARD("setting vec3 uniform");
-
-        auto l = make_active_lock();
-        glUniform3fv(get_uniform_location(_name), 1, reinterpret_cast<float const*>(&_value));
-    }
-
-    void shader_uniform_manager::set_mat4(std::string const& _name, glm::mat4 const& _value) {
-        RC_GL_ERROR_GUARD("setting mat4 uniform");
-
-        auto l = make_active_lock();
-        glUniformMatrix4fv(get_uniform_location(_name), 1, false, reinterpret_cast<float const*>(&_value));
     }
 }    // namespace randomcat::engine::graphics

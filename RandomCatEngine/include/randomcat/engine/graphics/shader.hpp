@@ -19,11 +19,40 @@ namespace randomcat::engine::graphics {
     namespace shader_detail {
         struct shader_no_such_uniform_error_tag {};
     }    // namespace shader_detail
+
     using shader_no_such_uniform_error = util_detail::tag_exception<shader_detail::shader_no_such_uniform_error_tag>;
 
+    template<typename... Ts>
+    using uniform_capabilities = type_container::type_list<Ts...>;
+
+    using uniform_no_capabilities = type_container::empty_type_list;
+
+    namespace shader_detail {
+        class program_active_lock {
+        public:
+            program_active_lock(program_active_lock const&) = delete;
+            program_active_lock(program_active_lock&&) = delete;
+
+            explicit program_active_lock(gl_raii_detail::shared_program_id const& _programID) noexcept;
+            ~program_active_lock() noexcept;
+
+        private:
+            static GLuint get_active_program() noexcept;
+            static void set_active_program(GLuint _id) noexcept;
+
+            std::optional<GLuint> m_oldID = std::nullopt;
+            gl_raii_detail::shared_program_id const& m_programID;
+        };
+    }    // namespace shader_detail
+
+    template<typename Capabilities = uniform_no_capabilities>
     class const_shader_uniform_manager {
     public:
         explicit const_shader_uniform_manager(gl_raii_detail::shared_program_id _programID) noexcept : m_programID(std::move(_programID)) {}
+
+        template<typename OtherCapabilities, typename = std::enable_if_t<type_container::type_list_is_sub_list_of_v<Capabilities, OtherCapabilities>>>
+        /* implicit */ const_shader_uniform_manager(const_shader_uniform_manager<OtherCapabilities> const& _other)
+        : const_shader_uniform_manager(_other.program()) {}
 
         // These functions will re-activate the previous shader after completion.
         // These functions will throw shader_no_such_uniform_error if the referenced
@@ -35,6 +64,11 @@ namespace randomcat::engine::graphics {
         glm::vec3 get_vec3(std::string const& _name) const noexcept(!"Throws if uniform not found");
         glm::mat4 get_mat4(std::string const& _name) const noexcept(!"Throws if uniform not found");
 
+        template<typename Wrapper>
+        Wrapper as() const noexcept(noexcept(Wrapper(*this))) {
+            return Wrapper(*this);
+        }
+
     protected:
         GLint get_uniform_location(std::string const& _name) const noexcept(!"Throws if uniform not found");
         gl_raii_detail::shared_program_id program() const noexcept { return m_programID; }
@@ -42,30 +76,28 @@ namespace randomcat::engine::graphics {
     private:
         gl_raii_detail::shared_program_id m_programID;
 
-        class active_lock {
-        public:
-            active_lock(active_lock const&) = delete;
-            active_lock(active_lock&&) = delete;
-
-            explicit active_lock(gl_raii_detail::shared_program_id const& _programID) noexcept;
-            ~active_lock() noexcept;
-
-        private:
-            static GLuint get_active_program() noexcept;
-            static void set_active_program(GLuint _id) noexcept;
-
-            std::optional<GLuint> m_oldID = std::nullopt;
-            gl_raii_detail::shared_program_id const& m_programID;
-        };
-
     protected:
-        active_lock make_active_lock() const noexcept { return active_lock(m_programID); }
+        auto make_active_lock() const noexcept { return shader_detail::program_active_lock(m_programID); }
+
+        template<typename>
+        friend class const_shader_uniform_manager;
     };
 
-    class shader_uniform_manager : public const_shader_uniform_manager {
+    template<typename Capabilities = uniform_no_capabilities>
+    class shader_uniform_manager : public const_shader_uniform_manager<Capabilities> {
     public:
         explicit shader_uniform_manager(gl_raii_detail::shared_program_id _programID) noexcept
-        : const_shader_uniform_manager(std::move(_programID)) {}
+        : const_shader_uniform_manager<Capabilities>(std::move(_programID)) {}
+
+        template<typename OtherCapabilities, typename = std::enable_if_t<type_container::type_list_is_sub_list_of_v<Capabilities, OtherCapabilities>>>
+        /* implicit */ shader_uniform_manager(shader_uniform_manager<OtherCapabilities> const& _other)
+        : shader_uniform_manager(_other.program()) {}
+
+        template<typename OtherCapabilities, typename = std::enable_if_t<type_container::type_list_is_sub_list_of_v<Capabilities, OtherCapabilities>>>
+        /* implicit */
+        operator const_shader_uniform_manager<OtherCapabilities>() const {
+            return const_shader_uniform_manager<OtherCapabilities>(this->program());
+        }
 
         // These functions will re-activate the previous shader after completion.
         // These functions will throw shader_no_such_uniform_error if the referenced
@@ -76,6 +108,19 @@ namespace randomcat::engine::graphics {
         void set_float(std::string const& _name, float _value) noexcept(!"Throws if uniform not found");
         void set_vec3(std::string const& _name, glm::vec3 const& _value) noexcept(!"Throws if uniform not found");
         void set_mat4(std::string const& _name, glm::mat4 const& _value) noexcept(!"Throws if uniform not found");
+
+        template<typename Wrapper>
+        Wrapper as() noexcept(noexcept(Wrapper(*this))) {
+            return Wrapper(*this);
+        }
+
+        template<typename Wrapper>
+        Wrapper as() const noexcept(noexcept(Wrapper(const_shader_uniform_manager(*this)))) {
+            return Wrapper(const_shader_uniform_manager(*this));
+        }
+
+        template<typename>
+        friend class shader_uniform_manager;
     };
 
     namespace shader_detail {
@@ -92,8 +137,11 @@ namespace randomcat::engine::graphics {
     class shader {
     public:
         static_assert(type_container::is_type_list_v<UniformCapabilities>, "UniformCapabilities must be a type_list");
+        static_assert(not type_container::type_list_has_duplicates_v<UniformCapabilities>, "All UniformCapabilities should be distinct");
 
         using vertex = Vertex;
+        using uniform_manager = shader_uniform_manager<UniformCapabilities>;
+        using const_uniform_manager = shader_uniform_manager<UniformCapabilities>;
 
         shader(shader const&) = delete;
         shader(shader&&) noexcept = default;
@@ -113,10 +161,10 @@ namespace randomcat::engine::graphics {
         bool operator==(shader const& _other) const noexcept { return program() == _other.program(); }
         bool operator!=(shader const& _other) const noexcept { return !(*this == _other); }
 
-        shader_uniform_manager uniforms() noexcept { return shader_uniform_manager(program()); }
+        uniform_manager uniforms() noexcept { return uniform_manager(program()); }
         decltype(auto) uniforms() const noexcept { return const_uniforms(); }
 
-        const_shader_uniform_manager const_uniforms() const noexcept { return const_shader_uniform_manager(program()); }
+        const_uniform_manager const_uniforms() const noexcept { return const_shader_uniform_manager(program()); }
 
         template<typename NewVertex>
         shader<NewVertex, UniformCapabilities> reinterpret_vertex_and_inputs(std::vector<shader_input> _inputs) const noexcept;
@@ -128,14 +176,14 @@ namespace randomcat::engine::graphics {
 
         shader clone() const noexcept;
 
-        template<typename UniformManager, typename = std::enable_if_t<type_container::type_list_contains_v<UniformCapabilities, UniformManager>>>
-        UniformManager uniforms_as() noexcept(noexcept(UniformManager(uniforms()))) {
-            return UniformManager(uniforms());
+        template<typename UniformWrapper, typename = std::enable_if_t<type_container::type_list_contains_v<UniformCapabilities, UniformWrapper>>>
+        UniformWrapper uniforms_as() noexcept(noexcept(UniformWrapper(uniforms()))) {
+            return uniforms().template as<UniformWrapper>();
         }
 
-        template<typename UniformManager, typename = std::enable_if_t<type_container::type_list_contains_v<UniformCapabilities, UniformManager>>>
-        UniformManager uniforms_as() const noexcept(noexcept(UniformManager(uniforms()))) {
-            return UniformManager(const_uniforms());
+        template<typename UniformWrapper, typename = std::enable_if_t<type_container::type_list_contains_v<UniformCapabilities, UniformWrapper>>>
+        UniformWrapper uniforms_as() const noexcept(noexcept(const_uniforms().template as<UniformWrapper>())) {
+            return const_uniforms().template as<UniformWrapper>();
         }
 
     protected:
@@ -147,6 +195,9 @@ namespace randomcat::engine::graphics {
     private:
         gl_raii_detail::shared_program_id m_programID;
         std::vector<shader_input> m_inputs;
+
+        template<typename, typename>
+        friend class shader;
 
         template<typename, typename>
         friend class shader_view;
@@ -170,7 +221,9 @@ namespace randomcat::engine::graphics {
 
         std::vector<shader_input> inputs() const noexcept { return m_inputs; }
 
-        const_shader_uniform_manager uniforms() const noexcept { return const_shader_uniform_manager(m_programID); }
+        using const_uniform_manager = shader_uniform_manager<UniformCapabilities>;
+
+        const_uniform_manager uniforms() const noexcept { return const_shader_uniform_manager(m_programID); }
         decltype(auto) const_uniforms() const noexcept { return uniforms(); }
 
         template<typename NewVertex>
@@ -184,8 +237,8 @@ namespace randomcat::engine::graphics {
         shader<Vertex, UniformCapabilities> clone() const noexcept;
 
         template<typename UniformManager, typename = std::enable_if_t<type_container::type_list_contains_v<UniformCapabilities, UniformManager>>>
-        UniformManager uniforms_as() const noexcept(noexcept(UniformManager(uniforms()))) {
-            return UniformManager(const_uniforms());
+        UniformManager uniforms_as() const noexcept(noexcept(const_uniforms().template as<UniformManager>())) {
+            return const_uniforms().template as<UniformManager>();
         }
 
     protected:

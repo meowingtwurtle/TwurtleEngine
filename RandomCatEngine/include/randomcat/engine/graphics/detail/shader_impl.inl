@@ -138,4 +138,123 @@ namespace randomcat::engine::graphics {
     shader<Vertex, Capabilities> shader_view<Vertex, Capabilities>::clone() const noexcept {
         return reinterpret_vertex<Vertex>();
     }
+
+    template<typename Capabilities>
+    GLint const_shader_uniform_manager<Capabilities>::get_uniform_location(std::string const& _name) const {
+        RC_GL_ERROR_GUARD("getting uniform location");
+
+        auto loc = glGetUniformLocation(program(), _name.c_str());
+        if (loc == -1) throw shader_no_such_uniform_error("No such uniform: " + _name);
+
+        return loc;
+    }
+
+    template<typename Capabilities>
+    bool const_shader_uniform_manager<Capabilities>::get_bool(std::string const& _name) const {
+        RC_GL_ERROR_GUARD("getting bool uniform");
+
+        auto l = make_active_lock();
+
+        GLint result;
+        glGetnUniformiv(program(), get_uniform_location(_name), 1, &result);
+
+        return static_cast<bool>(result);
+    }
+
+    template<typename Capabilities>
+    int const_shader_uniform_manager<Capabilities>::get_int(std::string const& _name) const {
+        RC_GL_ERROR_GUARD("getting int uniform");
+
+        auto l = make_active_lock();
+
+        GLint result;
+        glGetnUniformiv(program(), get_uniform_location(_name), 1, &result);
+
+        return result;
+    }
+
+    template<typename Capabilities>
+    float const_shader_uniform_manager<Capabilities>::get_float(std::string const& _name) const {
+        RC_GL_ERROR_GUARD("getting float uniform");
+
+        auto l = make_active_lock();
+
+        GLfloat result;
+        glGetnUniformfv(program(), get_uniform_location(_name), 1, &result);
+
+        return result;
+    }
+
+    template<typename Capabilities>
+    glm::vec3 const_shader_uniform_manager<Capabilities>::get_vec3(std::string const& _name) const {
+        RC_GL_ERROR_GUARD("getting vec3 uniform");
+
+        auto l = make_active_lock();
+
+        GLfloat result[3];
+        glGetnUniformfv(program(), get_uniform_location(_name), 3, result);
+
+        return glm::vec3(result[0], result[1], result[2]);
+    }
+
+    template<typename Capabilities>
+    glm::mat4 const_shader_uniform_manager<Capabilities>::get_mat4(std::string const& _name) const {
+        RC_GL_ERROR_GUARD("getting mat4 uniform");
+
+        auto l = make_active_lock();
+
+        GLfloat result[16];
+        glGetnUniformfv(program(), get_uniform_location(_name), 16, result);
+
+        // clang-format off
+
+        return glm::mat4{
+            result[0], result[1], result[2], result[3],
+            result[4], result[5], result[6], result[7],
+            result[8], result[9], result[10], result[11],
+            result[12], result[13], result[14], result[15]
+        };
+
+        // clang-format on
+    }
+
+    template<typename Capabilities>
+    void shader_uniform_manager<Capabilities>::set_bool(std::string const& _name, bool _value) {
+        RC_GL_ERROR_GUARD("setting bool uniform");
+
+        auto l = this->make_active_lock();
+        glUniform1i(this->get_uniform_location(_name), _value);
+    }
+
+    template<typename Capabilities>
+    void shader_uniform_manager<Capabilities>::set_int(std::string const& _name, int _value) {
+        RC_GL_ERROR_GUARD("setting int uniform");
+
+        auto l = this->make_active_lock();
+        glUniform1i(this->get_uniform_location(_name), _value);
+    }
+
+    template<typename Capabilities>
+    void shader_uniform_manager<Capabilities>::set_float(std::string const& _name, float _value) {
+        RC_GL_ERROR_GUARD("setting float uniform");
+
+        auto l = this->make_active_lock();
+        glUniform1f(this->get_uniform_location(_name), _value);
+    }
+
+    template<typename Capabilities>
+    void shader_uniform_manager<Capabilities>::set_vec3(std::string const& _name, glm::vec3 const& _value) {
+        RC_GL_ERROR_GUARD("setting vec3 uniform");
+
+        auto l = this->make_active_lock();
+        glUniform3fv(this->get_uniform_location(_name), 1, reinterpret_cast<float const*>(&_value));
+    }
+
+    template<typename Capabilities>
+    void shader_uniform_manager<Capabilities>::set_mat4(std::string const& _name, glm::mat4 const& _value) {
+        RC_GL_ERROR_GUARD("setting mat4 uniform");
+
+        auto l = this->make_active_lock();
+        glUniformMatrix4fv(this->get_uniform_location(_name), 1, false, reinterpret_cast<float const*>(&_value));
+    }
 }    // namespace randomcat::engine::graphics

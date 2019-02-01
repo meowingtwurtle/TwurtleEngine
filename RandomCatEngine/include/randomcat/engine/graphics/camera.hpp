@@ -23,13 +23,13 @@ namespace randomcat::engine::graphics {
     class camera {
     public:
         // State is indeterminate until update_state is called
-        explicit camera(shader_uniform_manager _uniforms) noexcept : m_uniforms(std::move(_uniforms)) {}
+        explicit camera(shader_uniform_manager<shader_capabilities<camera>> _uniforms) noexcept : m_uniforms(std::move(_uniforms)) {}
 
         void update(camera_state const& _state) noexcept;
 
         static shader<default_vertex, shader_capabilities<camera>> camera_shader();
 
     private:
-        shader_uniform_manager m_uniforms;
+        shader_uniform_manager<uniform_capabilities<camera>> m_uniforms;
     };
 }    // namespace randomcat::engine::graphics
