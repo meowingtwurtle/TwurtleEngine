@@ -3,6 +3,7 @@
 #include <chrono>
 #include <memory>
 
+#include "randomcat/engine/controller_timer.hpp"
 #include "randomcat/engine/graphics/global_gl_calls.hpp"
 #include "randomcat/engine/graphics/window.hpp"
 #include "randomcat/engine/init.hpp"
@@ -12,7 +13,7 @@ namespace randomcat::engine {
     class controller {
     public:
         explicit controller(std::string _windowTitle = "Twurtle Engine", int _windowWidth = 600, int _windowHeight = 600) noexcept
-        : m_window{std::move(_windowTitle), _windowWidth, _windowHeight}, m_startTime{fetch_current_raw_time()}, m_lastTickTime{m_startTime}, m_currentTickTime{m_startTime} {
+        : m_window{std::move(_windowTitle), _windowWidth, _windowHeight} {
             graphics::gl_detail::set_render_context(m_window);
             graphics::enable_depth_test();
         }
@@ -20,24 +21,15 @@ namespace randomcat::engine {
         controller(controller const&) = delete;
         controller(controller&&) = delete;
 
+        system_timer const& timer() const noexcept { return m_timer; }
+
         void tick() noexcept {
             fetch_sdl_events();
-
-            m_lastTickTime = std::move(m_currentTickTime);
-            m_currentTickTime = fetch_current_raw_time();
-
             graphics::clear_graphics();
+            m_timer.tick(fetch_current_raw_time());
         }
 
         input::input_state inputs() const noexcept { return m_currentInputState; }
-
-        std::chrono::milliseconds start_time() const noexcept { return m_startTime; }
-
-        std::chrono::milliseconds previous_time() const noexcept { return m_lastTickTime; }
-
-        std::chrono::milliseconds current_time() const noexcept { return m_currentTickTime; }
-
-        std::chrono::milliseconds delta_time() const noexcept { return current_time() - previous_time(); }
 
         template<typename _renderer_t, typename... _renderer_arg_t>
         void render(_renderer_t const& _renderer,
@@ -54,13 +46,11 @@ namespace randomcat::engine {
     private:
         graphics::window m_window;
 
-        std::chrono::milliseconds m_startTime;
-        std::chrono::milliseconds m_lastTickTime;
-        std::chrono::milliseconds m_currentTickTime;
-
         input::input_state m_currentInputState;
 
         bool m_quitReceived = false;
+
+        system_timer m_timer = system_timer{fetch_current_raw_time()};
 
         std::chrono::milliseconds fetch_current_raw_time() const noexcept { return std::chrono::milliseconds{SDL_GetTicks()}; }
 
