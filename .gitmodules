@@ -4,3 +4,6 @@
 [submodule "lib/randomcat_lib"]
 	path = lib/randomcat_lib
 	url = https://github.com/random-internet-cat/libraries.git
+[submodule "lib/GSL"]
+	path = lib/GSL
+	url = git@github.com:Microsoft/GSL.git
