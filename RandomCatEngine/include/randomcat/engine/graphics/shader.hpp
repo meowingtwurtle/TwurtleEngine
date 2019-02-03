@@ -147,7 +147,7 @@ namespace randomcat::engine::graphics {
         /* implicit */ shader(shader<Vertex, OtherCapabilities>&& _other) noexcept
         : m_programID(std::move(_other.program())), m_inputs(std::move(_other.inputs())) {}
 
-        explicit shader(char const* _vertex, char const* _fragment, std::vector<shader_input> _inputs) noexcept(!"Throws on error");
+        explicit shader(std::string_view _vertex, std::string_view _fragment, std::vector<shader_input> _inputs) noexcept(!"Throws on error");
 
         void make_active() const noexcept { shader_detail::activate_program(m_programID); }
 

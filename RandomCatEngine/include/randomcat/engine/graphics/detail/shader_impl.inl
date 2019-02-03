@@ -1,15 +1,21 @@
 #pragma once
 
+#include <gsl/gsl>
+
 #include "randomcat/engine/graphics/detail/gl_error_guard.hpp"
 
 namespace randomcat::engine::graphics {
     namespace shader_detail {
-        inline gl_raii_detail::unique_shader_id compile_shader(GLenum _type, char const* _source) noexcept(false) {
+        inline gl_raii_detail::unique_shader_id compile_shader(GLenum _type, std::string_view _source) noexcept(false) {
             RC_GL_ERROR_GUARD("compiling shader");
 
             auto shaderID = gl_raii_detail::unique_shader_id(_type);
 
-            glShaderSource(shaderID, 1, &_source, nullptr);
+            // Third argument: array of char const*, fourth argument: array of sizes of
+            // strings These arguments are given std::arrays of size 1 of the value then
+            // have the data pointer extracted
+            glShaderSource(shaderID, 1, std::array{_source.data()}.data(), std::array{gsl::narrow<GLint>(_source.size())}.data());
+
             glCompileShader(shaderID);
 
             int success = 0;
@@ -27,11 +33,11 @@ namespace randomcat::engine::graphics {
             return shaderID;
         }
 
-        inline decltype(auto) compile_vertex_shader(char const* _source) noexcept(noexcept(compile_shader(GL_VERTEX_SHADER, _source))) {
+        inline decltype(auto) compile_vertex_shader(std::string_view _source) noexcept(noexcept(compile_shader(GL_VERTEX_SHADER, _source))) {
             return compile_shader(GL_VERTEX_SHADER, _source);
         }
 
-        inline decltype(auto) compile_fragment_shader(char const* _source) noexcept(noexcept(compile_shader(GL_FRAGMENT_SHADER, _source))) {
+        inline decltype(auto) compile_fragment_shader(std::string_view _source) noexcept(noexcept(compile_shader(GL_FRAGMENT_SHADER, _source))) {
             return compile_shader(GL_FRAGMENT_SHADER, _source);
         }
 
@@ -74,7 +80,7 @@ namespace randomcat::engine::graphics {
     }    // namespace shader_detail
 
     template<typename Vertex, typename Capabilities>
-    shader<Vertex, Capabilities>::shader(char const* _vertex, char const* _fragment, std::vector<shader_input> _inputs)
+    shader<Vertex, Capabilities>::shader(std::string_view _vertex, std::string_view _fragment, std::vector<shader_input> _inputs)
     : shader(shader_detail::link_program(shader_detail::compile_vertex_shader(_vertex), shader_detail::compile_fragment_shader(_fragment)),
              std::move(_inputs)) {}
 
