@@ -42,12 +42,12 @@ namespace randomcat::engine::graphics {
         }
 
         template<typename... Shaders>
-        inline gl_raii_detail::shared_program_id link_program(Shaders const&... _shaders) noexcept(false) {
+        inline gl_raii_detail::unique_program_id link_program(Shaders const&... _shaders) noexcept(false) {
             static_assert((std::is_same_v<Shaders, gl_raii_detail::unique_shader_id> && ...), "Arguments must all be shader_ids");
 
             RC_GL_ERROR_GUARD("linking program");
 
-            gl_raii_detail::shared_program_id programID;
+            gl_raii_detail::unique_program_id programID;
 
             {
                 // Attach all shaders
