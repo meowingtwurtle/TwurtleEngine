@@ -103,20 +103,15 @@ namespace randomcat::engine::graphics {
         // These functions will throw shader_no_such_uniform_error if the referenced
         // uniform does not exist
 
-        void set_bool(std::string const& _name, bool _value) noexcept(!"Throws if uniform not found");
-        void set_int(std::string const& _name, int _value) noexcept(!"Throws if uniform not found");
-        void set_float(std::string const& _name, float _value) noexcept(!"Throws if uniform not found");
-        void set_vec3(std::string const& _name, glm::vec3 const& _value) noexcept(!"Throws if uniform not found");
-        void set_mat4(std::string const& _name, glm::mat4 const& _value) noexcept(!"Throws if uniform not found");
+        void set_bool(std::string const& _name, bool _value) const noexcept(!"Throws if uniform not found");
+        void set_int(std::string const& _name, int _value) const noexcept(!"Throws if uniform not found");
+        void set_float(std::string const& _name, float _value) const noexcept(!"Throws if uniform not found");
+        void set_vec3(std::string const& _name, glm::vec3 const& _value) const noexcept(!"Throws if uniform not found");
+        void set_mat4(std::string const& _name, glm::mat4 const& _value) const noexcept(!"Throws if uniform not found");
 
         template<typename Wrapper>
-        Wrapper as() noexcept(noexcept(Wrapper(*this))) {
+        Wrapper as() const noexcept(noexcept(Wrapper(*this))) {
             return Wrapper(*this);
-        }
-
-        template<typename Wrapper>
-        Wrapper as() const noexcept(noexcept(Wrapper(const_shader_uniform_manager(*this)))) {
-            return Wrapper(const_shader_uniform_manager(*this));
         }
 
         template<typename>

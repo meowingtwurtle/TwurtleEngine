@@ -219,7 +219,7 @@ namespace randomcat::engine::graphics {
     }
 
     template<typename Capabilities>
-    void shader_uniform_manager<Capabilities>::set_bool(std::string const& _name, bool _value) {
+    void shader_uniform_manager<Capabilities>::set_bool(std::string const& _name, bool _value) const {
         RC_GL_ERROR_GUARD("setting bool uniform");
 
         auto l = this->make_active_lock();
@@ -227,7 +227,7 @@ namespace randomcat::engine::graphics {
     }
 
     template<typename Capabilities>
-    void shader_uniform_manager<Capabilities>::set_int(std::string const& _name, int _value) {
+    void shader_uniform_manager<Capabilities>::set_int(std::string const& _name, int _value) const {
         RC_GL_ERROR_GUARD("setting int uniform");
 
         auto l = this->make_active_lock();
@@ -235,7 +235,7 @@ namespace randomcat::engine::graphics {
     }
 
     template<typename Capabilities>
-    void shader_uniform_manager<Capabilities>::set_float(std::string const& _name, float _value) {
+    void shader_uniform_manager<Capabilities>::set_float(std::string const& _name, float _value) const {
         RC_GL_ERROR_GUARD("setting float uniform");
 
         auto l = this->make_active_lock();
@@ -243,7 +243,7 @@ namespace randomcat::engine::graphics {
     }
 
     template<typename Capabilities>
-    void shader_uniform_manager<Capabilities>::set_vec3(std::string const& _name, glm::vec3 const& _value) {
+    void shader_uniform_manager<Capabilities>::set_vec3(std::string const& _name, glm::vec3 const& _value) const {
         RC_GL_ERROR_GUARD("setting vec3 uniform");
 
         auto l = this->make_active_lock();
@@ -251,7 +251,7 @@ namespace randomcat::engine::graphics {
     }
 
     template<typename Capabilities>
-    void shader_uniform_manager<Capabilities>::set_mat4(std::string const& _name, glm::mat4 const& _value) {
+    void shader_uniform_manager<Capabilities>::set_mat4(std::string const& _name, glm::mat4 const& _value) const {
         RC_GL_ERROR_GUARD("setting mat4 uniform");
 
         auto l = this->make_active_lock();
