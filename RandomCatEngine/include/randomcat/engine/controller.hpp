@@ -87,8 +87,7 @@ namespace randomcat::engine {
                         break;
                     }
 
-                    case SDL_QUIT:
-                    case SDL_WINDOWEVENT_CLOSE: {
+                    case SDL_QUIT: {
                         m_quitReceived = true;
 
                         break;
