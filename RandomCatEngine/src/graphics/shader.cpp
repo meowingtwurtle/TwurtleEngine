@@ -4,6 +4,7 @@
 #include <unordered_map>
 
 #include <GL/glew.h>
+#include <gsl/gsl>
 
 #include "randomcat/engine/detail/log.hpp"
 #include "randomcat/engine/graphics/detail/default_vertex.hpp"
@@ -39,7 +40,7 @@ namespace randomcat::engine::graphics {
 
         GLint value;
         glGetIntegerv(GL_CURRENT_PROGRAM, &value);
-        return static_cast<uint>(value);
+        return gsl::narrow<GLuint>(value);
     }
 
     void shader_detail::program_active_lock::set_active_program(GLuint _id) noexcept {
