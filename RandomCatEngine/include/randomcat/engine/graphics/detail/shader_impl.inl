@@ -146,7 +146,7 @@ namespace randomcat::engine::graphics {
     }
 
     template<typename Capabilities>
-    GLint const_shader_uniform_manager<Capabilities>::get_uniform_location(std::string const& _name) const {
+    GLint shader_uniform_reader<Capabilities>::get_uniform_location(std::string const& _name) const {
         RC_GL_ERROR_GUARD("getting uniform location");
 
         auto loc = glGetUniformLocation(program(), _name.c_str());
@@ -156,7 +156,7 @@ namespace randomcat::engine::graphics {
     }
 
     template<typename Capabilities>
-    bool const_shader_uniform_manager<Capabilities>::get_bool(std::string const& _name) const {
+    bool shader_uniform_reader<Capabilities>::get_bool(std::string const& _name) const {
         RC_GL_ERROR_GUARD("getting bool uniform");
 
         auto l = make_active_lock();
@@ -168,7 +168,7 @@ namespace randomcat::engine::graphics {
     }
 
     template<typename Capabilities>
-    int const_shader_uniform_manager<Capabilities>::get_int(std::string const& _name) const {
+    int shader_uniform_reader<Capabilities>::get_int(std::string const& _name) const {
         RC_GL_ERROR_GUARD("getting int uniform");
 
         auto l = make_active_lock();
@@ -180,7 +180,7 @@ namespace randomcat::engine::graphics {
     }
 
     template<typename Capabilities>
-    float const_shader_uniform_manager<Capabilities>::get_float(std::string const& _name) const {
+    float shader_uniform_reader<Capabilities>::get_float(std::string const& _name) const {
         RC_GL_ERROR_GUARD("getting float uniform");
 
         auto l = make_active_lock();
@@ -192,7 +192,7 @@ namespace randomcat::engine::graphics {
     }
 
     template<typename Capabilities>
-    glm::vec3 const_shader_uniform_manager<Capabilities>::get_vec3(std::string const& _name) const {
+    glm::vec3 shader_uniform_reader<Capabilities>::get_vec3(std::string const& _name) const {
         RC_GL_ERROR_GUARD("getting vec3 uniform");
 
         auto l = make_active_lock();
@@ -204,7 +204,7 @@ namespace randomcat::engine::graphics {
     }
 
     template<typename Capabilities>
-    glm::mat4 const_shader_uniform_manager<Capabilities>::get_mat4(std::string const& _name) const {
+    glm::mat4 shader_uniform_reader<Capabilities>::get_mat4(std::string const& _name) const {
         RC_GL_ERROR_GUARD("getting mat4 uniform");
 
         auto l = make_active_lock();
@@ -225,7 +225,7 @@ namespace randomcat::engine::graphics {
     }
 
     template<typename Capabilities>
-    void shader_uniform_manager<Capabilities>::set_bool(std::string const& _name, bool _value) const {
+    void shader_uniform_writer<Capabilities>::set_bool(std::string const& _name, bool _value) const {
         RC_GL_ERROR_GUARD("setting bool uniform");
 
         auto l = this->make_active_lock();
@@ -233,7 +233,7 @@ namespace randomcat::engine::graphics {
     }
 
     template<typename Capabilities>
-    void shader_uniform_manager<Capabilities>::set_int(std::string const& _name, int _value) const {
+    void shader_uniform_writer<Capabilities>::set_int(std::string const& _name, int _value) const {
         RC_GL_ERROR_GUARD("setting int uniform");
 
         auto l = this->make_active_lock();
@@ -241,7 +241,7 @@ namespace randomcat::engine::graphics {
     }
 
     template<typename Capabilities>
-    void shader_uniform_manager<Capabilities>::set_float(std::string const& _name, float _value) const {
+    void shader_uniform_writer<Capabilities>::set_float(std::string const& _name, float _value) const {
         RC_GL_ERROR_GUARD("setting float uniform");
 
         auto l = this->make_active_lock();
@@ -249,7 +249,7 @@ namespace randomcat::engine::graphics {
     }
 
     template<typename Capabilities>
-    void shader_uniform_manager<Capabilities>::set_vec3(std::string const& _name, glm::vec3 const& _value) const {
+    void shader_uniform_writer<Capabilities>::set_vec3(std::string const& _name, glm::vec3 const& _value) const {
         RC_GL_ERROR_GUARD("setting vec3 uniform");
 
         auto l = this->make_active_lock();
@@ -257,7 +257,7 @@ namespace randomcat::engine::graphics {
     }
 
     template<typename Capabilities>
-    void shader_uniform_manager<Capabilities>::set_mat4(std::string const& _name, glm::mat4 const& _value) const {
+    void shader_uniform_writer<Capabilities>::set_mat4(std::string const& _name, glm::mat4 const& _value) const {
         RC_GL_ERROR_GUARD("setting mat4 uniform");
 
         auto l = this->make_active_lock();

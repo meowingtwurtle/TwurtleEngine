@@ -47,8 +47,7 @@ namespace randomcat::engine::graphics {
                        {1, 2, GL_FLOAT, false, sizeof(default_vertex), reinterpret_cast<void*>(offsetof(default_vertex, texCoord))},
                        {2, 1, GL_INT, false, sizeof(default_vertex), reinterpret_cast<void*>(offsetof(default_vertex, layerNum))}});
 
-        shader_uniform_manager shaderUniforms = ourShader.uniforms();
-        shaderUniforms.set_mat4("camera", glm::mat4{1.0f});
+        ourShader.uniforms().set_mat4("camera", glm::mat4{1.0f});
 
         return ourShader;
     }
