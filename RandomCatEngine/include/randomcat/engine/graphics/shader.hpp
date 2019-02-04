@@ -22,6 +22,12 @@ namespace randomcat::engine::graphics {
 
     using shader_no_such_uniform_error = util_detail::tag_exception<shader_detail::shader_no_such_uniform_error_tag>;
 
+    namespace shader_detail {
+        template<typename Capabilities>
+        static auto constexpr valid_capabilities =
+            type_container::is_type_list_v<Capabilities> && not type_container::type_list_has_duplicates_v<Capabilities>;
+    }
+
     template<typename... Ts>
     using uniform_capabilities = type_container::type_list<Ts...>;
 
@@ -48,6 +54,8 @@ namespace randomcat::engine::graphics {
     template<typename Capabilities = uniform_no_capabilities>
     class const_shader_uniform_manager {
     public:
+        static_assert(shader_detail::valid_capabilities<Capabilities>, "Capabilities must be valid");
+
         explicit const_shader_uniform_manager(gl_raii_detail::shared_program_id _programID) noexcept : m_programID(std::move(_programID)) {}
 
         template<typename OtherCapabilities, typename = std::enable_if_t<type_container::type_list_is_sub_list_of_v<Capabilities, OtherCapabilities>>>
@@ -86,6 +94,8 @@ namespace randomcat::engine::graphics {
     template<typename Capabilities = uniform_no_capabilities>
     class shader_uniform_manager : public const_shader_uniform_manager<Capabilities> {
     public:
+        static_assert(shader_detail::valid_capabilities<Capabilities>, "Capabilities must be valid");
+
         explicit shader_uniform_manager(gl_raii_detail::shared_program_id _programID) noexcept
         : const_shader_uniform_manager<Capabilities>(std::move(_programID)) {}
 
@@ -124,15 +134,14 @@ namespace randomcat::engine::graphics {
     using shader_init_error = util_detail::tag_exception<shader_detail::shader_init_error_tag>;
 
     template<typename... Ts>
-    using shader_capabilities = type_container::type_list<Ts...>;
+    using shader_capabilities = uniform_capabilities<Ts...>;
 
-    using shader_no_capabilities = type_container::empty_type_list;
+    using shader_no_capabilities = uniform_no_capabilities;
 
     template<typename Vertex, typename UniformCapabilities = shader_no_capabilities>
     class shader {
     public:
-        static_assert(type_container::is_type_list_v<UniformCapabilities>, "UniformCapabilities must be a type_list");
-        static_assert(not type_container::type_list_has_duplicates_v<UniformCapabilities>, "All UniformCapabilities should be distinct");
+        static_assert(shader_detail::valid_capabilities<UniformCapabilities>, "UniformCapabilities must be valid");
 
         using vertex = Vertex;
         using uniform_manager = shader_uniform_manager<UniformCapabilities>;
@@ -201,6 +210,8 @@ namespace randomcat::engine::graphics {
     template<typename Vertex, typename UniformCapabilities = shader_no_capabilities>
     class shader_view {
     public:
+        static_assert(shader_detail::valid_capabilities<UniformCapabilities>, "UniformCapabilities must be valid");
+
         template<typename OtherCapabilities, typename = std::enable_if_t<type_container::type_list_is_sub_list_of_v<UniformCapabilities, OtherCapabilities>>>
         /* implicit */ shader_view(shader<Vertex, OtherCapabilities> const& _other) noexcept(!"Copying vector")
         : shader_view(_other.program(), _other.inputs()) {}
