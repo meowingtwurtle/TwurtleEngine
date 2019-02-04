@@ -109,7 +109,9 @@ namespace randomcat::engine::log {
 
     inline void log(log_type _type, std::string_view _message) noexcept { log(std::move(_type)) << std::move(_message); }
 
-    inline void set_log_stream(std::ostream& _stream) noexcept { log_detail::g_logStream = std::ref(_stream); }
+    inline void set_log_output(std::ostream& _stream) noexcept { log_detail::g_logStream = std::ref(_stream); }
+
+    inline std::ostream& raw_log() noexcept { return log_detail::g_logStream; }
 
     inline auto info = log(log_type::INFO);
     inline auto warn = log(log_type::WARN);
