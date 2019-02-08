@@ -62,6 +62,31 @@ namespace randomcat::engine::graphics {
         std::array<render_triangle_texture, 1> m_triangle;
     };
 
+    class render_object_rectangle {
+    public:
+        explicit render_object_rectangle(glm::vec3 _topLeft, glm::vec3 _topRight, glm::vec3 _bottomLeft, unsigned int _texture) noexcept
+        : m_triangles(gen_triangles(std::move(_topLeft), std::move(_topRight), std::move(_bottomLeft), std::move(_texture))) {}
+
+        auto const& components() const noexcept { return m_triangles; }
+
+        static auto constexpr sub_extractor_f = object_detail::component_extractor_f<render_object_rectangle>;
+
+    private:
+        static std::array<render_triangle_texture, 2> gen_triangles(glm::vec3 _topLeft, glm::vec3 _topRight, glm::vec3 _bottomLeft, unsigned int _texture) noexcept {
+            auto bottomRight = _bottomLeft + (_topRight - _topLeft);
+
+            auto bottomLeftV = default_vertex{_bottomLeft, {0, 1}, _texture};
+            auto bottomRightV = default_vertex{bottomRight, {1, 1}, _texture};
+            auto topLeftV = default_vertex{_topLeft, {0, 0}, _texture};
+            auto topRightV = default_vertex{_topRight, {1, 0}, _texture};
+
+            return {render_triangle_texture{render_triangle{topRightV, topLeftV, bottomRightV}, _texture},
+                    render_triangle_texture{render_triangle{bottomLeftV, bottomRightV, topLeftV}, _texture}};
+        }
+
+        std::array<render_triangle_texture, 2> m_triangles;
+    };
+
     class render_object_rect_prism {
     public:
         explicit render_object_rect_prism(glm::vec3 _center, glm::vec3 _sides, unsigned int _texture) noexcept
@@ -74,60 +99,58 @@ namespace randomcat::engine::graphics {
                                           unsigned int _texLY,
                                           unsigned int _texHZ,
                                           unsigned int _texLZ) noexcept
-        : m_triangles(genTriangles(_center, _sides, _texHX, _texLX, _texHY, _texLY, _texHZ, _texLZ)), m_center(_center) {}
+        : m_rectangles(genTriangles(_center, _sides, _texHX, _texLX, _texHY, _texLY, _texHZ, _texLZ)), m_center(_center) {}
 
-        std::array<render_triangle_texture, 12> genTriangles(glm::vec3 _center,
-                                                             glm::vec3 _sides,
-                                                             unsigned int _texHX,
-                                                             unsigned int _texLX,
-                                                             unsigned int _texHY,
-                                                             unsigned int _texLY,
-                                                             unsigned int _texHZ,
-                                                             unsigned int _texLZ) const {
-            auto const makeTriangle = [&](glm::vec3 posA, glm::vec3 posB, glm::vec3 posC, unsigned int tex, auto const& toTexCoord) {
-                return render_triangle_texture{render_triangle{default_vertex{_center + (posA * _sides), toTexCoord(posA), tex},
-                                                               default_vertex{_center + (posB * _sides), toTexCoord(posB), tex},
-                                                               {_center + (posC * _sides), toTexCoord(posC), tex}},
-                                               tex};
-            };
+        std::array<render_object_rectangle, 6> genTriangles(glm::vec3 _center,
+                                                            glm::vec3 _sides,
+                                                            unsigned int _texHX,
+                                                            unsigned int _texLX,
+                                                            unsigned int _texHY,
+                                                            unsigned int _texLY,
+                                                            unsigned int _texHZ,
+                                                            unsigned int _texLZ) const noexcept {
+            auto vecHX = glm::vec3{_sides.x / 2, 0, 0};
+            auto vecHY = glm::vec3{0, _sides.y / 2, 0};
+            auto vecHZ = glm::vec3{0, 0, _sides.z / 2};
+            auto vecLX = -vecHX;
+            auto vecLY = -vecHY;
+            auto vecLZ = -vecHZ;
 
-            auto const dropHX = [](glm::vec3 pos) -> glm::vec2 { return glm::vec2{pos.y - 0.5, pos.z - 0.5} * 1.0f; };
-            auto const dropHY = [](glm::vec3 pos) -> glm::vec2 { return glm::vec2{pos.x - 0.5, pos.z - 0.5} * 1.0f; };
-            auto const dropHZ = [](glm::vec3 pos) -> glm::vec2 { return glm::vec2{pos.x - 0.5, pos.y - 0.5} * 1.0f; };
+            // Sorry for the macro, takes L and H (low and high) and generates corners
+            // of the cubes
 
-            auto const dropLX = [](glm::vec3 pos) -> glm::vec2 { return glm::vec2{pos.y + 0.5, pos.z + 0.5} * 1.0f; };
-            auto const dropLY = [](glm::vec3 pos) -> glm::vec2 { return glm::vec2{pos.x + 0.5, pos.z + 0.5} * 1.0f; };
-            auto const dropLZ = [](glm::vec3 pos) -> glm::vec2 { return glm::vec2{pos.x + 0.5, pos.y + 0.5} * 1.0f; };
+#define RC_POINT_GEN(x, y, z) auto point##x##X##y##Y##z##Z = _center + vec##x##X + vec##y##Y + vec##z##Z;
 
-            auto tri0 = makeTriangle(glm::vec3{-0.5f, -0.5f, -0.5f}, glm::vec3{0.5f, -0.5f, -0.5f}, glm::vec3{0.5f, 0.5f, -0.5f}, _texLZ, dropLZ);
-            auto tri1 = makeTriangle(glm::vec3{0.5f, 0.5f, -0.5f}, glm::vec3{-0.5f, 0.5f, -0.5f}, glm::vec3{-0.5f, -0.5f, -0.5f}, _texLZ, dropLZ);
+            RC_POINT_GEN(L, L, L);
+            RC_POINT_GEN(L, L, H);
+            RC_POINT_GEN(L, H, L);
+            RC_POINT_GEN(L, H, H);
+            RC_POINT_GEN(H, L, L);
+            RC_POINT_GEN(H, L, H);
+            RC_POINT_GEN(H, H, L);
+            RC_POINT_GEN(H, H, H);
 
-            auto tri2 = makeTriangle(glm::vec3{-0.5f, -0.5f, 0.5f}, glm::vec3{0.5f, -0.5f, 0.5f}, glm::vec3{0.5f, 0.5f, 0.5f}, _texHZ, dropHZ);
-            auto tri3 = makeTriangle(glm::vec3{0.5f, 0.5f, 0.5f}, glm::vec3{-0.5f, 0.5f, 0.5f}, glm::vec3{-0.5f, -0.5f, 0.5f}, _texHZ, dropHZ);
+#undef RC_POINT_GEN
 
-            auto tri4 = makeTriangle(glm::vec3{-0.5f, 0.5f, 0.5f}, glm::vec3{-0.5f, 0.5f, -0.5f}, glm::vec3{-0.5f, -0.5f, -0.5f}, _texLX, dropLX);
-            auto tri5 = makeTriangle(glm::vec3{-0.5f, -0.5f, -0.5f}, glm::vec3{-0.5f, -0.5f, 0.5f}, glm::vec3{-0.5f, 0.5f, 0.5f}, _texLX, dropLX);
+            auto rectHZ = render_object_rectangle{pointLXHYHZ, pointHXHYHZ, pointLXLYHZ, _texHZ};
+            auto rectLZ = render_object_rectangle{pointHXHYLZ, pointLXHYLZ, pointHXLYLZ, _texLZ};
 
-            auto tri6 = makeTriangle(glm::vec3{0.5f, 0.5f, 0.5f}, glm::vec3{0.5f, 0.5f, -0.5f}, glm::vec3{0.5f, -0.5f, -0.5f}, _texHX, dropHX);
+            auto rectHX = render_object_rectangle{pointHXHYHZ, pointHXHYLZ, pointHXLYHZ, _texHX};
+            auto rectLX = render_object_rectangle{pointLXHYLZ, pointLXHYHZ, pointLXLYLZ, _texLX};
 
-            auto tri7 = makeTriangle(glm::vec3{0.5f, -0.5f, -0.5f}, glm::vec3{0.5f, -0.5f, 0.5f}, glm::vec3{0.5f, 0.5f, 0.5f}, _texHX, dropHX);
+            auto rectHY = render_object_rectangle{pointHXHYHZ, pointLXHYHZ, pointHXHYLZ, _texHY};
+            auto rectLY = render_object_rectangle{pointHXLYLZ, pointLXLYLZ, pointHXLYHZ, _texLY};
 
-            auto tri8 = makeTriangle(glm::vec3{-0.5f, -0.5f, -0.5f}, glm::vec3{0.5f, -0.5f, -0.5f}, glm::vec3{0.5f, -0.5f, 0.5f}, _texLY, dropLY);
-            auto tri9 = makeTriangle(glm::vec3{0.5f, -0.5f, 0.5f}, glm::vec3{-0.5f, -0.5f, 0.5f}, glm::vec3{-0.5f, -0.5f, -0.5f}, _texLY, dropLY);
-
-            auto tri10 = makeTriangle(glm::vec3{-0.5f, 0.5f, -0.5f}, glm::vec3{0.5f, 0.5f, -0.5f}, glm::vec3{0.5f, 0.5f, 0.5f}, _texHY, dropHY);
-            auto tri11 = makeTriangle(glm::vec3{0.5f, 0.5f, 0.5f}, glm::vec3{-0.5f, 0.5f, 0.5f}, glm::vec3{-0.5f, 0.5f, -0.5f}, _texHY, dropHY);
-
-            return std::array<render_triangle_texture, 12>{tri0, tri1, tri2, tri3, tri4, tri5, tri6, tri7, tri8, tri9, tri10, tri11};
+            return {rectHZ, rectLZ, rectHY, rectLY, rectLX, rectHX};
         }
 
-        auto const& components() const noexcept { return m_triangles; }
+        auto const& components() const noexcept { return m_rectangles; }
         auto center() const noexcept { return m_center; }
 
         static constexpr auto sub_extractor_f = object_detail::component_extractor_f<render_object_rect_prism>;
 
     private:
-        std::array<render_triangle_texture, 12> m_triangles;
+        std::array<render_object_rectangle, 6> m_rectangles;
         glm::vec3 m_center;
     };
 
