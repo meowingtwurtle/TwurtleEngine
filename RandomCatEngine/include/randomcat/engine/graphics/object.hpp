@@ -74,7 +74,7 @@ namespace randomcat::engine::graphics {
                                           unsigned int _texLY,
                                           unsigned int _texHZ,
                                           unsigned int _texLZ) noexcept
-        : m_triangles(genTriangles(_center, _sides, _texHX, _texLX, _texHY, _texLY, _texHZ, _texLZ)) {}
+        : m_triangles(genTriangles(_center, _sides, _texHX, _texLX, _texHY, _texLY, _texHZ, _texLZ)), m_center(_center) {}
 
         std::array<render_triangle_texture, 12> genTriangles(glm::vec3 _center,
                                                              glm::vec3 _sides,
@@ -122,11 +122,13 @@ namespace randomcat::engine::graphics {
         }
 
         auto const& components() const noexcept { return m_triangles; }
+        auto center() const noexcept { return m_center; }
 
         static constexpr auto sub_extractor_f = object_detail::component_extractor_f<render_object_rect_prism>;
 
     private:
         std::array<render_triangle_texture, 12> m_triangles;
+        glm::vec3 m_center;
     };
 
     class render_object_cube : public render_object_rect_prism {
