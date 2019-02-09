@@ -24,10 +24,20 @@ namespace randomcat::engine::graphics::texture {
         return {std::move(id), _width, _height, _layers};
     }
 
-    void bind_texture_array_layer(texture_array const& _array, int _layer, texture const& _texture) noexcept {
+    void bind_texture_array_layer(texture_array const& _array, texture_array_index _layerNum, texture const& _texture) noexcept {
         RC_GL_ERROR_GUARD("binding texture");
 
         glBindTexture(GL_TEXTURE_2D_ARRAY, _array.id);
-        glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, _layer, _texture.width(), _texture.height(), 1, GL_RGBA, GL_UNSIGNED_BYTE, _texture.data());
+        glTexSubImage3D(GL_TEXTURE_2D_ARRAY,
+                        0,
+                        0,
+                        0,
+                        _layerNum.value,
+                        _texture.width(),
+                        _texture.height(),
+                        1,
+                        GL_RGBA,
+                        GL_UNSIGNED_BYTE,
+                        _texture.data());
     }
 }    // namespace randomcat::engine::graphics::texture

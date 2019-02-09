@@ -43,7 +43,7 @@ namespace randomcat::engine::graphics {
     struct render_triangle_texture {
         using vertex = render_triangle::vertex;
         render_triangle shape;
-        unsigned int texture;
+        texture_array_index texture;
 
         decltype(auto) vertices() const noexcept { return shape.vertices(); }
 
@@ -64,7 +64,7 @@ namespace randomcat::engine::graphics {
 
     class render_object_rectangle {
     public:
-        explicit render_object_rectangle(glm::vec3 _topLeft, glm::vec3 _topRight, glm::vec3 _bottomLeft, unsigned int _texture) noexcept
+        explicit render_object_rectangle(glm::vec3 _topLeft, glm::vec3 _topRight, glm::vec3 _bottomLeft, texture_array_index _texture) noexcept
         : m_triangles(gen_triangles(std::move(_topLeft), std::move(_topRight), std::move(_bottomLeft), std::move(_texture))) {}
 
         auto const& components() const noexcept { return m_triangles; }
@@ -72,7 +72,7 @@ namespace randomcat::engine::graphics {
         static auto constexpr sub_extractor_f = object_detail::component_extractor_f<render_object_rectangle>;
 
     private:
-        static std::array<render_triangle_texture, 2> gen_triangles(glm::vec3 _topLeft, glm::vec3 _topRight, glm::vec3 _bottomLeft, unsigned int _texture) noexcept {
+        static std::array<render_triangle_texture, 2> gen_triangles(glm::vec3 _topLeft, glm::vec3 _topRight, glm::vec3 _bottomLeft, texture_array_index _texture) noexcept {
             auto bottomRight = _bottomLeft + (_topRight - _topLeft);
 
             auto bottomLeftV = default_vertex{_bottomLeft, {0, 1}, _texture};
@@ -89,26 +89,26 @@ namespace randomcat::engine::graphics {
 
     class render_object_rect_prism {
     public:
-        explicit render_object_rect_prism(glm::vec3 _center, glm::vec3 _sides, unsigned int _texture) noexcept
+        explicit render_object_rect_prism(glm::vec3 _center, glm::vec3 _sides, texture_array_index _texture) noexcept
         : render_object_rect_prism(_center, _sides, _texture, _texture, _texture, _texture, _texture, _texture) {}
         explicit render_object_rect_prism(glm::vec3 _center,
                                           glm::vec3 _sides,
-                                          unsigned int _texHX,
-                                          unsigned int _texLX,
-                                          unsigned int _texHY,
-                                          unsigned int _texLY,
-                                          unsigned int _texHZ,
-                                          unsigned int _texLZ) noexcept
+                                          texture_array_index _texHX,
+                                          texture_array_index _texLX,
+                                          texture_array_index _texHY,
+                                          texture_array_index _texLY,
+                                          texture_array_index _texHZ,
+                                          texture_array_index _texLZ) noexcept
         : m_rectangles(genTriangles(_center, _sides, _texHX, _texLX, _texHY, _texLY, _texHZ, _texLZ)), m_center(_center) {}
 
         std::array<render_object_rectangle, 6> genTriangles(glm::vec3 _center,
                                                             glm::vec3 _sides,
-                                                            unsigned int _texHX,
-                                                            unsigned int _texLX,
-                                                            unsigned int _texHY,
-                                                            unsigned int _texLY,
-                                                            unsigned int _texHZ,
-                                                            unsigned int _texLZ) const noexcept {
+                                                            texture_array_index _texHX,
+                                                            texture_array_index _texLX,
+                                                            texture_array_index _texHY,
+                                                            texture_array_index _texLY,
+                                                            texture_array_index _texHZ,
+                                                            texture_array_index _texLZ) const noexcept {
             auto vecHX = glm::vec3{_sides.x / 2, 0, 0};
             auto vecHY = glm::vec3{0, _sides.y / 2, 0};
             auto vecHZ = glm::vec3{0, 0, _sides.z / 2};
@@ -156,17 +156,17 @@ namespace randomcat::engine::graphics {
 
     class render_object_cube : public render_object_rect_prism {
     public:
-        explicit render_object_cube(glm::vec3 _center, float _side, unsigned int _texture) noexcept
+        explicit render_object_cube(glm::vec3 _center, float _side, texture_array_index _texture) noexcept
         : render_object_cube(std::move(_center), std::move(_side), _texture, _texture, _texture, _texture, _texture, _texture) {}
 
         explicit render_object_cube(glm::vec3 _center,
                                     float _side,
-                                    unsigned int _texHX,
-                                    unsigned int _texLX,
-                                    unsigned int _texHY,
-                                    unsigned int _texLY,
-                                    unsigned int _texHZ,
-                                    unsigned int _texLZ) noexcept
+                                    texture_array_index _texHX,
+                                    texture_array_index _texLX,
+                                    texture_array_index _texHY,
+                                    texture_array_index _texLY,
+                                    texture_array_index _texHZ,
+                                    texture_array_index _texLZ) noexcept
         : render_object_rect_prism(std::move(_center),
                                    glm::vec3{_side, _side, _side},
                                    std::move(_texHX),
