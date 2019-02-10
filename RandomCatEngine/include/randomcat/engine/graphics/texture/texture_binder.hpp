@@ -6,7 +6,7 @@
 #include "randomcat/engine/graphics/detail/raii_wrappers/texture_raii.hpp"
 #include "randomcat/engine/graphics/texture/texture_manager.hpp"
 
-namespace randomcat::engine::graphics::texture {
+namespace randomcat::engine::graphics::textures {
     // Because this is designed to be a semi-user-facing class, we provide
     // mutability template arg as well as shared template arg
     template<bool Shared, bool IsMutable>
@@ -117,4 +117,4 @@ namespace randomcat::engine::graphics::texture {
                         GL_UNSIGNED_BYTE,
                         _texture.data());
     }
-}    // namespace randomcat::engine::graphics::texture
+}    // namespace randomcat::engine::graphics::textures

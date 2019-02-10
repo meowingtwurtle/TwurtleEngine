@@ -6,7 +6,7 @@
 
 #include "randomcat/engine/detail/tag_exception.hpp"
 
-namespace randomcat::engine::graphics::texture {
+namespace randomcat::engine::graphics::textures {
     class texture {
     public:
         explicit texture(std::string _name, int _width, int _height, unsigned char* _data) noexcept
@@ -54,4 +54,4 @@ namespace randomcat::engine::graphics::texture {
     private:
         std::unordered_map<std::string, texture> m_textureMap;
     };
-}    // namespace randomcat::engine::graphics::texture
+}    // namespace randomcat::engine::graphics::textures

@@ -6,7 +6,7 @@
 
 #include "randomcat/engine/detail/log.hpp"
 
-namespace randomcat::engine::graphics::texture {
+namespace randomcat::engine::graphics::textures {
     texture::underlying::~underlying() noexcept { stbi_image_free(m_data); }
 
     texture const& texture_manager::load_texture(std::string const& _path) {
@@ -30,4 +30,4 @@ namespace randomcat::engine::graphics::texture {
 
         return it->second;
     }
-}    // namespace randomcat::engine::graphics::texture
+}    // namespace randomcat::engine::graphics::textures
