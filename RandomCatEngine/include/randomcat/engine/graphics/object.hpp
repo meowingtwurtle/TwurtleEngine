@@ -64,7 +64,7 @@ namespace randomcat::engine::graphics {
     }
 
     template<typename Target, typename InputIt, typename OutputIt>
-    OutputIt decompose_render_object_to(InputIt _begin, InputIt _end, OutputIt _output) noexcept {
+    constexpr OutputIt decompose_render_object_to(InputIt _begin, InputIt _end, OutputIt _output) noexcept {
         using InputType = typename std::iterator_traits<InputIt>::value_type;
 
         if constexpr (std::is_same_v<InputType, Target>) {
@@ -76,6 +76,11 @@ namespace randomcat::engine::graphics {
             });
             return _output;
         }
+    }
+
+    template<typename Target, typename Object, typename OutputIt>
+    constexpr OutputIt decompose_render_object_to(Object const& _obj, OutputIt _output) noexcept {
+        return decompose_render_object_to<Target>(std::addressof(_obj), std::addressof(_obj) + 1, std::move(_output));
     }
 
 // Macro because this really needs it and really shortens the code
