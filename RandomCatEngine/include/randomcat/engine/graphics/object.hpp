@@ -4,22 +4,88 @@
 
 #include <glm/glm.hpp>
 
+#include "randomcat/engine/detail/templates.hpp"
 #include "randomcat/engine/graphics/detail/default_vertex.hpp"
 
 namespace randomcat::engine::graphics {
     namespace object_detail {
-        template<typename T>
-        static constexpr auto vertex_extractor_f = [](auto const& x) noexcept(noexcept(x.vertices())) -> decltype(auto) {
-            static_assert(std::is_same_v<decltype(x), T const&>);
-            return x.vertices();
+        // Implementation, do not specialize
+        template<typename Object, typename = void>
+        struct object_has_static_sub_parts_func_s : std::false_type {};
+
+        template<typename Object>
+        struct object_has_static_sub_parts_func_s<Object, std::void_t<decltype(Object::sub_parts(std::declval<Object const&>()))>> :
+        std::true_type {};
+
+        template<typename Object>
+        static auto constexpr object_has_static_sub_parts_func = object_has_static_sub_parts_func_s<Object>::value;
+
+        template<typename Object, typename = void>
+        struct object_has_member_sub_parts_func_s : std::false_type {};
+
+        template<typename Object>
+        struct object_has_member_sub_parts_func_s<Object, std::void_t<decltype(std::declval<Object const&>().sub_parts())>> : std::true_type {};
+
+        template<typename Object>
+        static auto constexpr object_has_member_sub_parts_func = object_has_member_sub_parts_func_s<Object>::value;
+
+        // This may be specialized by users and will receive full library support
+        // By default, will use a static function called "sub_parts" taking an object of
+        // the render object type by const& or a const member function named sub_parts
+        // taking no arguments If specializing: exposes a variable called "value" that
+        // returns the sub_parts when called as `std::invoke(value, obj)` Where obj is a
+        // const reference to the Object type
+        template<typename Object, typename = void>
+        struct object_sub_parts_s {
+            static_assert(util_detail::invalid<Object>,
+                          "Unrecognized render object type, you may specialize this "
+                          "struct if needed.");
         };
 
-        template<typename T>
-        static constexpr auto component_extractor_f = [](auto const& x) noexcept(noexcept(x.components())) -> decltype(auto) {
-            static_assert(std::is_same_v<decltype(x), T const&>);
-            return x.components();
+        template<typename Object>
+        struct object_sub_parts_s<Object, std::enable_if_t<object_has_static_sub_parts_func<Object>>> {
+            static auto constexpr value = Object::sub_parts;
         };
+
+        template<typename Object>
+        struct object_sub_parts_s<Object, std::enable_if_t<object_has_member_sub_parts_func<Object>>> {
+            static auto constexpr value = [](Object const& obj) noexcept(noexcept(obj.sub_parts())) -> decltype(auto) {
+                return obj.sub_parts();
+            };
+        };
+
+        template<typename Object>
+        static auto constexpr object_sub_parts = object_sub_parts_s<Object>::value;
     }    // namespace object_detail
+
+    template<typename Object>
+    constexpr decltype(auto) render_object_sub_parts(Object const& _obj) noexcept(noexcept(object_detail::object_sub_parts<Object>(_obj))) {
+        return std::invoke(object_detail::object_sub_parts<Object>, _obj);
+    }
+
+    template<typename Target, typename InputIt, typename OutputIt>
+    OutputIt decompose_render_object_to(InputIt _begin, InputIt _end, OutputIt _output) noexcept {
+        using InputType = typename std::iterator_traits<InputIt>::value_type;
+
+        if constexpr (std::is_same_v<InputType, Target>) {
+            return std::copy(_begin, _end, _output);
+        } else {
+            std::for_each(_begin, _end, [&](auto const& x) {
+                decltype(auto) sub = render_object_sub_parts(x);
+                _output = decompose_render_object_to<Target>(begin(sub), end(sub), _output);
+            });
+            return _output;
+        }
+    }
+
+// Macro because this really needs it and really shortens the code
+// Must be a template to delay instantiation until the render_object type is a
+// complete type
+#define RC_SUB_PARTS(name)                                                                                                                 \
+    template<bool Impl = true>                                                                                                             \
+    constexpr decltype(auto) sub_parts() const noexcept(noexcept(std::enable_if_t<Impl, decltype(*this)>(*this).name())) {                 \
+        return std::enable_if_t<Impl, decltype(*this)>(*this).name();                                                                      \
+    }
 
     class render_triangle {
     public:
@@ -34,7 +100,7 @@ namespace randomcat::engine::graphics {
 
         auto const& vertices() const noexcept { return m_vertices; }
 
-        static constexpr auto sub_extractor_f = object_detail::vertex_extractor_f<render_triangle>;
+        RC_SUB_PARTS(vertices);
 
     private:
         std::array<vertex, 3> m_vertices;
@@ -47,19 +113,20 @@ namespace randomcat::engine::graphics {
 
         decltype(auto) vertices() const noexcept { return shape.vertices(); }
 
-        static constexpr auto sub_extractor_f = object_detail::vertex_extractor_f<render_triangle_texture>;
+        RC_SUB_PARTS(vertices);
     };
 
     class render_object_triangle {
     public:
         render_object_triangle(render_triangle_texture _triangle) noexcept : m_triangle{std::move(_triangle)} {}
 
-        auto const& components() const noexcept { return m_triangle; }
+        decltype(auto) vertices() const noexcept { return m_triangle.vertices(); }
+        auto const& triangle() const noexcept { return m_triangle; }
 
-        static constexpr auto sub_extractor_f = object_detail::component_extractor_f<render_object_triangle>;
+        RC_SUB_PARTS(vertices);
 
     private:
-        std::array<render_triangle_texture, 1> m_triangle;
+        render_triangle_texture m_triangle;
     };
 
     class render_object_rectangle {
@@ -67,9 +134,9 @@ namespace randomcat::engine::graphics {
         explicit render_object_rectangle(glm::vec3 _topLeft, glm::vec3 _topRight, glm::vec3 _bottomLeft, texture_array_index _texture) noexcept
         : m_triangles(gen_triangles(std::move(_topLeft), std::move(_topRight), std::move(_bottomLeft), std::move(_texture))) {}
 
-        auto const& components() const noexcept { return m_triangles; }
+        auto const& triangles() const noexcept { return m_triangles; }
 
-        static auto constexpr sub_extractor_f = object_detail::component_extractor_f<render_object_rectangle>;
+        RC_SUB_PARTS(triangles);
 
     private:
         static std::array<render_triangle_texture, 2> gen_triangles(glm::vec3 _topLeft, glm::vec3 _topRight, glm::vec3 _bottomLeft, texture_array_index _texture) noexcept {
@@ -144,10 +211,10 @@ namespace randomcat::engine::graphics {
             return {rectHZ, rectLZ, rectHY, rectLY, rectLX, rectHX};
         }
 
-        auto const& components() const noexcept { return m_rectangles; }
+        auto const& sides() const noexcept { return m_rectangles; }
         auto center() const noexcept { return m_center; }
 
-        static constexpr auto sub_extractor_f = object_detail::component_extractor_f<render_object_rect_prism>;
+        RC_SUB_PARTS(sides);
 
     private:
         std::array<render_object_rectangle, 6> m_rectangles;
@@ -175,7 +242,7 @@ namespace randomcat::engine::graphics {
                                    std::move(_texLY),
                                    std::move(_texHZ),
                                    std::move(_texLZ)) {}
-
-        static constexpr auto sub_extractor_f = object_detail::component_extractor_f<render_object_cube>;
     };
+
+#undef RC_SUB_PARTS
 }    // namespace randomcat::engine::graphics
