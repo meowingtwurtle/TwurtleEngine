@@ -9,7 +9,7 @@ namespace randomcat::engine::graphics::gl_raii_detail {
     inline decltype(auto) make_vao() noexcept {
         RC_GL_ERROR_GUARD("creating vao id");
 
-        unsigned id;
+        opengl_raw_id id;
         glGenVertexArrays(1, &id);
         return opengl_raw_id{id};
     }

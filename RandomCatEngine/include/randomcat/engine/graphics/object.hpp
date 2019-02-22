@@ -223,7 +223,7 @@ namespace randomcat::engine::graphics {
 
     class render_object_cube : public render_object_rect_prism {
     public:
-        explicit render_object_cube(glm::vec3 _center, float _side, texture_array_index _texture) noexcept
+        explicit render_object_cube(glm::vec3 _center, GLfloat _side, texture_array_index _texture) noexcept
         : render_object_cube(std::move(_center), std::move(_side), _texture, _texture, _texture, _texture, _texture, _texture) {}
 
         explicit render_object_cube(glm::vec3 _center,

@@ -2,6 +2,7 @@
 
 #include <functional>
 
+#include <GL/glew.h>
 #include <glm/ext.hpp>
 #include <glm/glm.hpp>
 
@@ -11,10 +12,10 @@
 
 namespace randomcat::engine::graphics {
     struct camera_state {
-        float aspectRatio;
-        float fov;
-        float minDistance;
-        float maxDistance;
+        GLfloat aspectRatio;
+        GLfloat fov;
+        GLfloat minDistance;
+        GLfloat maxDistance;
         direction dir;
         position pos;
     };

@@ -6,12 +6,12 @@
 #include "randomcat/engine/graphics/detail/raii_wrappers/opengl_raii_id.hpp"
 
 namespace randomcat::engine::graphics::gl_raii_detail {
-    inline decltype(auto) raw_make_buffer() noexcept {
+    inline auto raw_make_buffer() noexcept {
         RC_GL_ERROR_GUARD("creating buffer id");
 
-        unsigned id;
+        opengl_raw_id id;
         glGenBuffers(1, &id);
-        return opengl_raw_id{id};
+        return id;
     }
 
     inline void raw_destroy_buffer(opengl_raw_id _id) noexcept {

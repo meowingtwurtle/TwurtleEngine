@@ -36,13 +36,13 @@ namespace randomcat::engine::graphics::textures {
     private:
         using id_type = std::conditional_t<Shared, gl_raii_detail::shared_texture_id, gl_raii_detail::unique_texture_id>;
 
-        explicit basic_texture_array(id_type _id, int _width, int _height, int _layers)
+        explicit basic_texture_array(id_type _id, GLsizei _width, GLsizei _height, GLsizei _layers)
         : m_id(std::move(_id)), m_width(std::move(_width)), m_height(std::move(_height)), m_layers(std::move(_layers)) {}
 
         id_type m_id;
-        int m_width;
-        int m_height;
-        int m_layers;
+        GLsizei m_width;
+        GLsizei m_height;
+        GLsizei m_layers;
 
         template<bool, bool>
         friend class basic_texture_array;
@@ -52,11 +52,11 @@ namespace randomcat::engine::graphics::textures {
         // Not part of the public interface
         // Wrappers provided in namespace texture_array_detail
 
-        friend int m_tex_arr_width(basic_texture_array const& _arr) { return _arr.m_width; }
+        friend auto m_tex_arr_width(basic_texture_array const& _arr) { return _arr.m_width; }
 
-        friend int m_tex_arr_height(basic_texture_array const& _arr) { return _arr.m_height; }
+        friend auto m_tex_arr_height(basic_texture_array const& _arr) { return _arr.m_height; }
 
-        friend int m_tex_arr_layers(basic_texture_array const& _arr) { return _arr.m_layers; }
+        friend auto m_tex_arr_layers(basic_texture_array const& _arr) { return _arr.m_layers; }
 
         friend auto m_tex_arr_raw_id(basic_texture_array const& _arr) { return _arr.m_id.value(); }
     };
@@ -88,7 +88,7 @@ namespace randomcat::engine::graphics::textures {
     using const_unique_texture_array = unique_texture_array::as_const;
     using const_shared_texture_array = shared_texture_array::as_const;
 
-    unique_texture_array gen_texture_array(int _width, int _height, int _layers) noexcept {
+    unique_texture_array gen_texture_array(GLsizei _width, GLsizei _height, GLsizei _layers) noexcept {
         RC_GL_ERROR_GUARD("generating texture array");
 
         gl_raii_detail::unique_texture_id id;

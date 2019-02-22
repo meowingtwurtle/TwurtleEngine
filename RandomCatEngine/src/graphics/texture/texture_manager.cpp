@@ -2,6 +2,7 @@
 
 #include <exception>
 
+#include <gsl/gsl_util>
 #include <stb/stb_image.hpp>
 
 #include "randomcat/engine/detail/log.hpp"
@@ -13,12 +14,13 @@ namespace randomcat::engine::graphics::textures {
         auto it = m_textureMap.find(_path);
         if (it != m_textureMap.end()) return it->second;
 
+        // Raw use of int required by stbi
         int width, height, burn;
         auto data = stbi_load(_path.c_str(), &width, &height, &burn, STBI_rgb_alpha);
 
         if (data == nullptr) { throw texture_load_error{"Unable to load texture with path: " + _path}; }
 
-        m_textureMap.insert({_path, texture{_path, width, height, data}});
+        m_textureMap.insert({_path, texture{_path, gsl::narrow<std::int32_t>(width), gsl::narrow<std::int32_t>(height), data}});
 
         return m_textureMap.at(_path);
     }

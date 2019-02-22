@@ -7,7 +7,7 @@
 
 namespace randomcat::engine::graphics {
     /// Floats should be between 0 and 1
-    inline void set_global_background_color(float _red, float _green, float _blue, float _alpha) noexcept {
+    inline void set_global_background_color(GLfloat _red, GLfloat _green, GLfloat _blue, GLfloat _alpha) noexcept {
         RC_GL_ERROR_GUARD("setting global background color");
 
         glClearColor(_red, _green, _blue, _alpha);

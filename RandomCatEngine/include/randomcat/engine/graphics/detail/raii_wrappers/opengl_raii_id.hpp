@@ -2,11 +2,16 @@
 
 #include <memory>
 
+#include <GL/glew.h>
+
+#include "randomcat/engine/graphics/detail/gl_types.hpp"
+
 namespace randomcat::engine::graphics::gl_raii_detail {
     template<bool copyable, auto, auto, typename...>
     struct basic_opengl_raii_id;
 
-    using opengl_raw_id = uint32_t;
+    using gl_detail::opengl_raw_id;
+
     static_assert(std::is_integral_v<opengl_raw_id>);
 
     // Yes, an impl namespace within a detail namespace. Sue me.

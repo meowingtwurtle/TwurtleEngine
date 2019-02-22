@@ -1,9 +1,11 @@
 #pragma once
 
+#include <cstdint>
 #include <string>
 
 #include <SDL2/SDL.h>
-#include <glm/vec2.hpp>
+#include <glm/glm.hpp>
+#include <gsl/gsl_util>
 
 #include "randomcat/engine/detail/log.hpp"
 #include "randomcat/engine/graphics/detail/gl_context.hpp"
@@ -13,7 +15,7 @@
 namespace randomcat::engine::graphics {
     class window {
     public:
-        explicit window(std::string const& _title = "Twurtle Engine", int _width = 600, int _height = 600) noexcept {
+        explicit window(std::string const& _title = "Twurtle Engine", std::int16_t _width = 600, std::int16_t _height = 600) noexcept {
             m_window = SDL_CreateWindow(_title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, _width, _height, SDL_WINDOW_OPENGL);
 
             log::info << "Window created with title \"" << _title << "\".";
@@ -27,21 +29,24 @@ namespace randomcat::engine::graphics {
         window(window const&) = delete;
         window(window&&) = delete;
 
+        // Use of raw int required by SDL
         void set_size(int _width, int _height) noexcept { SDL_SetWindowSize(m_window, _width, _height); }
 
-        int width() const noexcept { return size().width; }
+        auto width() const noexcept { return size().width; }
 
-        int height() const noexcept { return size().height; }
+        auto height() const noexcept { return size().height; }
 
         struct dimensions {
-            int width;
-            int height;
+            std::int16_t width;
+            std::int16_t height;
         };
 
         dimensions size() const noexcept {
-            dimensions d;
-            SDL_GetWindowSize(m_window, &d.width, &d.height);
-            return d;
+            // SDL requires use of int
+            int width, height;
+            SDL_GetWindowSize(m_window, &width, &height);
+
+            return {.width = gsl::narrow<std::int16_t>(width), .height = gsl::narrow<std::int16_t>(height)};
         }
 
         float aspect_ratio() const noexcept {

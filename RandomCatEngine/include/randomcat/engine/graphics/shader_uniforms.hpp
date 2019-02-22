@@ -1,5 +1,7 @@
 #pragma once
 
+#include "randomcat/engine/graphics/detail/gl_types.hpp"
+
 namespace randomcat::engine::graphics {
     namespace shader_detail {
         template<typename Capabilities>
@@ -22,10 +24,10 @@ namespace randomcat::engine::graphics {
             ~program_active_lock() noexcept;
 
         private:
-            static GLuint get_active_program() noexcept;
+            static gl_detail::opengl_raw_id get_active_program() noexcept;
             static void set_active_program(GLuint _id) noexcept;
 
-            std::optional<GLuint> m_oldID = std::nullopt;
+            std::optional<gl_detail::opengl_raw_id> m_oldID = std::nullopt;
             gl_raii_detail::shared_program_id const& m_programID;
         };
     }    // namespace shader_detail
@@ -46,8 +48,8 @@ namespace randomcat::engine::graphics {
         // uniform does not exist
 
         bool get_bool(std::string const& _name) const noexcept(!"Throws if uniform not found");
-        int get_int(std::string const& _name) const noexcept(!"Throws if uniform not found");
-        float get_float(std::string const& _name) const noexcept(!"Throws if uniform not found");
+        GLint get_int(std::string const& _name) const noexcept(!"Throws if uniform not found");
+        GLfloat get_float(std::string const& _name) const noexcept(!"Throws if uniform not found");
         glm::vec3 get_vec3(std::string const& _name) const noexcept(!"Throws if uniform not found");
         glm::mat4 get_mat4(std::string const& _name) const noexcept(!"Throws if uniform not found");
 
@@ -92,10 +94,10 @@ namespace randomcat::engine::graphics {
         // uniform does not exist
 
         void set_bool(std::string const& _name, bool _value) const noexcept(!"Throws if uniform not found");
-        void set_int(std::string const& _name, int _value) const noexcept(!"Throws if uniform not found");
-        void set_float(std::string const& _name, float _value) const noexcept(!"Throws if uniform not found");
-        void set_vec3(std::string const& _name, glm::vec3 const& _value) const noexcept(!"Throws if uniform not found");
-        void set_mat4(std::string const& _name, glm::mat4 const& _value) const noexcept(!"Throws if uniform not found");
+        void set_int(std::string const& _name, GLint _value) const noexcept(!"Throws if uniform not found");
+        void set_float(std::string const& _name, GLfloat _value) const noexcept(!"Throws if uniform not found");
+        void set_vec3(std::string const& _name, glm::tvec3<GLfloat> const& _value) const noexcept(!"Throws if uniform not found");
+        void set_mat4(std::string const& _name, glm::tmat4x4<GLfloat> const& _value) const noexcept(!"Throws if uniform not found");
 
         template<typename Wrapper>
         Wrapper as() const noexcept(noexcept(Wrapper(*this))) {

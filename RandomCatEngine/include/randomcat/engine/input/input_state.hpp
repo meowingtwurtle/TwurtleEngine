@@ -53,28 +53,28 @@ namespace randomcat::engine::input {
 
     class mouse_input_state {
     public:
-        int& x() noexcept { return m_mouseX; }
-        int& y() noexcept { return m_mouseY; }
+        auto& x() noexcept { return m_mouseX; }
+        auto& y() noexcept { return m_mouseY; }
 
-        int x() const noexcept { return m_mouseX; }
-        int y() const noexcept { return m_mouseY; }
+        auto x() const noexcept { return m_mouseX; }
+        auto y() const noexcept { return m_mouseY; }
 
     private:
-        int m_mouseX = 0;
-        int m_mouseY = 0;
+        std::int16_t m_mouseX = 0;
+        std::int16_t m_mouseY = 0;
     };
 
     class relative_mouse_input_state {
     public:
-        int& rel_x() noexcept { return m_relX; }
-        int& rel_y() noexcept { return m_relY; }
+        auto& rel_x() noexcept { return m_relX; }
+        auto& rel_y() noexcept { return m_relY; }
 
-        int rel_x() const noexcept { return m_relX; }
-        int rel_y() const noexcept { return m_relY; }
+        auto rel_x() const noexcept { return m_relX; }
+        auto rel_y() const noexcept { return m_relY; }
 
     private:
-        int m_relX = 0;
-        int m_relY = 0;
+        std::int16_t m_relX = 0;
+        std::int16_t m_relY = 0;
     };
 
     class input_state {

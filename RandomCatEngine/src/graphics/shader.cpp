@@ -9,6 +9,7 @@
 #include "randomcat/engine/detail/log.hpp"
 #include "randomcat/engine/graphics/detail/default_vertex.hpp"
 #include "randomcat/engine/graphics/detail/gl_error_guard.hpp"
+#include "randomcat/engine/graphics/detail/gl_types.hpp"
 
 namespace randomcat::engine::graphics {
     namespace shader_detail {
@@ -35,15 +36,15 @@ namespace randomcat::engine::graphics {
         if (m_oldID.has_value()) set_active_program(*m_oldID);
     }
 
-    GLuint shader_detail::program_active_lock::get_active_program() noexcept {
+    gl_detail::opengl_raw_id shader_detail::program_active_lock::get_active_program() noexcept {
         RC_GL_ERROR_GUARD("getting active program");
 
         GLint value;
         glGetIntegerv(GL_CURRENT_PROGRAM, &value);
-        return gsl::narrow<GLuint>(value);
+        return gsl::narrow<gl_detail::opengl_raw_id>(value);
     }
 
-    void shader_detail::program_active_lock::set_active_program(GLuint _id) noexcept {
+    void shader_detail::program_active_lock::set_active_program(gl_detail::opengl_raw_id _id) noexcept {
         RC_GL_ERROR_GUARD("activating program");
 
         glUseProgram(_id);

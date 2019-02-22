@@ -45,9 +45,9 @@ namespace randomcat::engine {
         /* implicit */ operator pos_components() const noexcept { return components(); }
         pos_components components() const noexcept { return m_pos; }
 
-        float x() const noexcept { return m_pos.x; }
-        float y() const noexcept { return m_pos.y; }
-        float z() const noexcept { return m_pos.z; }
+        auto x() const noexcept { return m_pos.x; }
+        auto y() const noexcept { return m_pos.y; }
+        auto z() const noexcept { return m_pos.z; }
 
         glm::vec3 as_glm() const noexcept { return engine::as_glm(m_pos); }
 
@@ -68,9 +68,9 @@ namespace randomcat::engine {
 
         glm::vec3 as_glm() const noexcept { return engine::as_glm(m_dir); }
 
-        float facing_x() const noexcept { return m_dir.x; }
-        float facing_y() const noexcept { return m_dir.y; }
-        float facing_z() const noexcept { return m_dir.z; }
+        auto facing_x() const noexcept { return m_dir.x; }
+        auto facing_y() const noexcept { return m_dir.y; }
+        auto facing_z() const noexcept { return m_dir.z; }
 
         /* implicit */ operator dir_yaw_pitch() const noexcept { return yaw_pitch(); }
 

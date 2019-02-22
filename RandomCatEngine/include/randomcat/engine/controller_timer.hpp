@@ -1,6 +1,7 @@
 #pragma once
 
 #include <chrono>
+#include <cstdint>
 
 #include "randomcat/engine/controller_timer.hpp"
 
@@ -26,7 +27,7 @@ namespace randomcat::engine {
 
         time start_time() const noexcept { return m_startTime; }
 
-        unsigned int fps() const noexcept { return m_ticksLastSecond; }
+        auto fps() const noexcept { return m_ticksLastSecond; }
 
     private:
         time m_startTime;
@@ -34,8 +35,8 @@ namespace randomcat::engine {
         time m_currentTickTime = m_startTime;
 
         time m_lastFpsTime = m_startTime;
-        unsigned int m_ticksThisSecond = 0;
-        unsigned int m_ticksLastSecond = 0;
+        std::int16_t m_ticksThisSecond = 0;
+        std::int16_t m_ticksLastSecond = 0;
 
         void tick_fps() noexcept {
             using namespace std::chrono_literals;

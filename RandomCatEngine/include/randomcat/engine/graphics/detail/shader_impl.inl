@@ -18,7 +18,7 @@ namespace randomcat::engine::graphics {
 
             glCompileShader(shaderID);
 
-            int success = 0;
+            GLint success = 0;
             glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);
 
             if (!success) {
@@ -55,10 +55,11 @@ namespace randomcat::engine::graphics {
 
                 glLinkProgram(programID);
 
-                int success = 0;
+                GLint success = 0;
                 glGetProgramiv(programID, GL_LINK_STATUS, &success);
 
                 if (!success) {
+                    // Raw use of int okay - constant expression
                     constexpr int BUFFER_LEN = 512;
                     std::array<char, BUFFER_LEN> errorBuffer{};
 
@@ -168,7 +169,7 @@ namespace randomcat::engine::graphics {
     }
 
     template<typename Capabilities>
-    int shader_uniform_reader<Capabilities>::get_int(std::string const& _name) const {
+    GLint shader_uniform_reader<Capabilities>::get_int(std::string const& _name) const {
         RC_GL_ERROR_GUARD("getting int uniform");
 
         auto l = make_active_lock();
@@ -180,7 +181,7 @@ namespace randomcat::engine::graphics {
     }
 
     template<typename Capabilities>
-    float shader_uniform_reader<Capabilities>::get_float(std::string const& _name) const {
+    GLfloat shader_uniform_reader<Capabilities>::get_float(std::string const& _name) const {
         RC_GL_ERROR_GUARD("getting float uniform");
 
         auto l = make_active_lock();
@@ -233,7 +234,7 @@ namespace randomcat::engine::graphics {
     }
 
     template<typename Capabilities>
-    void shader_uniform_writer<Capabilities>::set_int(std::string const& _name, int _value) const {
+    void shader_uniform_writer<Capabilities>::set_int(std::string const& _name, GLint _value) const {
         RC_GL_ERROR_GUARD("setting int uniform");
 
         auto l = this->make_active_lock();
@@ -241,7 +242,7 @@ namespace randomcat::engine::graphics {
     }
 
     template<typename Capabilities>
-    void shader_uniform_writer<Capabilities>::set_float(std::string const& _name, float _value) const {
+    void shader_uniform_writer<Capabilities>::set_float(std::string const& _name, GLfloat _value) const {
         RC_GL_ERROR_GUARD("setting float uniform");
 
         auto l = this->make_active_lock();
@@ -253,7 +254,7 @@ namespace randomcat::engine::graphics {
         RC_GL_ERROR_GUARD("setting vec3 uniform");
 
         auto l = this->make_active_lock();
-        glUniform3fv(this->get_uniform_location(_name), 1, reinterpret_cast<float const*>(&_value));
+        glUniform3fv(this->get_uniform_location(_name), 1, reinterpret_cast<GLfloat const*>(&_value));
     }
 
     template<typename Capabilities>
@@ -261,6 +262,6 @@ namespace randomcat::engine::graphics {
         RC_GL_ERROR_GUARD("setting mat4 uniform");
 
         auto l = this->make_active_lock();
-        glUniformMatrix4fv(this->get_uniform_location(_name), 1, false, reinterpret_cast<float const*>(&_value));
+        glUniformMatrix4fv(this->get_uniform_location(_name), 1, false, reinterpret_cast<GLfloat const*>(&_value));
     }
 }    // namespace randomcat::engine::graphics

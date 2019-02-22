@@ -12,7 +12,7 @@
 namespace randomcat::engine {
     class controller {
     public:
-        explicit controller(std::string _windowTitle = "Twurtle Engine", int _windowWidth = 600, int _windowHeight = 600) noexcept
+        explicit controller(std::string _windowTitle = "Twurtle Engine", std::int16_t _windowWidth = 600, std::int16_t _windowHeight = 600) noexcept
         : m_window{std::move(_windowTitle), _windowWidth, _windowHeight} {
             graphics::gl_detail::set_render_context(m_window);
             graphics::enable_depth_test();
