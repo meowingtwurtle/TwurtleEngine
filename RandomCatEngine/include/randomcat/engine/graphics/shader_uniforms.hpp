@@ -1,5 +1,8 @@
 #pragma once
 
+#include <randomcat/type_container/type_list.hpp>
+
+#include "randomcat/engine/detail/templates.hpp"
 #include "randomcat/engine/graphics/detail/gl_types.hpp"
 
 namespace randomcat::engine::graphics {
@@ -61,6 +64,12 @@ namespace randomcat::engine::graphics {
             return Wrapper(*this);
         }
 
+        template<typename Func,
+                 typename = std::enable_if_t<type_container::type_list_contains_v<Capabilities, decltype(std::forward<Func>(std::declval<std::add_lvalue_reference_t<Func&&>>())(std::declval<shader_uniform_reader const&>()))>>>
+        decltype(auto) as(Func&& _func) const noexcept(noexcept(std::forward<Func>(_func)(*this))) {
+            return std::forward<Func>(_func)(*this);
+        }
+
     protected:
         GLint get_uniform_location(std::string const& _name) const noexcept(!"Throws if uniform not found");
         gl_raii_detail::shared_program_id program() const noexcept { return m_programID; }
@@ -110,7 +119,33 @@ namespace randomcat::engine::graphics {
             return Wrapper(*this);
         }
 
+        template<typename Func,
+                 typename = std::enable_if_t<has_capability<decltype(std::forward<Func>(std::declval<std::add_lvalue_reference_t<Func>>())(std::declval<shader_uniform_writer const&>()))>>>
+        decltype(auto) as(Func&& _func) const noexcept(noexcept(std::forward<Func>(_func)(*this))) {
+            return std::forward<Func>(_func)(*this);
+        }
+
         template<typename>
         friend class shader_uniform_writer;
     };
+
+    namespace uniform_manager_detail {
+        template<typename T>
+        struct uniform_manager_capabilities_s {
+            static_assert(util_detail::invalid<T>, "Argument must be a uniform manager");
+        };
+
+        template<typename Capabilities>
+        struct uniform_manager_capabilities_s<shader_uniform_reader<Capabilities>> {
+            using type = Capabilities;
+        };
+
+        template<typename Capabilities>
+        struct uniform_manager_capabilities_s<shader_uniform_writer<Capabilities>> {
+            using type = Capabilities;
+        };
+    }    // namespace uniform_manager_detail
+
+    template<typename UniformManager>
+    using uniform_manager_capabilities = typename uniform_manager_detail::uniform_manager_capabilities_s<UniformManager>::type;
 }    // namespace randomcat::engine::graphics

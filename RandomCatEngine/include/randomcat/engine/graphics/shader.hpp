@@ -75,6 +75,16 @@ namespace randomcat::engine::graphics {
 
         shader clone() const noexcept;
 
+        template<typename Func>
+        decltype(auto) uniforms_as(Func&& _func) noexcept(noexcept(uniforms().template as(std::forward<Func>(_func)))) {
+            return uniforms().template as(std::forward<Func>(_func));
+        }
+
+        template<typename Func>
+        decltype(auto) uniforms_as(Func&& _func) const noexcept(noexcept(uniforms().template as(std::forward<Func>(_func)))) {
+            return const_uniforms().template as(std::forward<Func>(_func));
+        }
+
         template<typename UniformWrapper, typename = std::enable_if_t<type_container::type_list_contains_v<UniformCapabilities, UniformWrapper>>>
         UniformWrapper uniforms_as() noexcept(noexcept(UniformWrapper(uniforms()))) {
             return uniforms().template as<UniformWrapper>();
