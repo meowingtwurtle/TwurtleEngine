@@ -43,6 +43,9 @@ namespace randomcat::engine::graphics {
         /* implicit */ shader_uniform_reader(shader_uniform_reader<OtherCapabilities> const& _other)
         : shader_uniform_reader(_other.program()) {}
 
+        template<typename T>
+        static inline constexpr auto has_capability = type_container::type_list_contains_v<Capabilities, T>;
+
         // These functions will re-activate the previous shader after completion.
         // These functions will throw shader_no_such_uniform_error if the referenced
         // uniform does not exist
@@ -53,7 +56,7 @@ namespace randomcat::engine::graphics {
         glm::vec3 get_vec3(std::string const& _name) const noexcept(!"Throws if uniform not found");
         glm::mat4 get_mat4(std::string const& _name) const noexcept(!"Throws if uniform not found");
 
-        template<typename Wrapper>
+        template<typename Wrapper, typename = std::enable_if_t<has_capability<Wrapper>>>
         Wrapper as() const noexcept(noexcept(Wrapper(*this))) {
             return Wrapper(*this);
         }
@@ -89,6 +92,9 @@ namespace randomcat::engine::graphics {
             return shader_uniform_reader<OtherCapabilities>(this->program());
         }
 
+        template<typename T>
+        static inline constexpr auto has_capability = type_container::type_list_contains_v<Capabilities, T>;
+
         // These functions will re-activate the previous shader after completion.
         // These functions will throw shader_no_such_uniform_error if the referenced
         // uniform does not exist
@@ -99,7 +105,7 @@ namespace randomcat::engine::graphics {
         void set_vec3(std::string const& _name, glm::tvec3<GLfloat> const& _value) const noexcept(!"Throws if uniform not found");
         void set_mat4(std::string const& _name, glm::tmat4x4<GLfloat> const& _value) const noexcept(!"Throws if uniform not found");
 
-        template<typename Wrapper>
+        template<typename Wrapper, typename = std::enable_if_t<has_capability<Wrapper>>>
         Wrapper as() const noexcept(noexcept(Wrapper(*this))) {
             return Wrapper(*this);
         }
