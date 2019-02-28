@@ -31,8 +31,24 @@ namespace randomcat::engine::graphics {
             glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 
             for (shader_input input : m_shader.inputs()) {
-                glVertexAttribPointer(input.position, input.count, input.type, input.normalized, input.stride, input.offset);
-                glEnableVertexAttribArray(input.position);
+                auto const rawStorageType = static_cast<GLenum>(input.storageType);
+                auto const rawOffset = reinterpret_cast<void*>(input.offset.value);
+
+                switch (input.attributeType.base()) {
+                    case shader_input_attribute_base_type::floating_point: {
+                        glVertexAttribPointer(input.index.value, input.attributeType.size().value, rawStorageType, false, input.stride.value, rawOffset);
+
+                        break;
+                    }
+
+                    case shader_input_attribute_base_type::integral: {
+                        glVertexAttribIPointer(input.index.value, input.attributeType.size().value, rawStorageType, input.stride.value, rawOffset);
+
+                        break;
+                    }
+                }
+
+                glEnableVertexAttribArray(input.index.value);
             }
         }
 

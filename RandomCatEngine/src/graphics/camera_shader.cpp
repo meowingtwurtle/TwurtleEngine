@@ -45,9 +45,9 @@ namespace randomcat::engine::graphics {
         shader<default_vertex, shader_capabilities<camera>>
             ourShader(DEFAULT_VERTEX_SHADER,
                       DEFAULT_FRAGMENT_SHADER,
-                      {{0, 3, GL_FLOAT, false, sizeof(default_vertex), reinterpret_cast<void*>(offsetof(default_vertex, location))},
-                       {1, 2, GL_FLOAT, false, sizeof(default_vertex), reinterpret_cast<void*>(offsetof(default_vertex, texCoord))},
-                       {2, 1, GL_INT, false, sizeof(default_vertex), reinterpret_cast<void*>(offsetof(default_vertex, layerNum) + offsetof(texture_array_index, value))}});
+                      {{0, shader_input::vec3_type, shader_input_storage_type::floating_point, offsetof(default_vertex, location), sizeof(default_vertex)},
+                       {1, shader_input::vec2_type, shader_input_storage_type::floating_point, offsetof(default_vertex, texCoord), sizeof(default_vertex)},
+                       {2, shader_input::int_type, shader_input_storage_type::signed_int, offsetof(default_vertex, layerNum), sizeof(default_vertex)}});
 
         ourShader.uniforms().set_mat4("camera", glm::mat4{1.0f});
 
