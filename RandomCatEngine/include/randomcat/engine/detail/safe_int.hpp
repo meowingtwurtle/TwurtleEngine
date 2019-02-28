@@ -10,17 +10,17 @@ namespace randomcat::engine::util_detail {
         Value value;
 
         template<typename = decltype(std::declval<Value const&>() == std::declval<Value const&>())>
-        bool operator==(safe_integer const& _other) const noexcept {
+        [[nodiscard]] bool operator==(safe_integer const& _other) const noexcept {
             return value == _other.value;
         }
 
         template<typename = decltype(std::declval<Value const&>() != std::declval<Value const&>())>
-        bool operator!=(safe_integer const& _other) const noexcept {
+        [[nodiscard]] bool operator!=(safe_integer const& _other) const noexcept {
             return value != _other.value;
         }
 
         template<typename = decltype(std::declval<std::ostream&>() << std::declval<Value const&>())>
-        friend std::ostream& operator<<(std::ostream& _out, safe_integer const& _val) noexcept {
+        [[nodiscard]] friend std::ostream& operator<<(std::ostream& _out, safe_integer const& _val) noexcept {
             _out << _val.value;
             return _out;
         }

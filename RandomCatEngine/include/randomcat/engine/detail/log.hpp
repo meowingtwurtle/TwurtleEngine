@@ -12,7 +12,7 @@ namespace randomcat::engine::log {
     namespace log_detail {
         inline std::reference_wrapper<std::ostream> g_logStream = std::reference_wrapper<std::ostream>(std::clog);
 
-        inline std::string_view log_type_header(log_type _logType) noexcept {
+        [[nodiscard]] inline std::string_view log_type_header(log_type _logType) noexcept {
             using std::string_view_literals::operator""sv;
 
             switch (_logType) {
@@ -81,7 +81,7 @@ namespace randomcat::engine::log {
             }
 
         private:
-            std::string log_header() noexcept(!"Ostreaming not noexcept") {
+            [[nodiscard]] std::string log_header() noexcept(!"Ostreaming not noexcept") {
                 std::ostringstream fullMessage{};
                 time_t systemTime = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
                 auto formatTime = *std::localtime(&systemTime);
@@ -91,7 +91,7 @@ namespace randomcat::engine::log {
                 return fullMessage.str();
             }
 
-            static std::string_view log_header_cont() noexcept {
+            [[nodiscard]] static std::string_view log_header_cont() noexcept {
                 using std::string_view_literals::operator""sv;
                 return "\n[CONT] "sv;
             }
@@ -105,13 +105,13 @@ namespace randomcat::engine::log {
     // Guaranteed to be of a type such that:
     // - Any ostreamable type can be logged with the stream insertion operator
     // - Any ostreamable type can be logged with the function call operator
-    inline auto log(log_type _type) noexcept { return log_detail::log_impl(std::move(_type)); }
+    [[nodiscard]] inline auto log(log_type _type) noexcept { return log_detail::log_impl(std::move(_type)); }
 
     inline void log(log_type _type, std::string_view _message) noexcept { log(std::move(_type)) << std::move(_message); }
 
     inline void set_log_output(std::ostream& _stream) noexcept { log_detail::g_logStream = std::ref(_stream); }
 
-    inline std::ostream& raw_log() noexcept { return log_detail::g_logStream; }
+    [[nodiscard]] inline std::ostream& raw_log() noexcept { return log_detail::g_logStream; }
 
     inline auto info = log(log_type::INFO);
     inline auto warn = log(log_type::WARN);

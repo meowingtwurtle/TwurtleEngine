@@ -6,7 +6,7 @@ namespace randomcat::engine::util_detail {
     public:
         explicit tag_exception(std::string _error) noexcept : m_error(std::move(_error)) {}
 
-        char const* what() const noexcept override { return m_error.c_str(); }
+        [[nodiscard]] char const* what() const noexcept override { return m_error.c_str(); }
 
     private:
         std::string m_error;

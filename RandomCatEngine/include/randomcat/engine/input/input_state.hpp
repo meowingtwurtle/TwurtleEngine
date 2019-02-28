@@ -10,19 +10,19 @@ namespace randomcat::engine::input {
     public:
         enum class key_state { up, down, held };
 
-        bool key_is_down(keycode _key) const noexcept {
+        [[nodiscard]] auto key_is_down(keycode _key) const noexcept {
             auto keyState = get_key_state(_key);
             return keyState == key_state::down || keyState == key_state::held;
         }
 
-        bool key_is_up(keycode _key) const noexcept {
+        [[nodiscard]] auto key_is_up(keycode _key) const noexcept {
             auto keyState = get_key_state(_key);
             return keyState == key_state::up;
         }
 
-        bool key_is_held(keycode _key) const noexcept { return get_key_state(_key) == key_state::held; }
+        [[nodiscard]] auto key_is_held(keycode _key) const noexcept { return get_key_state(_key) == key_state::held; }
 
-        key_state get_key_state(keycode _key) const noexcept {
+        [[nodiscard]] key_state get_key_state(keycode _key) const noexcept {
             auto const it = m_map.find(_key);
 
             if (it != m_map.end()) {

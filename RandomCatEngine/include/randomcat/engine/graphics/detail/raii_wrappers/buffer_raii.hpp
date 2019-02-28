@@ -6,7 +6,7 @@
 #include "randomcat/engine/graphics/detail/raii_wrappers/opengl_raii_id.hpp"
 
 namespace randomcat::engine::graphics::gl_raii_detail {
-    inline auto raw_make_buffer() noexcept {
+    [[nodiscard]] inline auto raw_make_buffer() noexcept {
         RC_GL_ERROR_GUARD("creating buffer id");
 
         opengl_raw_id id;
@@ -21,7 +21,7 @@ namespace randomcat::engine::graphics::gl_raii_detail {
     }
 
     template<typename Tag>
-    inline decltype(auto) make_buffer() noexcept(noexcept(raw_make_buffer())) {
+    [[nodiscard]] inline decltype(auto) make_buffer() noexcept(noexcept(raw_make_buffer())) {
         return raw_make_buffer();
     }
 

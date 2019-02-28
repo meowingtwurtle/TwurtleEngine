@@ -27,7 +27,7 @@ namespace randomcat::engine::graphics {
             ~program_active_lock() noexcept;
 
         private:
-            static gl_detail::opengl_raw_id get_active_program() noexcept;
+            [[nodiscard]] static gl_detail::opengl_raw_id get_active_program() noexcept;
             static void set_active_program(GLuint _id) noexcept;
 
             std::optional<gl_detail::opengl_raw_id> m_oldID = std::nullopt;
@@ -43,7 +43,7 @@ namespace randomcat::engine::graphics {
         explicit shader_uniform_reader(gl_raii_detail::shared_program_id _programID) noexcept : m_programID(std::move(_programID)) {}
 
         template<typename OtherCapabilities, typename = std::enable_if_t<type_container::type_list_is_sub_list_of_v<Capabilities, OtherCapabilities>>>
-        /* implicit */ shader_uniform_reader(shader_uniform_reader<OtherCapabilities> const& _other)
+        /* implicit */ shader_uniform_reader(shader_uniform_reader<OtherCapabilities> const& _other) noexcept
         : shader_uniform_reader(_other.program()) {}
 
         template<typename T>
@@ -53,32 +53,32 @@ namespace randomcat::engine::graphics {
         // These functions will throw shader_no_such_uniform_error if the referenced
         // uniform does not exist
 
-        bool get_bool(std::string const& _name) const noexcept(!"Throws if uniform not found");
-        GLint get_int(std::string const& _name) const noexcept(!"Throws if uniform not found");
-        GLfloat get_float(std::string const& _name) const noexcept(!"Throws if uniform not found");
-        glm::vec3 get_vec3(std::string const& _name) const noexcept(!"Throws if uniform not found");
-        glm::mat4 get_mat4(std::string const& _name) const noexcept(!"Throws if uniform not found");
+        [[nodiscard]] bool get_bool(std::string const& _name) const noexcept(!"Throws if uniform not found");
+        [[nodiscard]] GLint get_int(std::string const& _name) const noexcept(!"Throws if uniform not found");
+        [[nodiscard]] GLfloat get_float(std::string const& _name) const noexcept(!"Throws if uniform not found");
+        [[nodiscard]] glm::vec3 get_vec3(std::string const& _name) const noexcept(!"Throws if uniform not found");
+        [[nodiscard]] glm::mat4 get_mat4(std::string const& _name) const noexcept(!"Throws if uniform not found");
 
         template<typename Wrapper, typename = std::enable_if_t<has_capability<Wrapper>>>
-        Wrapper as() const noexcept(noexcept(Wrapper(*this))) {
+        [[nodiscard]] Wrapper as() const noexcept(noexcept(Wrapper(*this))) {
             return Wrapper(*this);
         }
 
         template<typename Func,
                  typename = std::enable_if_t<type_container::type_list_contains_v<Capabilities, decltype(std::forward<Func>(std::declval<std::add_lvalue_reference_t<Func&&>>())(std::declval<shader_uniform_reader const&>()))>>>
-        decltype(auto) as(Func&& _func) const noexcept(noexcept(std::forward<Func>(_func)(*this))) {
+        [[nodiscard]] decltype(auto) as(Func&& _func) const noexcept(noexcept(std::forward<Func>(_func)(*this))) {
             return std::forward<Func>(_func)(*this);
         }
 
     protected:
-        GLint get_uniform_location(std::string const& _name) const noexcept(!"Throws if uniform not found");
-        gl_raii_detail::shared_program_id program() const noexcept { return m_programID; }
+        [[nodiscard]] GLint get_uniform_location(std::string const& _name) const noexcept(!"Throws if uniform not found");
+        [[nodiscard]] auto const& program() const noexcept { return m_programID; }
 
     private:
         gl_raii_detail::shared_program_id m_programID;
 
     protected:
-        auto make_active_lock() const noexcept { return shader_detail::program_active_lock(m_programID); }
+        [[nodiscard]] auto make_active_lock() const noexcept { return shader_detail::program_active_lock(m_programID); }
 
         template<typename>
         friend class shader_uniform_reader;
@@ -115,13 +115,13 @@ namespace randomcat::engine::graphics {
         void set_mat4(std::string const& _name, glm::tmat4x4<GLfloat> const& _value) const noexcept(!"Throws if uniform not found");
 
         template<typename Wrapper, typename = std::enable_if_t<has_capability<Wrapper>>>
-        Wrapper as() const noexcept(noexcept(Wrapper(*this))) {
+        [[nodiscard]] Wrapper as() const noexcept(noexcept(Wrapper(*this))) {
             return Wrapper(*this);
         }
 
         template<typename Func,
                  typename = std::enable_if_t<has_capability<decltype(std::forward<Func>(std::declval<std::add_lvalue_reference_t<Func>>())(std::declval<shader_uniform_writer const&>()))>>>
-        decltype(auto) as(Func&& _func) const noexcept(noexcept(std::forward<Func>(_func)(*this))) {
+        [[nodiscard]] decltype(auto) as(Func&& _func) const noexcept(noexcept(std::forward<Func>(_func)(*this))) {
             return std::forward<Func>(_func)(*this);
         }
 

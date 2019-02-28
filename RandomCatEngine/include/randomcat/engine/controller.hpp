@@ -21,7 +21,7 @@ namespace randomcat::engine {
         controller(controller const&) = delete;
         controller(controller&&) = delete;
 
-        system_timer const& timer() const noexcept { return m_timer; }
+        [[nodiscard]] auto const& timer() const noexcept { return m_timer; }
 
         void tick() noexcept {
             fetch_sdl_events();
@@ -29,7 +29,7 @@ namespace randomcat::engine {
             m_timer.tick(fetch_current_raw_time());
         }
 
-        input::input_state inputs() const noexcept { return m_currentInputState; }
+        [[nodiscard]] auto const& inputs() const noexcept { return m_currentInputState; }
 
         template<typename _renderer_t, typename... _renderer_arg_t>
         void render(_renderer_t const& _renderer,
@@ -38,10 +38,10 @@ namespace randomcat::engine {
             m_window.swap_buffers();
         }
 
-        graphics::window& window() noexcept { return m_window; }
-        graphics::window const& window() const noexcept { return m_window; }
+        [[nodiscard]] auto& window() noexcept { return m_window; }
+        [[nodiscard]] auto const& window() const noexcept { return m_window; }
 
-        bool quit_received() const noexcept { return m_quitReceived; }
+        [[nodiscard]] auto quit_received() const noexcept { return m_quitReceived; }
 
     private:
         graphics::window m_window;

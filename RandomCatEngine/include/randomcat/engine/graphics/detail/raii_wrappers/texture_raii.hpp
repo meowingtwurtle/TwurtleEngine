@@ -6,7 +6,7 @@
 #include "randomcat/engine/graphics/detail/raii_wrappers/opengl_raii_id.hpp"
 
 namespace randomcat::engine::graphics::gl_raii_detail {
-    inline opengl_raw_id make_texture() noexcept {
+    [[nodiscard]] inline auto make_texture() noexcept {
         RC_GL_ERROR_GUARD("creating texture id");
 
         opengl_raw_id id;

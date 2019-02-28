@@ -6,7 +6,7 @@
 
 namespace randomcat::engine::graphics {
     namespace shader_detail {
-        inline gl_raii_detail::unique_shader_id compile_shader(GLenum _type, std::string_view _source) noexcept(false) {
+        inline auto compile_shader(GLenum _type, std::string_view _source) noexcept(!"Throws on error") {
             RC_GL_ERROR_GUARD("compiling shader");
 
             auto shaderID = gl_raii_detail::unique_shader_id(_type);
@@ -42,7 +42,7 @@ namespace randomcat::engine::graphics {
         }
 
         template<typename... Shaders>
-        inline gl_raii_detail::unique_program_id link_program(Shaders const&... _shaders) noexcept(false) {
+        inline auto link_program(Shaders const&... _shaders) noexcept(false) {
             static_assert((std::is_same_v<Shaders, gl_raii_detail::unique_shader_id> && ...), "Arguments must all be shader_ids");
 
             RC_GL_ERROR_GUARD("linking program");
@@ -71,17 +71,17 @@ namespace randomcat::engine::graphics {
             return programID;
         }
 
-        inline GLuint program_binary_size(gl_raii_detail::shared_program_id const& _program) {
+        inline auto program_binary_size(gl_raii_detail::shared_program_id const& _program) noexcept {
             RC_GL_ERROR_GUARD("getting program size");
 
             GLint size;
             glGetProgramiv(_program, GL_PROGRAM_BINARY_LENGTH, &size);
-            return GLuint(size);
+            return gsl::narrow<GLuint>(size);
         }
     }    // namespace shader_detail
 
     template<typename Vertex, typename Capabilities>
-    shader<Vertex, Capabilities>::shader(std::string_view _vertex, std::string_view _fragment, std::vector<shader_input> _inputs)
+    shader<Vertex, Capabilities>::shader(std::string_view _vertex, std::string_view _fragment, std::vector<shader_input> _inputs) noexcept(false)
     : shader(shader_detail::link_program(shader_detail::compile_vertex_shader(_vertex), shader_detail::compile_fragment_shader(_fragment)),
              std::move(_inputs)) {}
 

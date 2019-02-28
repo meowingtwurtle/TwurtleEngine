@@ -59,7 +59,7 @@ namespace randomcat::engine::graphics {
     }    // namespace object_detail
 
     template<typename Object>
-    constexpr decltype(auto) render_object_sub_parts(Object const& _obj) noexcept(noexcept(object_detail::object_sub_parts<Object>(_obj))) {
+    [[nodiscard]] constexpr decltype(auto) render_object_sub_parts(Object const& _obj) noexcept(noexcept(object_detail::object_sub_parts<Object>(_obj))) {
         return std::invoke(object_detail::object_sub_parts<Object>, _obj);
     }
 

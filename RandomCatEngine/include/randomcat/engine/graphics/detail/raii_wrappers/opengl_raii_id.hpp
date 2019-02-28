@@ -62,12 +62,12 @@ namespace randomcat::engine::graphics::gl_raii_detail {
         template<bool Enable = is_shared, typename = std::enable_if_t<Enable>>
         basic_opengl_raii_id(as_unique&& _other) : m_id(std::move(_other.m_id)), m_deleter(std::move(_other.m_deleter)) {}
 
-        opengl_raw_id value() const noexcept { return m_id; }
+        [[nodiscard]] opengl_raw_id value() const noexcept { return m_id; }
         /* implicit */ operator opengl_raw_id() const { return value(); }
 
-        bool operator==(this_t const& _other) const noexcept { return value() == _other.value(); }
+        [[nodiscard]] bool operator==(this_t const& _other) const noexcept { return value() == _other.value(); }
 
-        bool operator!=(this_t const& _other) const noexcept { return !(*this == _other); }
+        [[nodiscard]] bool operator!=(this_t const& _other) const noexcept { return !(*this == _other); }
 
     private:
         // Do not reorder these fields, as constructor init-list depends on it

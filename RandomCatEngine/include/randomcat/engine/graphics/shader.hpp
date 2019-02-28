@@ -55,43 +55,43 @@ namespace randomcat::engine::graphics {
 
         void make_active() const noexcept { shader_detail::activate_program(m_programID); }
 
-        std::vector<shader_input> inputs() const noexcept { return m_inputs; }
+        [[nodiscard]] auto const& inputs() const noexcept { return m_inputs; }
 
-        bool operator==(shader const& _other) const noexcept { return program() == _other.program(); }
-        bool operator!=(shader const& _other) const noexcept { return !(*this == _other); }
+        [[nodiscard]] auto operator==(shader const& _other) const noexcept { return program() == _other.program(); }
+        [[nodiscard]] auto operator!=(shader const& _other) const noexcept { return !(*this == _other); }
 
-        uniform_manager uniforms() noexcept { return uniform_manager(program()); }
-        decltype(auto) uniforms() const noexcept { return const_uniforms(); }
+        [[nodiscard]] auto uniforms() noexcept { return uniform_manager(program()); }
+        [[nodiscard]] decltype(auto) uniforms() const noexcept { return const_uniforms(); }
 
-        const_uniform_manager const_uniforms() const noexcept { return shader_uniform_reader(program()); }
-
-        template<typename NewVertex>
-        shader<NewVertex, UniformCapabilities> reinterpret_vertex_and_inputs(std::vector<shader_input> _inputs) const noexcept;
-
-        shader<Vertex, UniformCapabilities> reinterpret_inputs(std::vector<shader_input> _inputs) const noexcept;
+        [[nodiscard]] auto const_uniforms() const noexcept { return const_uniform_manager(program()); }
 
         template<typename NewVertex>
-        shader<NewVertex, UniformCapabilities> reinterpret_vertex() const noexcept;
+        [[nodiscard]] shader<NewVertex, UniformCapabilities> reinterpret_vertex_and_inputs(std::vector<shader_input> _inputs) const noexcept;
 
-        shader clone() const noexcept;
+        [[nodiscard]] shader<Vertex, UniformCapabilities> reinterpret_inputs(std::vector<shader_input> _inputs) const noexcept;
+
+        template<typename NewVertex>
+        [[nodiscard]] shader<NewVertex, UniformCapabilities> reinterpret_vertex() const noexcept;
+
+        [[nodiscard]] shader clone() const noexcept;
 
         template<typename Func>
-        decltype(auto) uniforms_as(Func&& _func) noexcept(noexcept(uniforms().template as(std::forward<Func>(_func)))) {
+        [[nodiscard]] decltype(auto) uniforms_as(Func&& _func) noexcept(noexcept(uniforms().template as(std::forward<Func>(_func)))) {
             return uniforms().template as(std::forward<Func>(_func));
         }
 
         template<typename Func>
-        decltype(auto) uniforms_as(Func&& _func) const noexcept(noexcept(uniforms().template as(std::forward<Func>(_func)))) {
+        [[nodiscard]] decltype(auto) uniforms_as(Func&& _func) const noexcept(noexcept(uniforms().template as(std::forward<Func>(_func)))) {
             return const_uniforms().template as(std::forward<Func>(_func));
         }
 
         template<typename UniformWrapper, typename = std::enable_if_t<type_container::type_list_contains_v<UniformCapabilities, UniformWrapper>>>
-        UniformWrapper uniforms_as() noexcept(noexcept(UniformWrapper(uniforms()))) {
+        [[nodiscard]] UniformWrapper uniforms_as() noexcept(noexcept(UniformWrapper(uniforms()))) {
             return uniforms().template as<UniformWrapper>();
         }
 
         template<typename UniformWrapper, typename = std::enable_if_t<type_container::type_list_contains_v<UniformCapabilities, UniformWrapper>>>
-        UniformWrapper uniforms_as() const noexcept(noexcept(const_uniforms().template as<UniformWrapper>())) {
+        [[nodiscard]] UniformWrapper uniforms_as() const noexcept(noexcept(const_uniforms().template as<UniformWrapper>())) {
             return const_uniforms().template as<UniformWrapper>();
         }
 
@@ -99,7 +99,7 @@ namespace randomcat::engine::graphics {
         explicit shader(gl_raii_detail::shared_program_id _program, std::vector<shader_input> _inputs) noexcept
         : m_programID(std::move(_program)), m_inputs(std::move(_inputs)) {}
 
-        gl_raii_detail::shared_program_id program() const noexcept { return m_programID; }
+        [[nodiscard]] auto const& program() const noexcept { return m_programID; }
 
     private:
         gl_raii_detail::shared_program_id m_programID;
@@ -125,30 +125,30 @@ namespace randomcat::engine::graphics {
         /* implicit */ shader_view(shader_view<Vertex, OtherCapabilities> const& _other) noexcept(!"Copying vector")
         : shader_view(_other.program(), _other.inputs()) {}
 
-        bool operator==(shader_view const& _other) const noexcept { return m_programID == _other.m_programID; }
-        bool operator!=(shader_view const& _other) const noexcept { return !(*this == _other); }
+        [[nodiscard]] auto operator==(shader_view const& _other) const noexcept { return m_programID == _other.m_programID; }
+        [[nodiscard]] auto operator!=(shader_view const& _other) const noexcept { return !(*this == _other); }
 
         void make_active() const noexcept { shader_detail::activate_program(m_programID); }
 
-        std::vector<shader_input> inputs() const noexcept { return m_inputs; }
+        [[nodiscard]] auto const& inputs() const noexcept { return m_inputs; }
 
         using const_uniform_manager = shader_uniform_writer<UniformCapabilities>;
 
-        const_uniform_manager uniforms() const noexcept { return shader_uniform_reader(m_programID); }
-        decltype(auto) const_uniforms() const noexcept { return uniforms(); }
+        [[nodiscard]] auto uniforms() const noexcept { return const_uniform_manager(m_programID); }
+        [[nodiscard]] decltype(auto) const_uniforms() const noexcept { return uniforms(); }
 
         template<typename NewVertex>
-        shader<NewVertex, UniformCapabilities> reinterpret_vertex_and_inputs(std::vector<shader_input> _inputs) const noexcept;
+        [[nodiscard]] shader<NewVertex, UniformCapabilities> reinterpret_vertex_and_inputs(std::vector<shader_input> _inputs) const noexcept;
 
-        shader<Vertex, UniformCapabilities> reinterpret_inputs(std::vector<shader_input> _inputs) const noexcept;
+        [[nodiscard]] shader<Vertex, UniformCapabilities> reinterpret_inputs(std::vector<shader_input> _inputs) const noexcept;
 
         template<typename NewVertex>
-        shader<NewVertex, UniformCapabilities> reinterpret_vertex() const noexcept;
+        [[nodiscard]] shader<NewVertex, UniformCapabilities> reinterpret_vertex() const noexcept;
 
-        shader<Vertex, UniformCapabilities> clone() const noexcept;
+        [[nodiscard]] shader<Vertex, UniformCapabilities> clone() const noexcept;
 
         template<typename UniformManager, typename = std::enable_if_t<type_container::type_list_contains_v<UniformCapabilities, UniformManager>>>
-        UniformManager uniforms_as() const noexcept(noexcept(const_uniforms().template as<UniformManager>())) {
+        [[nodiscard]] UniformManager uniforms_as() const noexcept(noexcept(const_uniforms().template as<UniformManager>())) {
             return const_uniforms().template as<UniformManager>();
         }
 
@@ -156,7 +156,7 @@ namespace randomcat::engine::graphics {
         explicit shader_view(gl_raii_detail::shared_program_id _program, std::vector<shader_input> _inputs) noexcept(!"Copying vector")
         : m_programID(std::move(_program)), m_inputs(std::move(_inputs)) {}
 
-        gl_raii_detail::shared_program_id program() const noexcept { return m_programID; }
+        [[nodiscard]] auto const& program() const noexcept { return m_programID; }
 
     private:
         gl_raii_detail::shared_program_id m_programID;

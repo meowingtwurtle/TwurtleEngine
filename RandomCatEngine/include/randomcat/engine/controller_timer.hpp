@@ -10,7 +10,7 @@ namespace randomcat::engine {
     public:
         using time = std::chrono::milliseconds;
 
-        system_timer(time _startTime) noexcept : m_startTime(_startTime) {}
+        explicit system_timer(time _startTime) noexcept : m_startTime(_startTime) {}
 
         // Does not make sense to tick a temporary timer
         void tick(time _currentTime) & noexcept {
@@ -19,15 +19,15 @@ namespace randomcat::engine {
             tick_fps();
         }
 
-        time current_time() const noexcept { return m_currentTickTime; }
+        [[nodiscard]] auto current_time() const noexcept { return m_currentTickTime; }
 
-        time previous_time() const noexcept { return m_lastTickTime; }
+        [[nodiscard]] auto previous_time() const noexcept { return m_lastTickTime; }
 
-        time delta_time() const noexcept { return current_time() - previous_time(); }
+        [[nodiscard]] auto delta_time() const noexcept { return current_time() - previous_time(); }
 
-        time start_time() const noexcept { return m_startTime; }
+        [[nodiscard]] auto start_time() const noexcept { return m_startTime; }
 
-        auto fps() const noexcept { return m_ticksLastSecond; }
+        [[nodiscard]] auto fps() const noexcept { return m_ticksLastSecond; }
 
     private:
         time m_startTime;

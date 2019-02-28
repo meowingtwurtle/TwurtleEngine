@@ -16,13 +16,13 @@ namespace randomcat::engine::graphics::gl_detail {
         gl_error_guard(gl_error_guard const&) = delete;
         gl_error_guard(gl_error_guard&&) = delete;
 
-        ~gl_error_guard() {
+        ~gl_error_guard() noexcept {
             GLenum error;
             while ((error = glGetError()) != GL_NO_ERROR) { log::error << m_errorString << ": " << error_string(error) << "!"; }
         }
 
     private:
-        static std::string_view error_string(GLenum _error) {
+        [[nodiscard]] static std::string_view error_string(GLenum _error) noexcept {
             switch (_error) {
                 case GL_NO_ERROR: return "[no error]";
                 case GL_INVALID_ENUM: return "Invalid enum passed to command";

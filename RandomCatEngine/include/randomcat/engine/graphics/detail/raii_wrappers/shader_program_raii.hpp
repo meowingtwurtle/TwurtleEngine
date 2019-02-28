@@ -6,7 +6,7 @@
 #include "randomcat/engine/graphics/detail/raii_wrappers/opengl_raii_id.hpp"
 
 namespace randomcat::engine::graphics::gl_raii_detail {
-    inline opengl_raw_id make_shader(GLenum _type) noexcept {
+    [[nodiscard]] inline auto make_shader(GLenum _type) noexcept {
         RC_GL_ERROR_GUARD("creating shader id");
 
         return opengl_raw_id{glCreateShader(_type)};
@@ -18,7 +18,7 @@ namespace randomcat::engine::graphics::gl_raii_detail {
         glDeleteShader(_id);
     }
 
-    inline opengl_raw_id make_program() noexcept {
+    [[nodiscard]] inline auto make_program() noexcept {
         RC_GL_ERROR_GUARD("creating program id");
 
         return opengl_raw_id{glCreateProgram()};

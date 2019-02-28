@@ -24,9 +24,9 @@ namespace randomcat::engine::graphics {
         /* implicit */ constexpr shader_input_attribute_type(shader_input_attribute_base_type _baseType, shader_input_attribute_size _size) noexcept
         : m_baseType(std::move(_baseType)), m_size(std::move(_size)) {}
 
-        auto base() const noexcept { return m_baseType; }
+        [[nodiscard]] constexpr auto base() const noexcept { return m_baseType; }
 
-        auto size() const noexcept { return m_size; }
+        [[nodiscard]] constexpr auto size() const noexcept { return m_size; }
 
     private:
         shader_input_attribute_base_type m_baseType;

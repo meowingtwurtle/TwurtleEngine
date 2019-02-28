@@ -28,7 +28,7 @@ namespace randomcat::engine::graphics {
 
         void update(camera_state const& _state) noexcept;
 
-        static shader<default_vertex, shader_capabilities<camera>> camera_shader();
+        [[nodiscard]] static shader<default_vertex, shader_capabilities<camera>> camera_shader();
 
     private:
         shader_uniform_writer<uniform_capabilities<camera>> m_uniforms;

@@ -88,7 +88,7 @@ namespace randomcat::engine::graphics::textures {
     using const_unique_texture_array = unique_texture_array::as_const;
     using const_shared_texture_array = shared_texture_array::as_const;
 
-    unique_texture_array gen_texture_array(GLsizei _width, GLsizei _height, GLsizei _layers) noexcept {
+    [[nodiscard]] unique_texture_array gen_texture_array(GLsizei _width, GLsizei _height, GLsizei _layers) noexcept {
         RC_GL_ERROR_GUARD("generating texture array");
 
         gl_raii_detail::unique_texture_id id;

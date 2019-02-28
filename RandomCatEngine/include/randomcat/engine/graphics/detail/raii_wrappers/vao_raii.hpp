@@ -6,7 +6,7 @@
 #include "randomcat/engine/graphics/detail/raii_wrappers/opengl_raii_id.hpp"
 
 namespace randomcat::engine::graphics::gl_raii_detail {
-    inline decltype(auto) make_vao() noexcept {
+    [[nodiscard]] inline auto make_vao() noexcept {
         RC_GL_ERROR_GUARD("creating vao id");
 
         opengl_raw_id id;

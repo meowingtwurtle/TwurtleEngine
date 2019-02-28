@@ -32,29 +32,29 @@ namespace randomcat::engine::graphics {
         // Use of raw int required by SDL
         void set_size(int _width, int _height) noexcept { SDL_SetWindowSize(m_window, _width, _height); }
 
-        auto width() const noexcept { return size().width; }
-
-        auto height() const noexcept { return size().height; }
-
         struct dimensions {
             std::int16_t width;
             std::int16_t height;
         };
 
-        dimensions size() const noexcept {
+        [[nodiscard]] auto size() const noexcept {
             // SDL requires use of int
             int width, height;
             SDL_GetWindowSize(m_window, &width, &height);
 
-            return {.width = gsl::narrow<std::int16_t>(width), .height = gsl::narrow<std::int16_t>(height)};
+            return dimensions{.width = gsl::narrow<std::int16_t>(width), .height = gsl::narrow<std::int16_t>(height)};
         }
 
-        float aspect_ratio() const noexcept {
+        [[nodiscard]] auto width() const noexcept { return size().width; }
+
+        [[nodiscard]] auto height() const noexcept { return size().height; }
+
+        [[nodiscard]] auto aspect_ratio() const noexcept {
             dimensions dims = size();
             return float(dims.width) / float(dims.height);
         }
 
-        std::string title() const noexcept { return SDL_GetWindowTitle(m_window); }
+        [[nodiscard]] std::string title() const noexcept { return SDL_GetWindowTitle(m_window); }
 
         void set_title(std::string const& _title) noexcept { SDL_SetWindowTitle(m_window, _title.c_str()); }
 
