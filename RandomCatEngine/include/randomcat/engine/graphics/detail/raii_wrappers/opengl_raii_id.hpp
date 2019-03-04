@@ -7,7 +7,7 @@
 #include "randomcat/engine/graphics/detail/gl_types.hpp"
 
 namespace randomcat::engine::graphics::gl_raii_detail {
-    template<bool copyable, auto, auto, typename...>
+    template<bool copyable, auto, auto>
     struct basic_opengl_raii_id;
 
     using gl_detail::opengl_raw_id;
@@ -34,27 +34,18 @@ namespace randomcat::engine::graphics::gl_raii_detail {
         };
     }    // namespace impl
 
-    template<bool _is_shared,
-             typename... _construct_args_ts,
-             typename... _create_args_ts,
-             bool _create_noexcept,
-             opengl_raw_id (*_create_id_f)(_create_args_ts...) noexcept(_create_noexcept),
-             bool _destroy_noexcept,
-             void (*_destroy_id_f)(opengl_raw_id) noexcept(_destroy_noexcept)>
-    struct basic_opengl_raii_id<_is_shared, _create_id_f, _destroy_id_f, _construct_args_ts...> {
+    template<bool _is_shared, typename... _create_args_ts, bool _create_noexcept, opengl_raw_id (*_create_id_f)(_create_args_ts...) noexcept(_create_noexcept), bool _destroy_noexcept, void (*_destroy_id_f)(opengl_raw_id) noexcept(_destroy_noexcept)>
+    struct basic_opengl_raii_id<_is_shared, _create_id_f, _destroy_id_f> {
         using this_t = basic_opengl_raii_id;
 
-        // Only delete if we require construct args
-        template<bool Enable = sizeof...(_construct_args_ts), typename = std::enable_if_t<Enable>>
-        basic_opengl_raii_id() = delete;
-
-        explicit basic_opengl_raii_id(_construct_args_ts... _args) noexcept(_create_noexcept)
+        template<typename... Args>
+        explicit basic_opengl_raii_id(Args&&... _args) noexcept(_create_noexcept)
         // This depends on order of fields, as m_id is referenced in deleter
         // constructor rvalue unique_ptr is convertible to shared_ptr
-        : m_id(_create_id_f(_args...)), m_deleter(std::make_unique<deleter>(m_id)) {}
+        : m_id(_create_id_f(std::forward<Args>(_args)...)), m_deleter(std::make_unique<deleter>(m_id)) {}
 
-        using as_unique = basic_opengl_raii_id<false, _create_id_f, _destroy_id_f, _construct_args_ts...>;
-        using as_shared = basic_opengl_raii_id<true, _create_id_f, _destroy_id_f, _construct_args_ts...>;
+        using as_unique = basic_opengl_raii_id<false, _create_id_f, _destroy_id_f>;
+        using as_shared = basic_opengl_raii_id<true, _create_id_f, _destroy_id_f>;
 
         static auto constexpr is_shared = _is_shared;
         static auto constexpr is_unique = !is_shared;
@@ -78,13 +69,13 @@ namespace randomcat::engine::graphics::gl_raii_detail {
 
         std::conditional_t<_is_shared, std::shared_ptr<deleter>, std::unique_ptr<deleter>> m_deleter;
 
-        template<bool copyable, auto, auto, typename...>
+        template<bool copyable, auto, auto>
         friend struct basic_opengl_raii_id;
     };
 
-    template<auto _create_id_f, auto _destroy_id_f, typename... _construct_args_ts>
-    using unique_opengl_raii_id = basic_opengl_raii_id<false, _create_id_f, _destroy_id_f, _construct_args_ts...>;
+    template<auto _create_id_f, auto _destroy_id_f>
+    using unique_opengl_raii_id = basic_opengl_raii_id<false, _create_id_f, _destroy_id_f>;
 
-    template<auto _create_id_f, auto _destroy_id_f, typename... _construct_args_ts>
-    using shared_opengl_raii_id = basic_opengl_raii_id<true, _create_id_f, _destroy_id_f, _construct_args_ts...>;
+    template<auto _create_id_f, auto _destroy_id_f>
+    using shared_opengl_raii_id = basic_opengl_raii_id<true, _create_id_f, _destroy_id_f>;
 }    // namespace randomcat::engine::graphics::gl_raii_detail
