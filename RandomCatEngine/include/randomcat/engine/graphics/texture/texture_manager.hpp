@@ -5,53 +5,40 @@
 #include <unordered_map>
 
 #include "randomcat/engine/detail/tag_exception.hpp"
+#include "randomcat/engine/graphics/texture/texture.hpp"
 
 namespace randomcat::engine::graphics::textures {
-    class texture {
-    public:
-        explicit texture(std::string _name, std::int32_t _width, std::int32_t _height, unsigned char* _data) noexcept
-        : m_name{std::move(_name)}, m_width{_width}, m_height{_height}, m_data{_data}, m_underlying{std::make_shared<underlying>(_data)} {}
-
-        [[nodiscard]] auto const& name() const noexcept { return m_name; }
-        [[nodiscard]] auto width() const noexcept { return m_width; }
-        [[nodiscard]] auto height() const noexcept { return m_height; }
-        [[nodiscard]] unsigned char const* data() const noexcept { return m_data; }
-
-    private:
-        struct underlying {
-            unsigned char* m_data;
-            underlying(unsigned char* _data) noexcept : m_data(_data) {}
-            ~underlying() noexcept;
-        };
-
-        std::string m_name;
-        std::int32_t m_width;
-        std::int32_t m_height;
-        unsigned char* m_data;
-        std::shared_ptr<underlying> m_underlying;
-    };
-
-    namespace texture_detail {
-        struct texture_load_error_tag {};
-    }    // namespace texture_detail
-    using texture_load_error = util_detail::tag_exception<texture_detail::texture_load_error_tag>;
-
     namespace texture_detail {
         struct no_such_texture_error_tag {};
     }    // namespace texture_detail
     using no_such_texture_error = util_detail::tag_exception<texture_detail::no_such_texture_error_tag>;
 
+    namespace texture_detail {
+        struct texture_duplicate_path_tag {};
+    }    // namespace texture_detail
+    using texture_duplicate_path_error = util_detail::tag_exception<texture_detail::texture_duplicate_path_tag>;
+
     class texture_manager {
     public:
-        [[nodiscard]] texture const& load_texture(std::string const& _path);
-        [[nodiscard]] texture const& get_texture(std::string const& _path) const;
+        [[nodiscard]] texture const& get_texture(std::string_view _path) const noexcept(!"Throws on error");
+        [[nodiscard]] bool has_texture(std::string_view _path) const noexcept;
 
-        using texture_map_iterator = std::unordered_map<std::string, texture>::const_iterator;
+        // Returns whether or not a texture was removed
+        [[nodiscard]] bool remove_texture(std::string_view _path) noexcept;
 
-        [[nodiscard]] texture_map_iterator begin() const noexcept { return m_textureMap.begin(); }
-        [[nodiscard]] texture_map_iterator end() const noexcept { return m_textureMap.end(); }
+        void alias_texture(std::string _newName, std::string_view _oldName) noexcept(!"Throws on error");
+
+        // Copies the texture into the map, returns a reference to the new texture
+        texture const& add_texture(std::string _newName, texture _texture) noexcept(!"Throws on error");
 
     private:
-        std::unordered_map<std::string, texture> m_textureMap;
+        using map_t = std::unordered_map<std::string, texture>;
+        using map_iter_t = typename map_t::iterator;
+        using map_const_iter_t = typename map_t::const_iterator;
+
+        map_iter_t texture_iter(std::string_view _name) noexcept;
+        map_const_iter_t texture_iter(std::string_view _name) const noexcept;
+        map_t m_textureMap;
     };
+
 }    // namespace randomcat::engine::graphics::textures
