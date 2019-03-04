@@ -30,6 +30,7 @@ namespace randomcat::engine {
         }
 
         [[nodiscard]] auto const& inputs() const noexcept { return m_currentInputState; }
+        [[nodiscard]] auto const& input_changes() const noexcept { return m_inputStateChanges; }
 
         template<typename _renderer_t, typename... _renderer_arg_t>
         void render(_renderer_t const& _renderer,
@@ -47,6 +48,7 @@ namespace randomcat::engine {
         graphics::window m_window;
 
         input::input_state m_currentInputState;
+        input::input_state_changes m_inputStateChanges;
 
         bool m_quitReceived = false;
 
@@ -55,34 +57,26 @@ namespace randomcat::engine {
         std::chrono::milliseconds fetch_current_raw_time() const noexcept { return std::chrono::milliseconds{SDL_GetTicks()}; }
 
         void fetch_sdl_events() noexcept {
-            input::input_state workState = std::move(m_currentInputState);
-
-            workState.rel_mouse_state().rel_x() = 0;
-            workState.rel_mouse_state().rel_y() = 0;
-
-            workState.keyboard_state().down_to_held();
+            input::input_state_changes changes;
 
             SDL_Event event;
             while (SDL_PollEvent(&event)) {
                 switch (event.type) {
                     case SDL_KEYDOWN: {
-                        workState.keyboard_state().set_key_down(event.key.keysym.sym);
+                        changes.keyboard_changes().set_key_down(event.key.keysym.sym);
 
                         break;
                     }
 
                     case SDL_KEYUP: {
-                        workState.keyboard_state().set_key_up(event.key.keysym.sym);
+                        changes.keyboard_changes().set_key_up(event.key.keysym.sym);
 
                         break;
                     }
 
                     case SDL_MOUSEMOTION: {
-                        workState.mouse_state().x() = event.motion.x;
-                        workState.mouse_state().y() = event.motion.y;
-
-                        workState.rel_mouse_state().rel_x() += event.motion.xrel;
-                        workState.rel_mouse_state().rel_y() += event.motion.yrel;
+                        changes.mouse_changes().delta_x() += event.motion.xrel;
+                        changes.mouse_changes().delta_y() += event.motion.yrel;
 
                         break;
                     }
@@ -95,7 +89,8 @@ namespace randomcat::engine {
                 }
             }
 
-            m_currentInputState = std::move(workState);
+            m_currentInputState.update(changes);
+            m_inputStateChanges = std::move(changes);
         }
     };
 }    // namespace randomcat::engine
