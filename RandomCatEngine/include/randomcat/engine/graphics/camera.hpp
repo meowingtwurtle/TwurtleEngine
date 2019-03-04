@@ -13,7 +13,7 @@
 namespace randomcat::engine::graphics {
     struct camera_state {
         GLfloat aspectRatio;
-        GLfloat fov;
+        units::quantity<double, units::radians_unit> fov;
         GLfloat minDistance;
         GLfloat maxDistance;
         direction dir;
