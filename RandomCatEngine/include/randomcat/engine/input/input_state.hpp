@@ -80,13 +80,13 @@ namespace randomcat::engine::input {
     class input_state {
     public:
         mouse_input_state& mouse_state() noexcept { return m_mouseState; }
-        mouse_input_state mouse_state() const noexcept { return m_mouseState; }
+        mouse_input_state const& mouse_state() const noexcept { return m_mouseState; }
 
         relative_mouse_input_state& rel_mouse_state() noexcept { return m_relMouseState; }
-        relative_mouse_input_state rel_mouse_state() const noexcept { return m_relMouseState; }
+        relative_mouse_input_state const& rel_mouse_state() const noexcept { return m_relMouseState; }
 
         keyboard_input_state& keyboard_state() noexcept { return m_keyState; }
-        keyboard_input_state keyboard_state() const noexcept { return m_keyState; }
+        keyboard_input_state const& keyboard_state() const noexcept { return m_keyState; }
 
     private:
         mouse_input_state m_mouseState;
