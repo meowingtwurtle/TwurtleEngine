@@ -34,7 +34,9 @@ namespace randomcat::engine::graphics {
             
             void main()
             {
-                FragColor = texture(textures, vec3(texCoord, layerNum));
+                vec4 color = texture(textures, vec3(texCoord, layerNum));
+                if (color.a == 0.0) discard;
+                FragColor = color;
             }
         )";
     }    // namespace
