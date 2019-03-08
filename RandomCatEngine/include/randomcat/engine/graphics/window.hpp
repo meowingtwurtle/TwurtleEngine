@@ -3,7 +3,6 @@
 #include <cstdint>
 #include <string>
 
-#include <SDL2/SDL.h>
 #include <glm/glm.hpp>
 #include <gsl/gsl_util>
 
@@ -15,35 +14,22 @@
 namespace randomcat::engine::graphics {
     class window {
     public:
-        explicit window(std::string const& _title = "Twurtle Engine", std::int16_t _width = 600, std::int16_t _height = 600) noexcept {
-            m_window = SDL_CreateWindow(_title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, _width, _height, SDL_WINDOW_OPENGL);
+        explicit window(std::string const& _title = "Twurtle Engine", std::int16_t _width = 600, std::int16_t _height = 600) noexcept;
 
-            log::info << "Window created with title \"" << _title << "\".";
-        }
-
-        ~window() noexcept {
-            log::info << "Window with title \"" << title() << "\" destroyed.";
-            SDL_DestroyWindow(m_window);
-        }
+        ~window() noexcept;
 
         window(window const&) = delete;
         window(window&&) = delete;
-
-        // Use of raw int required by SDL
-        void set_size(int _width, int _height) noexcept { SDL_SetWindowSize(m_window, _width, _height); }
 
         struct dimensions {
             std::int16_t width;
             std::int16_t height;
         };
 
-        [[nodiscard]] auto size() const noexcept {
-            // SDL requires use of int
-            int width, height;
-            SDL_GetWindowSize(m_window, &width, &height);
+        void set_size(std::int16_t _width, std::int16_t _height) noexcept { set_size({_width, _height}); }
+        void set_size(dimensions _dims) noexcept;
 
-            return dimensions{.width = gsl::narrow<std::int16_t>(width), .height = gsl::narrow<std::int16_t>(height)};
-        }
+        [[nodiscard]] dimensions size() const noexcept;
 
         [[nodiscard]] auto width() const noexcept { return size().width; }
 
@@ -54,16 +40,16 @@ namespace randomcat::engine::graphics {
             return float(dims.width) / float(dims.height);
         }
 
-        [[nodiscard]] std::string title() const noexcept { return SDL_GetWindowTitle(m_window); }
+        [[nodiscard]] std::string title() const noexcept;
 
-        void set_title(std::string const& _title) noexcept { SDL_SetWindowTitle(m_window, _title.c_str()); }
+        void set_title(std::string const& _title) noexcept;
 
-        void swap_buffers() noexcept { SDL_GL_SwapWindow(m_window); }
+        void swap_buffers() noexcept;
 
-        void set_cursor_shown(bool _shown) noexcept { SDL_SetRelativeMouseMode(!_shown ? SDL_TRUE : SDL_FALSE); }
+        void set_cursor_shown(bool _shown) noexcept;
 
     private:
-        SDL_Window* m_window;
+        void* m_window;
 
         friend void randomcat::engine::graphics::gl_detail::set_render_context(window const&);
     };

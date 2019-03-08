@@ -20,7 +20,7 @@ namespace randomcat::engine::graphics::gl_detail {
             log::info("Destroyed previous GL context.");
         }
 
-        g_context = SDL_GL_CreateContext(_window.m_window);
+        g_context = SDL_GL_CreateContext(static_cast<SDL_Window*>(_window.m_window));
 
         if (!g_context) { throw render_context_init_error{std::string{"Error creating GL context: "} + SDL_GetError()}; }
 
