@@ -11,13 +11,13 @@ namespace randomcat::engine {
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
                 case SDL_KEYDOWN: {
-                    changes.keyboard_changes().set_key_down(event.key.keysym.sym);
+                    changes.keyboard_changes().set_key_down(input_detail::wrap_key(event.key.keysym.sym));
 
                     break;
                 }
 
                 case SDL_KEYUP: {
-                    changes.keyboard_changes().set_key_up(event.key.keysym.sym);
+                    changes.keyboard_changes().set_key_up(input_detail::wrap_key(event.key.keysym.sym));
 
                     break;
                 }
