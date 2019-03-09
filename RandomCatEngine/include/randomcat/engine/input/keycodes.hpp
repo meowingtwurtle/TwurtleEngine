@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <SDL2/SDL.h>
+#include <SDL2/SDL_keyboard.h>
 
 #define RC_KC_DEF(symbol, sdl_name)                                                                                                        \
     static constexpr keycode const keycode_##symbol [[maybe_unused]] = SDLK_##sdl_name;                                                    \
