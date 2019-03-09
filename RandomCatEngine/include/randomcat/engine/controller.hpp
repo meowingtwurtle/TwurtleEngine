@@ -24,7 +24,7 @@ namespace randomcat::engine {
         [[nodiscard]] auto const& timer() const noexcept { return m_timer; }
 
         void tick() noexcept {
-            fetch_sdl_events();
+            fetch_raw_events();
             graphics::clear_graphics();
             m_timer.tick(fetch_current_raw_time());
         }
@@ -54,43 +54,8 @@ namespace randomcat::engine {
 
         system_timer m_timer = system_timer{fetch_current_raw_time()};
 
-        std::chrono::milliseconds fetch_current_raw_time() const noexcept { return std::chrono::milliseconds{SDL_GetTicks()}; }
+        std::chrono::milliseconds fetch_current_raw_time() const noexcept;
 
-        void fetch_sdl_events() noexcept {
-            input::input_state_changes changes;
-
-            SDL_Event event;
-            while (SDL_PollEvent(&event)) {
-                switch (event.type) {
-                    case SDL_KEYDOWN: {
-                        changes.keyboard_changes().set_key_down(event.key.keysym.sym);
-
-                        break;
-                    }
-
-                    case SDL_KEYUP: {
-                        changes.keyboard_changes().set_key_up(event.key.keysym.sym);
-
-                        break;
-                    }
-
-                    case SDL_MOUSEMOTION: {
-                        changes.mouse_changes().delta_x() += event.motion.xrel;
-                        changes.mouse_changes().delta_y() += event.motion.yrel;
-
-                        break;
-                    }
-
-                    case SDL_QUIT: {
-                        m_quitReceived = true;
-
-                        break;
-                    }
-                }
-            }
-
-            m_currentInputState.update(changes);
-            m_inputStateChanges = std::move(changes);
-        }
+        void fetch_raw_events() noexcept;
     };
 }    // namespace randomcat::engine
