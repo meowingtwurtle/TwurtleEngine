@@ -12,8 +12,7 @@
 namespace randomcat::engine {
     class controller {
     public:
-        explicit controller(std::string _windowTitle = "Twurtle Engine", std::int16_t _windowWidth = 600, std::int16_t _windowHeight = 600) noexcept
-        : m_window{std::move(_windowTitle), _windowWidth, _windowHeight} {
+        explicit controller(graphics::window& _window) noexcept : m_window{_window} {
             graphics::gl_detail::set_render_context(m_window);
             graphics::enable_depth_test();
         }
@@ -36,7 +35,7 @@ namespace randomcat::engine {
         void render(_renderer_t const& _renderer,
                     _renderer_arg_t&&... _rendererArg) noexcept(noexcept(_renderer(std::forward<_renderer_arg_t>(_rendererArg)...))) {
             _renderer(std::forward<_renderer_arg_t>(_rendererArg)...);
-            m_window.swap_buffers();
+            m_window.get().swap_buffers();
         }
 
         [[nodiscard]] auto& window() noexcept { return m_window; }
@@ -45,7 +44,7 @@ namespace randomcat::engine {
         [[nodiscard]] auto quit_received() const noexcept { return m_quitReceived; }
 
     private:
-        graphics::window m_window;
+        std::reference_wrapper<graphics::window> m_window;
 
         input::input_state m_currentInputState;
         input::input_state_changes m_inputStateChanges;
