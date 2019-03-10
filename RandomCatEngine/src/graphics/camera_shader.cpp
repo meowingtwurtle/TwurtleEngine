@@ -42,12 +42,23 @@ namespace randomcat::engine::graphics {
     }    // namespace
 
     shader<default_vertex, shader_capabilities<camera>> camera::camera_shader() {
-        shader<default_vertex, shader_capabilities<camera>>
-            ourShader(DEFAULT_VERTEX_SHADER,
-                      DEFAULT_FRAGMENT_SHADER,
-                      {{0, shader_input::vec3_type, shader_input_storage_type::floating_point, offsetof(default_vertex, location), sizeof(default_vertex)},
-                       {1, shader_input::vec2_type, shader_input_storage_type::floating_point, offsetof(default_vertex, texCoord), sizeof(default_vertex)},
-                       {2, shader_input::int_type, shader_input_storage_type::signed_int, offsetof(default_vertex, layerNum), sizeof(default_vertex)}});
+        shader<default_vertex, shader_capabilities<camera>> ourShader(DEFAULT_VERTEX_SHADER,
+                                                                      DEFAULT_FRAGMENT_SHADER,
+                                                                      {{0,
+                                                                        shader_input::vec3_type,
+                                                                        shader_input_storage_type::floating_point,
+                                                                        offsetof(default_vertex, loc) + offsetof(default_vertex::location, value),
+                                                                        sizeof(default_vertex)},
+                                                                       {1,
+                                                                        shader_input::vec2_type,
+                                                                        shader_input_storage_type::floating_point,
+                                                                        offsetof(default_vertex, tex) + offsetof(default_vertex::texture, coord),
+                                                                        sizeof(default_vertex)},
+                                                                       {2,
+                                                                        shader_input::int_type,
+                                                                        shader_input_storage_type::signed_int,
+                                                                        offsetof(default_vertex, tex) + offsetof(default_vertex::texture, layer),
+                                                                        sizeof(default_vertex)}});
 
         ourShader.uniforms().set_mat4("camera", glm::mat4{1.0f});
 
