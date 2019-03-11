@@ -54,30 +54,37 @@ namespace randomcat::engine::graphics {
 
         template<typename T>
         void operator()(T const& _t) const noexcept {
-            std::optional<active_lock> lock = std::nullopt;
-            if (!is_forced_active()) lock.emplace(*this);
-
+            auto l = make_active_lock();
             render_active(_t);
         }
 
+    private:
+        struct active_lock_held {};
+
+    public:
         // Must not outlive the renderer object
         class active_lock {
         public:
             active_lock(active_lock const&) = delete;
             active_lock(active_lock&&) = delete;
 
-            active_lock(vertex_renderer const& _renderer) noexcept(!"Throws on error") : m_renderer(_renderer) {
+            active_lock(vertex_renderer const& _renderer) noexcept : m_renderer(_renderer) {
                 m_renderer.make_active();
-                m_renderer.set_forced_active();
+                if (_renderer.m_activeLock.expired()) {
+                    auto newHeld = std::make_shared<active_lock_held>();
+                    _renderer.m_activeLock = newHeld;
+                    m_holdLock = std::move(newHeld);
+                } else {
+                    m_holdLock = _renderer.m_activeLock.lock();
+                }
             }
 
-            ~active_lock() noexcept { m_renderer.release_forced_active(); }
-
         private:
+            std::shared_ptr<active_lock_held> m_holdLock;
             vertex_renderer const& m_renderer;
         };
 
-        active_lock make_active_lock() const noexcept(!"Throws on error") {
+        active_lock make_active_lock() const noexcept {
             return active_lock(*this);    // Constructor activates the renderer
         }
 
@@ -125,19 +132,11 @@ namespace randomcat::engine::graphics {
             std::for_each(begin(_t), end(_t), [this](auto const& x) { render_active(x); });
         }
 
-        void set_forced_active() const noexcept(!"Throws on error") {
-            if (is_forced_active()) throw vertex_renderer_double_lock_error();
-            m_isForcedActive = true;
-        }
-
-        void release_forced_active() const noexcept { m_isForcedActive = false; }
-
-        bool is_forced_active() const noexcept { return m_isForcedActive; }
-
-        mutable bool m_isForcedActive = false;
         gl_raii_detail::unique_vao_id m_vao;
         gl_raii_detail::unique_vbo_id m_vbo;
         shader_view<vertex> m_shader;
+
+        mutable std::weak_ptr<active_lock_held> m_activeLock = std::weak_ptr<active_lock_held>();
     };
 
     using default_vertex_renderer = vertex_renderer<default_vertex>;
