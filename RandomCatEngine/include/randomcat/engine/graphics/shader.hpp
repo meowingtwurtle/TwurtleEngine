@@ -136,6 +136,11 @@ namespace randomcat::engine::graphics {
 
         [[nodiscard]] shader<Vertex, UniformCapabilities> clone() const noexcept;
 
+        template<typename Func>
+        [[nodiscard]] decltype(auto) uniforms_as(Func&& _func) const noexcept(noexcept(uniforms().template as(std::forward<Func>(_func)))) {
+            return const_uniforms().template as(std::forward<Func>(_func));
+        }
+
         template<typename UniformManager, typename = std::enable_if_t<type_container::type_list_contains_v<UniformCapabilities, UniformManager>>>
         [[nodiscard]] UniformManager uniforms_as() const noexcept(noexcept(const_uniforms().template as<UniformManager>())) {
             return const_uniforms().template as<UniformManager>();
