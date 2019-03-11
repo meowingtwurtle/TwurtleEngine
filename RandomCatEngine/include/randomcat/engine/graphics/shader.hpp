@@ -51,9 +51,6 @@ namespace randomcat::engine::graphics {
 
         [[nodiscard]] auto const& inputs() const noexcept { return m_inputs; }
 
-        [[nodiscard]] auto operator==(shader const& _other) const noexcept { return program() == _other.program(); }
-        [[nodiscard]] auto operator!=(shader const& _other) const noexcept { return !(*this == _other); }
-
         [[nodiscard]] auto uniforms() noexcept { return uniform_manager(program()); }
         [[nodiscard]] decltype(auto) uniforms() const noexcept { return const_uniforms(); }
 
@@ -118,9 +115,6 @@ namespace randomcat::engine::graphics {
         template<typename OtherCapabilities, typename = std::enable_if_t<type_container::type_list_is_sub_list_of_v<UniformCapabilities, OtherCapabilities>>>
         /* implicit */ shader_view(shader_view<Vertex, OtherCapabilities> const& _other) noexcept(!"Copying vector")
         : shader_view(_other.program(), _other.inputs()) {}
-
-        [[nodiscard]] auto operator==(shader_view const& _other) const noexcept { return m_programID == _other.m_programID; }
-        [[nodiscard]] auto operator!=(shader_view const& _other) const noexcept { return !(*this == _other); }
 
         void make_active() const noexcept { shader_detail::activate_program(m_programID); }
 
