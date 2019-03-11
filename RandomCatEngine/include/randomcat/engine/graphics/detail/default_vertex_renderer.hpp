@@ -110,26 +110,12 @@ namespace randomcat::engine::graphics {
             glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
         }
 
-        // bool_if_t makes the template parameter lists different here, so no
-        // redeclaration If this is confusing, go watch
-        // https://www.youtube.com/watch?v=ybaE9qlhHvw bool_if_t evaluates to bool
-        // only if the value is true, otherwise it SFINAEs away
-
-        // is_vertex_container_v tests if we can use this as a vertex container
-        // (namely, if it has a possibly data() method returning a cv-pointer to
-        // vertex)
-
-        template<typename _container_t, bool_if_t<is_vertex_container_v<_container_t>> = true>
+        template<typename _container_t, typename = std::enable_if_t<is_vertex_container_v<_container_t>>>
         void render_active(_container_t const& _vertices) const noexcept {
             RC_GL_ERROR_GUARD("vertex renderer rendering");
 
             glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(vertex), _vertices.data(), GL_DYNAMIC_DRAW);
             glDrawArrays(GL_TRIANGLES, 0, _vertices.size());
-        }
-
-        template<typename T, bool_if_t<!is_vertex_container_v<T>> = true>
-        void render_active(T const& _t) const noexcept {
-            std::for_each(begin(_t), end(_t), [this](auto const& x) { render_active(x); });
         }
 
         gl_raii_detail::unique_vao_id m_vao;
