@@ -176,16 +176,22 @@ namespace randomcat::engine::graphics {
                                           texture_array_index _texLY,
                                           texture_array_index _texHZ,
                                           texture_array_index _texLZ) noexcept
-        : m_rectangles(genTriangles(_center, _sides, _texHX, _texLX, _texHY, _texLY, _texHZ, _texLZ)), m_center(_center) {}
+        : m_rectangles(gen_triangles(_center, _sides, _texHX, _texLX, _texHY, _texLY, _texHZ, _texLZ)), m_center(_center) {}
 
-        std::array<render_object_rectangle, 6> genTriangles(glm::vec3 _center,
-                                                            glm::vec3 _sides,
-                                                            texture_array_index _texHX,
-                                                            texture_array_index _texLX,
-                                                            texture_array_index _texHY,
-                                                            texture_array_index _texLY,
-                                                            texture_array_index _texHZ,
-                                                            texture_array_index _texLZ) const noexcept {
+        auto const& sides() const noexcept { return m_rectangles; }
+        auto center() const noexcept { return m_center; }
+
+        RC_SUB_PARTS(sides);
+
+    private:
+        std::array<render_object_rectangle, 6> gen_triangles(glm::vec3 _center,
+                                                             glm::vec3 _sides,
+                                                             texture_array_index _texHX,
+                                                             texture_array_index _texLX,
+                                                             texture_array_index _texHY,
+                                                             texture_array_index _texLY,
+                                                             texture_array_index _texHZ,
+                                                             texture_array_index _texLZ) const noexcept {
             auto vecHX = glm::vec3{_sides.x / 2, 0, 0};
             auto vecHY = glm::vec3{0, _sides.y / 2, 0};
             auto vecHZ = glm::vec3{0, 0, _sides.z / 2};
@@ -229,12 +235,6 @@ namespace randomcat::engine::graphics {
             return {rectHZ, rectLZ, rectHY, rectLY, rectLX, rectHX};
         }
 
-        auto const& sides() const noexcept { return m_rectangles; }
-        auto center() const noexcept { return m_center; }
-
-        RC_SUB_PARTS(sides);
-
-    private:
         std::array<render_object_rectangle, 6> m_rectangles;
         glm::vec3 m_center;
     };
