@@ -151,7 +151,7 @@ namespace randomcat::engine::graphics {
         RC_GL_ERROR_GUARD("getting uniform location");
 
         auto loc = glGetUniformLocation(program(), _name.c_str());
-        if (loc == -1) throw shader_no_such_uniform_error("No such uniform: " + _name);
+        if (loc == -1) throw no_such_uniform_error("No such uniform: " + _name);
 
         return loc;
     }

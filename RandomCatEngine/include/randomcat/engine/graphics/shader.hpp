@@ -18,12 +18,6 @@ namespace randomcat::engine::graphics {
     }
 
     namespace shader_detail {
-        struct shader_no_such_uniform_error_tag {};
-    }    // namespace shader_detail
-
-    using shader_no_such_uniform_error = util_detail::tag_exception<shader_detail::shader_no_such_uniform_error_tag>;
-
-    namespace shader_detail {
         struct shader_init_error_tag {};
     }    // namespace shader_detail
     using shader_init_error = util_detail::tag_exception<shader_detail::shader_init_error_tag>;

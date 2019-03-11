@@ -18,6 +18,12 @@ namespace randomcat::engine::graphics {
     using uniform_no_capabilities = type_container::empty_type_list;
 
     namespace shader_detail {
+        struct no_such_uniform_error_tag {};
+    }    // namespace shader_detail
+
+    using no_such_uniform_error = util_detail::tag_exception<shader_detail::no_such_uniform_error_tag>;
+
+    namespace shader_detail {
         class program_active_lock {
         public:
             program_active_lock(program_active_lock const&) = delete;
