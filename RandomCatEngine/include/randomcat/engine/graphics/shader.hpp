@@ -120,10 +120,11 @@ namespace randomcat::engine::graphics {
 
         [[nodiscard]] auto const& inputs() const noexcept { return m_inputs; }
 
-        using const_uniform_manager = shader_uniform_writer<UniformCapabilities>;
+        using uniform_manager = shader_uniform_writer<UniformCapabilities>;
+        using const_uniform_manager = uniform_manager;
 
-        [[nodiscard]] auto uniforms() const noexcept { return const_uniform_manager(m_programID); }
-        [[nodiscard]] decltype(auto) const_uniforms() const noexcept { return uniforms(); }
+        [[nodiscard]] const_uniform_manager uniforms() const noexcept { return const_uniform_manager(m_programID); }
+        [[nodiscard]] const_uniform_manager const_uniforms() const noexcept { return uniforms(); }
 
         template<typename NewVertex>
         [[nodiscard]] shader<NewVertex, UniformCapabilities> reinterpret_vertex_and_inputs(std::vector<shader_input> _inputs) const noexcept;
