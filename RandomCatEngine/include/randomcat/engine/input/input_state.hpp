@@ -117,11 +117,11 @@ namespace randomcat::engine::input {
 
     class input_state_changes {
     public:
-        auto& mouse_changes() noexcept { return m_mouseChanges; }
-        auto const& mouse_changes() const noexcept { return m_mouseChanges; }
+        auto& mouse() noexcept { return m_mouseChanges; }
+        auto const& mouse() const noexcept { return m_mouseChanges; }
 
-        auto& keyboard_changes() noexcept { return m_keyboardChanges; }
-        auto const& keyboard_changes() const noexcept { return m_keyboardChanges; }
+        auto& keyboard() noexcept { return m_keyboardChanges; }
+        auto const& keyboard() const noexcept { return m_keyboardChanges; }
 
     private:
         mouse_input_state_changes m_mouseChanges;
@@ -130,15 +130,15 @@ namespace randomcat::engine::input {
 
     class input_state {
     public:
-        mouse_input_state& mouse_state() noexcept { return m_mouseState; }
-        mouse_input_state const& mouse_state() const noexcept { return m_mouseState; }
+        mouse_input_state& mouse() noexcept { return m_mouseState; }
+        mouse_input_state const& mouse() const noexcept { return m_mouseState; }
 
-        keyboard_input_state& keyboard_state() noexcept { return m_keyState; }
-        keyboard_input_state const& keyboard_state() const noexcept { return m_keyState; }
+        keyboard_input_state& keyboard() noexcept { return m_keyState; }
+        keyboard_input_state const& keyboard() const noexcept { return m_keyState; }
 
         void update(input_state_changes const& _changes) noexcept {
-            m_mouseState.update(_changes.mouse_changes());
-            m_keyState.update(_changes.keyboard_changes());
+            m_mouseState.update(_changes.mouse());
+            m_keyState.update(_changes.keyboard());
         }
 
         void update(mouse_input_state_changes const& _changes) noexcept { m_mouseState.update(_changes); }
