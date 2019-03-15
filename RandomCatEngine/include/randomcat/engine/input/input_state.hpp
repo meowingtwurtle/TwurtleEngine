@@ -70,10 +70,6 @@ namespace randomcat::engine::input {
             }
         }
 
-        void set_key_down(keycode _key) noexcept { m_map[_key] = key_state::down; }
-
-        void set_key_up(keycode _key) noexcept { m_map[_key] = key_state::up; }
-
         void update(keyboard_input_state_changes const& _changes) {
             std::for_each(begin(_changes.m_newStates), end(_changes.m_newStates), [&, this](auto const& changeNode) {
                 m_map[changeNode.first] = changeNode.second;
@@ -99,9 +95,6 @@ namespace randomcat::engine::input {
 
     class mouse_input_state {
     public:
-        auto& x() noexcept { return m_mouseX; }
-        auto& y() noexcept { return m_mouseY; }
-
         auto x() const noexcept { return m_mouseX; }
         auto y() const noexcept { return m_mouseY; }
 
