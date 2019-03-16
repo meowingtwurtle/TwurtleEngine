@@ -53,11 +53,18 @@ namespace randomcat::engine {
         [[nodiscard]] inline auto raw_key(input::keycode _key) noexcept { return static_cast<SDL_Keycode>(_key); }
 
         [[nodiscard]] inline auto wrap_key(SDL_Keycode _key) noexcept { return static_cast<input::keycode>(_key); }
+
+        struct no_such_keycode_error_tag {};
     }    // namespace input_detail
 
     namespace input {
-        [[nodiscard]] inline keycode keycode_from_name(std::string const& _character) noexcept {
-            return input_detail::wrap_key(SDL_GetKeyFromName(_character.c_str()));
+        using no_such_keycode_error = util_detail::tag_exception<input_detail::no_such_keycode_error_tag>;
+
+        [[nodiscard]] inline keycode keycode_from_name(std::string const& _character) {
+            auto const sdlKey = SDL_GetKeyFromName(_character.c_str());
+            if (sdlKey == SDLK_UNKNOWN) throw no_such_keycode_error("Invalid keycode name: " + _character);
+
+            return input_detail::wrap_key(sdlKey);
         }
 
         [[nodiscard]] inline std::string name_from_keycode(keycode _keycode) noexcept {
