@@ -5,7 +5,7 @@
 #include "randomcat/engine/graphics/detail/gl_error_guard.hpp"
 #include "randomcat/engine/graphics/detail/raii_wrappers/opengl_raii_id.hpp"
 
-namespace randomcat::engine::graphics::gl_raii_detail {
+namespace randomcat::engine::graphics::gl_detail {
     [[nodiscard]] inline auto make_texture() noexcept {
         RC_GL_ERROR_GUARD("creating texture id");
 
@@ -22,4 +22,4 @@ namespace randomcat::engine::graphics::gl_raii_detail {
 
     using unique_texture_id = unique_opengl_raii_id<make_texture, destroy_texture>;
     using shared_texture_id = shared_opengl_raii_id<make_texture, destroy_texture>;
-}    // namespace randomcat::engine::graphics::gl_raii_detail
+}    // namespace randomcat::engine::graphics::gl_detail

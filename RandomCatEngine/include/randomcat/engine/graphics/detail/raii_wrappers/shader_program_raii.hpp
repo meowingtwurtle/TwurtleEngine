@@ -5,7 +5,7 @@
 #include "randomcat/engine/graphics/detail/gl_error_guard.hpp"
 #include "randomcat/engine/graphics/detail/raii_wrappers/opengl_raii_id.hpp"
 
-namespace randomcat::engine::graphics::gl_raii_detail {
+namespace randomcat::engine::graphics::gl_detail {
     [[nodiscard]] inline auto make_shader(GLenum _type) noexcept {
         RC_GL_ERROR_GUARD("creating shader id");
 
@@ -34,4 +34,4 @@ namespace randomcat::engine::graphics::gl_raii_detail {
     using shared_shader_id = shared_opengl_raii_id<make_shader, destroy_shader>;
     using unique_program_id = unique_opengl_raii_id<make_program, destroy_program>;
     using shared_program_id = shared_opengl_raii_id<make_program, destroy_program>;
-}    // namespace randomcat::engine::graphics::gl_raii_detail
+}    // namespace randomcat::engine::graphics::gl_detail

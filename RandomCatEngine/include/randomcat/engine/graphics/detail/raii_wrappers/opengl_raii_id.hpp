@@ -6,7 +6,7 @@
 
 #include "randomcat/engine/graphics/detail/gl_types.hpp"
 
-namespace randomcat::engine::graphics::gl_raii_detail {
+namespace randomcat::engine::graphics::gl_detail {
     template<bool copyable, auto, auto>
     struct basic_opengl_raii_id;
 
@@ -78,4 +78,4 @@ namespace randomcat::engine::graphics::gl_raii_detail {
 
     template<auto _create_id_f, auto _destroy_id_f>
     using shared_opengl_raii_id = basic_opengl_raii_id<true, _create_id_f, _destroy_id_f>;
-}    // namespace randomcat::engine::graphics::gl_raii_detail
+}    // namespace randomcat::engine::graphics::gl_detail

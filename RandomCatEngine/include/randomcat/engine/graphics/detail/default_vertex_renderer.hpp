@@ -118,8 +118,8 @@ namespace randomcat::engine::graphics {
             glDrawArrays(GL_TRIANGLES, 0, _vertices.size());
         }
 
-        gl_raii_detail::unique_vao_id m_vao;
-        gl_raii_detail::unique_vbo_id m_vbo;
+        gl_detail::unique_vao_id m_vao;
+        gl_detail::unique_vbo_id m_vbo;
         shader_view<vertex> m_shader;
 
         mutable std::weak_ptr<active_lock_held> m_activeLock = std::weak_ptr<active_lock_held>();

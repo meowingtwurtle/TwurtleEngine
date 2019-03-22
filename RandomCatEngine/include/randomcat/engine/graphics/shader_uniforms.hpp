@@ -29,7 +29,7 @@ namespace randomcat::engine::graphics {
             program_active_lock(program_active_lock const&) = delete;
             program_active_lock(program_active_lock&&) = delete;
 
-            explicit program_active_lock(gl_raii_detail::shared_program_id const& _programID) noexcept;
+            explicit program_active_lock(gl_detail::shared_program_id const& _programID) noexcept;
             ~program_active_lock() noexcept;
 
         private:
@@ -37,7 +37,7 @@ namespace randomcat::engine::graphics {
             static void set_active_program(GLuint _id) noexcept;
 
             std::optional<gl_detail::opengl_raw_id> m_oldID = std::nullopt;
-            gl_raii_detail::shared_program_id const& m_programID;
+            gl_detail::shared_program_id const& m_programID;
         };
     }    // namespace shader_detail
 
@@ -46,7 +46,7 @@ namespace randomcat::engine::graphics {
     public:
         static_assert(shader_detail::valid_capabilities<Capabilities>, "Capabilities must be valid");
 
-        explicit shader_uniform_reader(gl_raii_detail::shared_program_id _programID) noexcept : m_programID(std::move(_programID)) {}
+        explicit shader_uniform_reader(gl_detail::shared_program_id _programID) noexcept : m_programID(std::move(_programID)) {}
 
         template<typename OtherCapabilities, typename = std::enable_if_t<type_container::type_list_is_sub_list_of_v<Capabilities, OtherCapabilities>>>
         /* implicit */ shader_uniform_reader(shader_uniform_reader<OtherCapabilities> const& _other) noexcept
@@ -81,7 +81,7 @@ namespace randomcat::engine::graphics {
         [[nodiscard]] auto const& program() const noexcept { return m_programID; }
 
     private:
-        gl_raii_detail::shared_program_id m_programID;
+        gl_detail::shared_program_id m_programID;
 
     protected:
         [[nodiscard]] auto make_active_lock() const noexcept { return shader_detail::program_active_lock(m_programID); }
@@ -95,7 +95,7 @@ namespace randomcat::engine::graphics {
     public:
         static_assert(shader_detail::valid_capabilities<Capabilities>, "Capabilities must be valid");
 
-        explicit shader_uniform_writer(gl_raii_detail::shared_program_id _programID) noexcept
+        explicit shader_uniform_writer(gl_detail::shared_program_id _programID) noexcept
         : shader_uniform_reader<Capabilities>(std::move(_programID)) {}
 
         template<typename OtherCapabilities, typename = std::enable_if_t<type_container::type_list_is_sub_list_of_v<Capabilities, OtherCapabilities>>>

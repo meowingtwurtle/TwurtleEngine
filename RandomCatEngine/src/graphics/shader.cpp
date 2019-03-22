@@ -13,17 +13,17 @@
 
 namespace randomcat::engine::graphics {
     namespace shader_detail {
-        void activate_program(gl_raii_detail::shared_program_id const& _program) noexcept {
+        void activate_program(gl_detail::shared_program_id const& _program) noexcept {
             RC_GL_ERROR_GUARD("activating program");
 
             glUseProgram(_program);
         }
     }    // namespace shader_detail
 
-    using gl_raii_detail::shared_program_id;
-    using gl_raii_detail::unique_shader_id;
+    using gl_detail::shared_program_id;
+    using gl_detail::unique_shader_id;
 
-    shader_detail::program_active_lock::program_active_lock(gl_raii_detail::shared_program_id const& _programID) noexcept
+    shader_detail::program_active_lock::program_active_lock(gl_detail::shared_program_id const& _programID) noexcept
     : m_programID(_programID) {
         auto oldActiveShader = get_active_program();
         if (m_programID.value() != oldActiveShader) {

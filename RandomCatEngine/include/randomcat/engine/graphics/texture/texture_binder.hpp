@@ -34,7 +34,7 @@ namespace randomcat::engine::graphics::textures {
         : m_id(std::move(_other.m_id)), m_width(std::move(_other.m_width)), m_height(std::move(_other.m_height)), m_layers(std::move(_other.m_layers)) {}
 
     private:
-        using id_type = std::conditional_t<Shared, gl_raii_detail::shared_texture_id, gl_raii_detail::unique_texture_id>;
+        using id_type = std::conditional_t<Shared, gl_detail::shared_texture_id, gl_detail::unique_texture_id>;
 
         explicit basic_texture_array(id_type _id, GLsizei _width, GLsizei _height, GLsizei _layers)
         : m_id(std::move(_id)), m_width(std::move(_width)), m_height(std::move(_height)), m_layers(std::move(_layers)) {}
@@ -91,7 +91,7 @@ namespace randomcat::engine::graphics::textures {
     [[nodiscard]] unique_texture_array gen_texture_array(GLsizei _width, GLsizei _height, GLsizei _layers) noexcept {
         RC_GL_ERROR_GUARD("generating texture array");
 
-        gl_raii_detail::unique_texture_id id;
+        gl_detail::unique_texture_id id;
         glBindTexture(GL_TEXTURE_2D_ARRAY, id);
         glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, _width, _height, _layers);
 

@@ -5,7 +5,7 @@
 #include "randomcat/engine/graphics/detail/gl_error_guard.hpp"
 #include "randomcat/engine/graphics/detail/raii_wrappers/opengl_raii_id.hpp"
 
-namespace randomcat::engine::graphics::gl_raii_detail {
+namespace randomcat::engine::graphics::gl_detail {
     [[nodiscard]] inline auto raw_make_buffer() noexcept {
         RC_GL_ERROR_GUARD("creating buffer id");
 
@@ -35,4 +35,4 @@ namespace randomcat::engine::graphics::gl_raii_detail {
 
     template<typename Tag>
     using shared_buffer_id = shared_opengl_raii_id<make_buffer<Tag>, destroy_buffer<Tag>>;
-}    // namespace randomcat::engine::graphics::gl_raii_detail
+}    // namespace randomcat::engine::graphics::gl_detail
