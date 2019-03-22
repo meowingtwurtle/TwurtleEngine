@@ -35,4 +35,7 @@ namespace randomcat::engine::graphics::gl_detail {
 
     template<typename Tag>
     using shared_buffer_id = shared_opengl_raii_id<make_buffer<Tag>, destroy_buffer<Tag>>;
+
+    template<typename Tag>
+    using raw_buffer_id = typename unique_buffer_id<Tag>::raw_id;
 }    // namespace randomcat::engine::graphics::gl_detail

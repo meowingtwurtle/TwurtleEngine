@@ -27,8 +27,8 @@ namespace randomcat::engine::graphics {
         explicit vertex_renderer(shader_view<vertex> _shader) noexcept : m_shader(std::move(_shader)) {
             RC_GL_ERROR_GUARD("initializing vertex renderer");
 
-            glBindVertexArray(m_vao);
-            glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+            glBindVertexArray(m_vao.value());
+            glBindBuffer(GL_ARRAY_BUFFER, m_vbo.value());
 
             for (shader_input input : m_shader.inputs()) {
                 auto const rawStorageType = static_cast<GLenum>(input.storageType);
@@ -106,8 +106,8 @@ namespace randomcat::engine::graphics {
             RC_GL_ERROR_GUARD("activating vertex renderer");
 
             m_shader.make_active();
-            glBindVertexArray(m_vao);
-            glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+            glBindVertexArray(m_vao.value());
+            glBindBuffer(GL_ARRAY_BUFFER, m_vbo.value());
         }
 
         template<typename _container_t, typename = std::enable_if_t<is_vertex_container_v<_container_t>>>

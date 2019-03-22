@@ -92,7 +92,7 @@ namespace randomcat::engine::graphics::textures {
         RC_GL_ERROR_GUARD("generating texture array");
 
         gl_detail::unique_texture_id id;
-        glBindTexture(GL_TEXTURE_2D_ARRAY, id);
+        glBindTexture(GL_TEXTURE_2D_ARRAY, id.value());
         glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, _width, _height, _layers);
 
         return unique_texture_array{std::move(id), _width, _height, _layers};

@@ -4,13 +4,12 @@
 
 #include <GL/glew.h>
 
+#include "randomcat/engine/detail/safe_int.hpp"
 #include "randomcat/engine/graphics/detail/gl_types.hpp"
 
 namespace randomcat::engine::graphics::gl_detail {
     template<bool copyable, auto, auto>
     struct basic_opengl_raii_id;
-
-    using gl_detail::opengl_raw_id;
 
     static_assert(std::is_integral_v<opengl_raw_id>);
 
@@ -32,11 +31,19 @@ namespace randomcat::engine::graphics::gl_detail {
 
             opengl_raw_id m_id;
         };
+
+        template<auto...>
+        struct gl_func_holder_tag {};
+
+        template<auto... Tags>
+        using typed_opengl_raw_id = util_detail::safe_integer<opengl_raw_id, gl_func_holder_tag<Tags...>>;
     }    // namespace impl
 
     template<bool _is_shared, typename... _create_args_ts, bool _create_noexcept, opengl_raw_id (*_create_id_f)(_create_args_ts...) noexcept(_create_noexcept), bool _destroy_noexcept, void (*_destroy_id_f)(opengl_raw_id) noexcept(_destroy_noexcept)>
     struct basic_opengl_raii_id<_is_shared, _create_id_f, _destroy_id_f> {
         using this_t = basic_opengl_raii_id;
+
+        using raw_id = impl::typed_opengl_raw_id<_create_id_f, _destroy_id_f>;
 
         template<typename... Args>
         explicit basic_opengl_raii_id(Args&&... _args) noexcept(_create_noexcept)
@@ -53,8 +60,10 @@ namespace randomcat::engine::graphics::gl_detail {
         template<bool Enable = is_shared, typename = std::enable_if_t<Enable>>
         basic_opengl_raii_id(as_unique&& _other) : m_id(std::move(_other.m_id)), m_deleter(std::move(_other.m_deleter)) {}
 
+        // For things that want to pass to GL functions
         [[nodiscard]] opengl_raw_id value() const noexcept { return m_id; }
-        /* implicit */ operator opengl_raw_id() const { return value(); }
+
+        /* implicit */ operator raw_id() const { return raw_id{value()}; }
 
         [[nodiscard]] bool operator==(this_t const& _other) const noexcept { return value() == _other.value(); }
 

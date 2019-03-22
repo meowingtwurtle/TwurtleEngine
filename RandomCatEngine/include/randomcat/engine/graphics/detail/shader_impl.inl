@@ -14,18 +14,18 @@ namespace randomcat::engine::graphics {
             // Third argument: array of char const*, fourth argument: array of sizes of
             // strings These arguments are given std::arrays of size 1 of the value then
             // have the data pointer extracted
-            glShaderSource(shaderID, 1, std::array{_source.data()}.data(), std::array{gsl::narrow<GLint>(_source.size())}.data());
+            glShaderSource(shaderID.value(), 1, std::array{_source.data()}.data(), std::array{gsl::narrow<GLint>(_source.size())}.data());
 
-            glCompileShader(shaderID);
+            glCompileShader(shaderID.value());
 
             GLint success = 0;
-            glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);
+            glGetShaderiv(shaderID.value(), GL_COMPILE_STATUS, &success);
 
             if (!success) {
                 constexpr int BUFFER_LEN = 512;
 
                 std::array<char, BUFFER_LEN> errorBuffer{};
-                glGetShaderInfoLog(shaderID, BUFFER_LEN, nullptr, errorBuffer.data());
+                glGetShaderInfoLog(shaderID.value(), BUFFER_LEN, nullptr, errorBuffer.data());
 
                 throw shader_init_error{std::string{"Error compiling shader: "} + errorBuffer.data()};
             }
@@ -51,19 +51,19 @@ namespace randomcat::engine::graphics {
 
             {
                 // Attach all shaders
-                ((glAttachShader(programID, _shaders)), ...);
+                ((glAttachShader(programID.value(), _shaders.value())), ...);
 
-                glLinkProgram(programID);
+                glLinkProgram(programID.value());
 
                 GLint success = 0;
-                glGetProgramiv(programID, GL_LINK_STATUS, &success);
+                glGetProgramiv(programID.value(), GL_LINK_STATUS, &success);
 
                 if (!success) {
                     // Raw use of int okay - constant expression
                     constexpr int BUFFER_LEN = 512;
                     std::array<char, BUFFER_LEN> errorBuffer{};
 
-                    glGetProgramInfoLog(programID, BUFFER_LEN, nullptr, errorBuffer.data());
+                    glGetProgramInfoLog(programID.value(), BUFFER_LEN, nullptr, errorBuffer.data());
                     throw shader_init_error{std::string{"Error linking program: "} + errorBuffer.data()};
                 }
             }
@@ -75,7 +75,7 @@ namespace randomcat::engine::graphics {
             RC_GL_ERROR_GUARD("getting program size");
 
             GLint size;
-            glGetProgramiv(_program, GL_PROGRAM_BINARY_LENGTH, &size);
+            glGetProgramiv(_program.value(), GL_PROGRAM_BINARY_LENGTH, &size);
             return gsl::narrow<GLuint>(size);
         }
     }    // namespace shader_detail
@@ -93,10 +93,10 @@ namespace randomcat::engine::graphics {
             auto binary = std::vector<char>(programSize);
             GLenum binaryFormat;
 
-            glGetProgramBinary(_program, programSize, nullptr, &binaryFormat, binary.data());
+            glGetProgramBinary(_program.value(), programSize, nullptr, &binaryFormat, binary.data());
 
             auto newProgram = gl_detail::shared_program_id();
-            glProgramBinary(newProgram, binaryFormat, binary.data(), programSize);
+            glProgramBinary(newProgram.value(), binaryFormat, binary.data(), programSize);
 
             return newProgram;
         }
@@ -150,7 +150,7 @@ namespace randomcat::engine::graphics {
     GLint shader_uniform_reader<Capabilities>::get_uniform_location(std::string const& _name) const {
         RC_GL_ERROR_GUARD("getting uniform location");
 
-        auto loc = glGetUniformLocation(program(), _name.c_str());
+        auto loc = glGetUniformLocation(program().value(), _name.c_str());
         if (loc == -1) throw no_such_uniform_error("No such uniform: " + _name);
 
         return loc;

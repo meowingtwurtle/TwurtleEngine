@@ -16,7 +16,7 @@ namespace randomcat::engine::graphics {
         void activate_program(gl_detail::shared_program_id const& _program) noexcept {
             RC_GL_ERROR_GUARD("activating program");
 
-            glUseProgram(_program);
+            glUseProgram(_program.value());
         }
     }    // namespace shader_detail
 

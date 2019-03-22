@@ -9,4 +9,5 @@ namespace randomcat::engine::graphics::gl_detail {
 
     using shared_vbo_id = shared_buffer_id<vbo_tag>;
     using unique_vbo_id = unique_buffer_id<vbo_tag>;
+    using raw_vbo_id = raw_buffer_id<vbo_tag>;
 }    // namespace randomcat::engine::graphics::gl_detail
