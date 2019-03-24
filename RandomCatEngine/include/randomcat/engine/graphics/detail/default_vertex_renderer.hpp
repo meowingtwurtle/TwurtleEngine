@@ -27,8 +27,8 @@ namespace randomcat::engine::graphics {
         explicit vertex_renderer(shader_view<vertex> _shader) noexcept : m_shader(std::move(_shader)) {
             RC_GL_ERROR_GUARD("initializing vertex renderer");
 
-            glBindVertexArray(m_vao.value());
-            glBindBuffer(GL_ARRAY_BUFFER, m_vbo.value());
+            auto vaoLock = gl_detail::vao_lock(m_vao);
+            auto vboLock = gl_detail::vbo_lock(m_vbo);
 
             for (shader_input input : m_shader.inputs()) {
                 auto const rawStorageType = static_cast<GLenum>(input.storageType);
@@ -58,9 +58,6 @@ namespace randomcat::engine::graphics {
             render_active(_t);
         }
 
-    private:
-        struct active_lock_held {};
-
     public:
         // Must not outlive the renderer object
         class active_lock {
@@ -68,20 +65,15 @@ namespace randomcat::engine::graphics {
             active_lock(active_lock const&) = delete;
             active_lock(active_lock&&) = delete;
 
-            active_lock(vertex_renderer const& _renderer) noexcept : m_renderer(_renderer) {
-                m_renderer.make_active();
-                if (_renderer.m_activeLock.expired()) {
-                    auto newHeld = std::make_shared<active_lock_held>();
-                    _renderer.m_activeLock = newHeld;
-                    m_holdLock = std::move(newHeld);
-                } else {
-                    m_holdLock = _renderer.m_activeLock.lock();
-                }
-            }
+            active_lock(vertex_renderer const& _renderer) noexcept
+            : m_vaoLock(gl_detail::vao_lock(_renderer.m_vao)),
+              m_vboLock(gl_detail::vbo_lock(_renderer.m_vbo)),
+              m_shaderLock(_renderer.m_shader.make_active_lock()) {}
 
         private:
-            std::shared_ptr<active_lock_held> m_holdLock;
-            vertex_renderer const& m_renderer;
+            gl_detail::vao_lock m_vaoLock;
+            gl_detail::vbo_lock m_vboLock;
+            typename shader_view<Vertex>::active_lock m_shaderLock;
         };
 
         active_lock make_active_lock() const noexcept {
@@ -102,14 +94,6 @@ namespace randomcat::engine::graphics {
         template<bool V>
         using bool_if_t = std::enable_if_t<V, bool>;
 
-        void make_active() const noexcept {
-            RC_GL_ERROR_GUARD("activating vertex renderer");
-
-            m_shader.make_active();
-            glBindVertexArray(m_vao.value());
-            glBindBuffer(GL_ARRAY_BUFFER, m_vbo.value());
-        }
-
         template<typename _container_t, typename = std::enable_if_t<is_vertex_container_v<_container_t>>>
         void render_active(_container_t const& _vertices) const noexcept {
             RC_GL_ERROR_GUARD("vertex renderer rendering");
@@ -121,8 +105,6 @@ namespace randomcat::engine::graphics {
         gl_detail::unique_vao_id m_vao;
         gl_detail::unique_vbo_id m_vbo;
         shader_view<vertex> m_shader;
-
-        mutable std::weak_ptr<active_lock_held> m_activeLock = std::weak_ptr<active_lock_held>();
     };
 
     using default_vertex_renderer = vertex_renderer<default_vertex>;

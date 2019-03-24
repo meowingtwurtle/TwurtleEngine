@@ -8,15 +8,12 @@
 #include <randomcat/type_container/type_list.hpp>
 
 #include "randomcat/engine/detail/tag_exception.hpp"
+#include "randomcat/engine/graphics/detail/gl_wrappers.hpp"
 #include "randomcat/engine/graphics/detail/raii_wrappers/shader_program_raii.hpp"
 #include "randomcat/engine/graphics/shader_input.hpp"
 #include "randomcat/engine/graphics/shader_uniforms.hpp"
 
 namespace randomcat::engine::graphics {
-    namespace shader_detail {
-        void activate_program(gl_detail::shared_program_id const& _program) noexcept;
-    }
-
     namespace shader_detail {
         struct shader_init_error_tag {};
     }    // namespace shader_detail
@@ -47,7 +44,9 @@ namespace randomcat::engine::graphics {
 
         explicit shader(std::string_view _vertex, std::string_view _fragment, std::vector<shader_input> _inputs) noexcept(!"Throws on error");
 
-        void make_active() const noexcept { shader_detail::activate_program(m_programID); }
+        using active_lock = gl_detail::program_lock;
+
+        [[nodiscard]] active_lock make_active_lock() const noexcept { return gl_detail::program_lock(program()); }
 
         [[nodiscard]] auto const& inputs() const noexcept { return m_inputs; }
 
@@ -116,7 +115,9 @@ namespace randomcat::engine::graphics {
         /* implicit */ shader_view(shader_view<Vertex, OtherCapabilities> const& _other) noexcept(!"Copying vector")
         : shader_view(_other.program(), _other.inputs()) {}
 
-        void make_active() const noexcept { shader_detail::activate_program(m_programID); }
+        using active_lock = gl_detail::program_lock;
+
+        [[nodiscard]] active_lock make_active_lock() const noexcept { return gl_detail::program_lock(program()); }
 
         [[nodiscard]] auto const& inputs() const noexcept { return m_inputs; }
 

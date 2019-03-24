@@ -4,6 +4,7 @@
 
 #include "randomcat/engine/detail/templates.hpp"
 #include "randomcat/engine/graphics/detail/gl_types.hpp"
+#include "randomcat/engine/graphics/detail/gl_wrappers.hpp"
 
 namespace randomcat::engine::graphics {
     namespace shader_detail {
@@ -22,24 +23,6 @@ namespace randomcat::engine::graphics {
     }    // namespace shader_detail
 
     using no_such_uniform_error = util_detail::tag_exception<shader_detail::no_such_uniform_error_tag>;
-
-    namespace shader_detail {
-        class program_active_lock {
-        public:
-            program_active_lock(program_active_lock const&) = delete;
-            program_active_lock(program_active_lock&&) = delete;
-
-            explicit program_active_lock(gl_detail::shared_program_id const& _programID) noexcept;
-            ~program_active_lock() noexcept;
-
-        private:
-            [[nodiscard]] static gl_detail::opengl_raw_id get_active_program() noexcept;
-            static void set_active_program(GLuint _id) noexcept;
-
-            std::optional<gl_detail::opengl_raw_id> m_oldID = std::nullopt;
-            gl_detail::shared_program_id const& m_programID;
-        };
-    }    // namespace shader_detail
 
     template<typename Capabilities = uniform_no_capabilities>
     class shader_uniform_reader {
@@ -84,7 +67,7 @@ namespace randomcat::engine::graphics {
         gl_detail::shared_program_id m_programID;
 
     protected:
-        [[nodiscard]] auto make_active_lock() const noexcept { return shader_detail::program_active_lock(m_programID); }
+        auto make_active_lock() const noexcept { return gl_detail::program_lock(m_programID); }
 
         template<typename>
         friend class shader_uniform_reader;
