@@ -3,15 +3,17 @@
 #include <cstdint>
 #include <memory>
 
+#include "randomcat/engine/detail/impl_only_access.hpp"
+
 namespace randomcat::engine::graphics::textures {
     class texture {
     public:
-        explicit texture(std::int32_t _width, std::int32_t _height, unsigned char* _data) noexcept
+        explicit texture(impl_call_only, std::int32_t _width, std::int32_t _height, unsigned char* _data) noexcept
         : m_width{_width}, m_height{_height}, m_data{_data}, m_underlying{std::make_shared<underlying>(_data)} {}
 
         [[nodiscard]] auto width() const noexcept { return m_width; }
         [[nodiscard]] auto height() const noexcept { return m_height; }
-        [[nodiscard]] unsigned char const* data() const noexcept { return m_data; }
+        [[nodiscard]] unsigned char const* data(impl_call_only) const noexcept { return m_data; }
 
     private:
         struct underlying {

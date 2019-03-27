@@ -2,6 +2,7 @@
 
 #include <GL/glew.h>
 
+#include "randomcat/engine/detail/impl_only_access.hpp"
 #include "randomcat/engine/graphics/detail/gl_error_guard.hpp"
 #include "randomcat/engine/graphics/detail/raii_wrappers/texture_raii.hpp"
 #include "randomcat/engine/graphics/texture/texture_manager.hpp"
@@ -33,6 +34,14 @@ namespace randomcat::engine::graphics::textures {
         /* implicit */ basic_texture_array(std::enable_if_t<Enable, as_mutable> _other)
         : m_id(std::move(_other.m_id)), m_width(std::move(_other.m_width)), m_height(std::move(_other.m_height)), m_layers(std::move(_other.m_layers)) {}
 
+        auto width(impl_call_only) const noexcept { return m_width; }
+
+        auto height(impl_call_only) const noexcept { return m_height; }
+
+        auto layers(impl_call_only) const noexcept { return m_layers; }
+
+        auto raw_id(impl_call_only) const noexcept { return typename id_type::raw_id(m_id); }
+
     private:
         using id_type = std::conditional_t<Shared, gl_detail::shared_texture_id, gl_detail::unique_texture_id>;
 
@@ -48,40 +57,7 @@ namespace randomcat::engine::graphics::textures {
         friend class basic_texture_array;
 
         friend basic_texture_array<false, true> gen_texture_array(int, int, int) noexcept;
-
-        // Not part of the public interface
-        // Wrappers provided in namespace texture_array_detail
-
-        friend auto m_tex_arr_width(basic_texture_array const& _arr) { return _arr.m_width; }
-
-        friend auto m_tex_arr_height(basic_texture_array const& _arr) { return _arr.m_height; }
-
-        friend auto m_tex_arr_layers(basic_texture_array const& _arr) { return _arr.m_layers; }
-
-        friend auto m_tex_arr_raw_id(basic_texture_array const& _arr) { return _arr.m_id.value(); }
     };
-
-    namespace texture_array_detail {
-        template<bool Shared, bool Mutable>
-        auto layers(basic_texture_array<Shared, Mutable> const& _arr) {
-            return m_tex_arr_layers(_arr);
-        }
-
-        template<bool Shared, bool Mutable>
-        auto width(basic_texture_array<Shared, Mutable> const& _arr) {
-            return m_tex_arr_width(_arr);
-        }
-
-        template<bool Shared, bool Mutable>
-        auto height(basic_texture_array<Shared, Mutable> const& _arr) {
-            return m_tex_arr_height(_arr);
-        }
-
-        template<bool Shared, bool Mutable>
-        auto raw_id(basic_texture_array<Shared, Mutable> const& _arr) {
-            return m_tex_arr_raw_id(_arr);
-        }
-    }    // namespace texture_array_detail
 
     using unique_texture_array = basic_texture_array</*Shared=*/false, true>;
     using shared_texture_array = basic_texture_array</*Shared=*/true, true>;
@@ -104,7 +80,7 @@ namespace randomcat::engine::graphics::textures {
                                   texture const& _texture) noexcept {
         RC_GL_ERROR_GUARD("binding texture");
 
-        glBindTexture(GL_TEXTURE_2D_ARRAY, texture_array_detail::raw_id(_array));
+        glBindTexture(GL_TEXTURE_2D_ARRAY, _array.raw_id(impl_call).value);
         glTexSubImage3D(GL_TEXTURE_2D_ARRAY,
                         0,
                         0,
@@ -115,6 +91,6 @@ namespace randomcat::engine::graphics::textures {
                         1,
                         GL_RGBA,
                         GL_UNSIGNED_BYTE,
-                        _texture.data());
+                        _texture.data(impl_call));
     }
 }    // namespace randomcat::engine::graphics::textures

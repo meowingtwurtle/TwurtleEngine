@@ -14,7 +14,7 @@ namespace randomcat::engine::graphics::textures {
 
         if (data == nullptr) { throw texture_load_error{"Unable to load texture with path: " + _path.string()}; }
 
-        return texture{gsl::narrow<std::int32_t>(width), gsl::narrow<std::int32_t>(height), data};
+        return texture{impl_call, gsl::narrow<std::int32_t>(width), gsl::narrow<std::int32_t>(height), data};
     }
 
     texture const& load_texture_file(texture_manager& _manager, fs::path const& _path) noexcept(false) {

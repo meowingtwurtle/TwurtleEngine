@@ -4,6 +4,7 @@
 
 #include <glm/glm.hpp>
 
+#include "randomcat/engine/detail/impl_only_access.hpp"
 #include "randomcat/engine/detail/templates.hpp"
 #include "randomcat/engine/graphics/detail/default_vertex.hpp"
 
@@ -137,12 +138,16 @@ namespace randomcat::engine::graphics {
         using vertex = default_vertex;
 
         render_object_triangle(location_triangle _locations, texture_triangle _texture) noexcept
-        : m_vertices{vertex{_locations[0], _texture[0]}, vertex{_locations[1], _texture[1]}, vertex{_locations[2], _texture[2]}},
-          m_normal(-glm::normalize(glm::cross(_locations[1].value - _locations[0].value, _locations[2].value - _locations[1].value))) {
-            std::for_each(begin(m_vertices), end(m_vertices), [&, this](auto& vertex) { vertex.normal = m_normal; });
+        : m_vertices{vertex{_locations[0], _texture[0]}, vertex{_locations[1], _texture[1]}, vertex{_locations[2], _texture[2]}} {
+            set_normal(impl_call, -glm::normalize(glm::cross(_locations[1].value - _locations[0].value, _locations[2].value - _locations[1].value)));
         }
 
         auto const& vertices() const noexcept { return m_vertices; }
+
+        void set_normal(impl_call_only, glm::vec3 _normal) noexcept {
+            m_normal = _normal;
+            std::for_each(begin(m_vertices), end(m_vertices), [&](auto& v) { v.normal = _normal; });
+        }
 
         RC_SUB_PARTS(vertices);
 
