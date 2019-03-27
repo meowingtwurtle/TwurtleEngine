@@ -3,14 +3,14 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
+#include "randomcat/engine/graphics/color.hpp"
 #include "randomcat/engine/graphics/detail/gl_error_guard.hpp"
 
 namespace randomcat::engine::graphics {
-    /// Floats should be between 0 and 1
-    inline void set_global_background_color(GLfloat _red, GLfloat _green, GLfloat _blue, GLfloat _alpha) noexcept {
+    inline void set_global_background_color(color_rgb _color) noexcept {
         RC_GL_ERROR_GUARD("setting global background color");
 
-        glClearColor(_red, _green, _blue, _alpha);
+        glClearColor(_color.r, _color.g, _color.b, 1.0);
     }
 
     inline void clear_graphics() noexcept {
