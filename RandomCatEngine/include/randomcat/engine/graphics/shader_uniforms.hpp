@@ -1,7 +1,10 @@
 #pragma once
 
+#include <glm/mat4x4.hpp>
+
 #include <randomcat/type_container/type_list.hpp>
 
+#include "randomcat/engine/detail/tag_exception.hpp"
 #include "randomcat/engine/detail/templates.hpp"
 #include "randomcat/engine/graphics/detail/gl_types.hpp"
 #include "randomcat/engine/graphics/detail/gl_wrappers.hpp"
