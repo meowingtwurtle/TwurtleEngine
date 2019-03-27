@@ -8,7 +8,7 @@
 #include "randomcat/engine/detail/log.hpp"
 
 namespace randomcat::engine::graphics::textures {
-    texture::underlying::~underlying() noexcept { stbi_image_free(m_data); }
+    texture::stbi_underlying::~stbi_underlying() noexcept { stbi_image_free(m_stbiPtr); }
 
     texture const& texture_manager::get_texture(std::string_view _path) const {
         auto it = texture_iter(_path);
