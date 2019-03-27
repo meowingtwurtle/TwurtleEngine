@@ -262,5 +262,29 @@ namespace randomcat::engine::graphics {
                                    std::move(_texLZ)) {}
     };
 
+    class render_object_regular_polygon {
+    public:
+        render_object_regular_polygon(int sides, glm::vec3 center, float radius, texture_array_index _texture)
+        : m_sideCount(std::move(sides)) {
+            for (int i = 0; i < sides; ++i) {
+                auto theta0 = units::degrees(360.0f * i / sides);
+                auto theta1 = units::degrees(360.0f * (i + 1) / sides);
+                auto point0 = center + glm::vec3(cos(theta0), 0, 0) + glm::vec3(0, sin(theta0), 0);
+                auto point1 = center + glm::vec3(cos(theta1), 0, 0) + glm::vec3(0, sin(theta1), 0);
+                m_triangles.push_back(render_object_triangle(location_triangle{{center}, {point0}, {point1}},
+                                                             texture_triangle{{{0, 0}, _texture}, {{0, 0}, _texture}, {{0, 0}, _texture}}));
+            }
+        }
+
+        auto const& triangles() const noexcept { return m_triangles; }
+        auto side_count() const noexcept { return m_sideCount; }
+
+        RC_SUB_PARTS(triangles);
+
+    private:
+        std::vector<render_object_triangle> m_triangles;
+        int m_sideCount;
+    };
+
 #undef RC_SUB_PARTS
 }    // namespace randomcat::engine::graphics
