@@ -137,7 +137,10 @@ namespace randomcat::engine::graphics {
         using vertex = default_vertex;
 
         render_object_triangle(location_triangle _locations, texture_triangle _texture) noexcept
-        : m_vertices{vertex{_locations[0], _texture[0]}, vertex{_locations[1], _texture[1]}, vertex{_locations[2], _texture[2]}} {}
+        : m_vertices{vertex{_locations[0], _texture[0]}, vertex{_locations[1], _texture[1]}, vertex{_locations[2], _texture[2]}},
+          m_normal(-glm::normalize(glm::cross(_locations[1].value - _locations[0].value, _locations[2].value - _locations[1].value))) {
+            std::for_each(begin(m_vertices), end(m_vertices), [&, this](auto& vertex) { vertex.normal = m_normal; });
+        }
 
         auto const& vertices() const noexcept { return m_vertices; }
 
@@ -145,6 +148,7 @@ namespace randomcat::engine::graphics {
 
     private:
         std::array<vertex, 3> m_vertices;
+        glm::vec3 m_normal;
     };
 
     class render_object_rectangle {

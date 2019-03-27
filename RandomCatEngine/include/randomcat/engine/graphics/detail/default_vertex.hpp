@@ -16,5 +16,7 @@ namespace randomcat::engine::graphics {
             glm::vec2 coord;
             texture_array_index layer;
         } tex;
+
+        glm::vec3 normal;
     };
 }    // namespace randomcat::engine::graphics
