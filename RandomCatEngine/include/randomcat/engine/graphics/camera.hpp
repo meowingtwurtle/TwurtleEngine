@@ -8,6 +8,7 @@
 
 #include "randomcat/engine/dir_pos.hpp"
 #include "randomcat/engine/graphics/detail/default_vertex.hpp"
+#include "randomcat/engine/graphics/lights.hpp"
 #include "randomcat/engine/graphics/shader.hpp"
 
 namespace randomcat::engine::graphics {
@@ -28,7 +29,7 @@ namespace randomcat::engine::graphics {
 
         void update(camera_state const& _state) noexcept;
 
-        [[nodiscard]] static shader<default_vertex, shader_capabilities<camera>> camera_shader();
+        [[nodiscard]] static shader<default_vertex, shader_capabilities<camera, light_handler>> camera_shader();
 
     private:
         shader_uniform_writer<uniform_capabilities<camera>> m_uniforms;
