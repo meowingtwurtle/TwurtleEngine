@@ -273,10 +273,15 @@ namespace randomcat::engine::graphics {
             for (int i = 0; i < sides; ++i) {
                 auto theta0 = units::degrees(360.0f * i / sides);
                 auto theta1 = units::degrees(360.0f * (i + 1) / sides);
-                auto point0 = center + glm::vec3(cos(theta0), 0, 0) + glm::vec3(0, sin(theta0), 0);
-                auto point1 = center + glm::vec3(cos(theta1), 0, 0) + glm::vec3(0, sin(theta1), 0);
+                auto point0 = center + radius * glm::vec3(cos(theta0), sin(theta0), 0);
+                auto point1 = center + radius * glm::vec3(cos(theta1), sin(theta1), 0);
+
+                auto texturePoint = [&](auto const& theta) {
+                    return default_vertex::texture{{(cos(theta) + 1.f) / 2.f, (1 - sin(theta)) / 2.f}, _texture};
+                };
+
                 m_triangles.push_back(render_object_triangle(location_triangle{{center}, {point0}, {point1}},
-                                                             texture_triangle{{{0, 0}, _texture}, {{0, 0}, _texture}, {{0, 0}, _texture}}));
+                                                             texture_triangle{{{0.5, 0.5}, _texture}, texturePoint(theta0), texturePoint(theta1)}));
             }
         }
 
