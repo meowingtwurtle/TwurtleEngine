@@ -8,14 +8,14 @@
 
 namespace randomcat::engine::graphics {
     struct default_vertex {
-        struct location {
+        struct location_t {
             glm::vec3 value;
-        } loc;
+        } location;
 
-        struct texture {
+        struct texture_t {
             glm::vec2 coord;
             texture_array_index layer;
-        } tex;
+        } texture;
 
         glm::vec3 normal;
     };

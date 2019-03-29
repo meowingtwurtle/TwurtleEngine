@@ -128,10 +128,10 @@ namespace randomcat::engine::graphics {
         };
     }    // namespace render_object_detail
 
-    using location_triangle = render_object_detail::basic_triangle<default_vertex::location>;
-    using texture_triangle = render_object_detail::basic_triangle<default_vertex::texture>;
-    using location_quad = render_object_detail::basic_quad<default_vertex::location>;
-    using texture_quad = render_object_detail::basic_quad<default_vertex::texture>;
+    using location_triangle = render_object_detail::basic_triangle<default_vertex::location_t>;
+    using texture_triangle = render_object_detail::basic_triangle<default_vertex::texture_t>;
+    using location_quad = render_object_detail::basic_quad<default_vertex::location_t>;
+    using texture_quad = render_object_detail::basic_quad<default_vertex::texture_t>;
 
     template<typename>
     class render_object_triangle;
@@ -463,7 +463,7 @@ namespace randomcat::engine::graphics {
                 auto point1 = _center + _radius * glm::vec3(cos(theta1), sin(theta1), 0);
 
                 auto texturePoint = [&](auto const& theta) {
-                    return default_vertex::texture{{(cos(theta) + 1.f) / 2.f, (1 - sin(theta)) / 2.f}, _texture};
+                    return default_vertex::texture_t{{(cos(theta) + 1.f) / 2.f, (1 - sin(theta)) / 2.f}, _texture};
                 };
 
                 triangles.push_back(render_object_triangle<vertex>(location_triangle{{_center}, {point0}, {point1}},
