@@ -12,10 +12,7 @@
 namespace randomcat::engine {
     class controller {
     public:
-        explicit controller(graphics::window& _window) noexcept : m_window{_window} {
-            graphics::gl_detail::set_render_context(m_window);
-            graphics::enable_depth_test();
-        }
+        controller() = default;
 
         controller(controller const&) = delete;
         controller(controller&&) = delete;
@@ -24,28 +21,15 @@ namespace randomcat::engine {
 
         void tick() noexcept {
             fetch_raw_events();
-            graphics::clear_graphics();
             m_timer.tick(fetch_current_raw_time());
         }
 
         [[nodiscard]] auto const& inputs() const noexcept { return m_currentInputState; }
         [[nodiscard]] auto const& input_changes() const noexcept { return m_inputStateChanges; }
 
-        template<typename _renderer_t, typename... _renderer_arg_t>
-        void render(_renderer_t const& _renderer,
-                    _renderer_arg_t&&... _rendererArg) noexcept(noexcept(_renderer(std::forward<_renderer_arg_t>(_rendererArg)...))) {
-            _renderer(std::forward<_renderer_arg_t>(_rendererArg)...);
-            m_window.get().swap_buffers();
-        }
-
-        [[nodiscard]] auto& window() noexcept { return m_window; }
-        [[nodiscard]] auto const& window() const noexcept { return m_window; }
-
         [[nodiscard]] auto quit_received() const noexcept { return m_quitReceived; }
 
     private:
-        std::reference_wrapper<graphics::window> m_window;
-
         input::input_state m_currentInputState;
         input::input_state_changes m_inputStateChanges;
 
