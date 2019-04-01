@@ -3,11 +3,12 @@
 #include <cstdint>
 #include <string>
 
+#include <SDL2/SDL_video.h>
 #include <glm/glm.hpp>
 #include <gsl/gsl_util>
 
+#include "randomcat/engine/detail/impl_only_access.hpp"
 #include "randomcat/engine/detail/log.hpp"
-#include "randomcat/engine/graphics/detail/gl_context.hpp"
 #include "randomcat/engine/graphics/window.hpp"
 #include "randomcat/engine/init.hpp"
 
@@ -44,13 +45,11 @@ namespace randomcat::engine::graphics {
 
         void set_title(std::string const& _title) noexcept;
 
-        void swap_buffers() noexcept;
-
         void set_cursor_shown(bool _shown) noexcept;
 
-    private:
-        void* m_window;
+        SDL_Window* raw_pointer(impl_call_only) const noexcept { return m_window; }
 
-        friend void randomcat::engine::graphics::gl_detail::set_render_context(window const&);
+    private:
+        SDL_Window* m_window;
     };
 }    // namespace randomcat::engine::graphics
