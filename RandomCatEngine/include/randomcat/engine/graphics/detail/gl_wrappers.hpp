@@ -1,5 +1,6 @@
 #pragma once
 
+#include "randomcat/engine/detail/raii_active_lock.hpp"
 #include "randomcat/engine/graphics/detail/raii_wrappers/shader_program_raii.hpp"
 #include "randomcat/engine/graphics/detail/raii_wrappers/texture_raii.hpp"
 #include "randomcat/engine/graphics/detail/raii_wrappers/vao_raii.hpp"
@@ -15,28 +16,7 @@ namespace randomcat::engine::graphics::gl_detail {
     void activate_program(raw_program_id _program) noexcept;
     [[nodiscard]] raw_program_id current_program() noexcept;
 
-    namespace impl {
-        template<auto Activate, auto Current>
-        class gl_lock;
-
-        template<typename IdType, void (*Activate)(IdType) noexcept, IdType (*Current)() noexcept>
-        class gl_lock<Activate, Current> {
-        public:
-            static_assert(std::is_trivial_v<IdType>);
-
-            gl_lock(gl_lock const&) = delete;
-            gl_lock(gl_lock&&) = delete;
-
-            gl_lock(IdType _new) noexcept : m_old(Current()) { Activate(_new); }
-
-            ~gl_lock() noexcept { Activate(m_old); }
-
-        private:
-            IdType m_old;
-        };
-    }    // namespace impl
-
-    using vao_lock = impl::gl_lock<activate_vao, current_vao>;
-    using vbo_lock = impl::gl_lock<activate_vbo, current_vbo>;
-    using program_lock = impl::gl_lock<activate_program, current_program>;
+    using vao_lock = util_detail::basic_active_lock<activate_vao, current_vao>;
+    using vbo_lock = util_detail::basic_active_lock<activate_vbo, current_vbo>;
+    using program_lock = util_detail::basic_active_lock<activate_program, current_program>;
 }    // namespace randomcat::engine::graphics::gl_detail
