@@ -7,6 +7,7 @@
 #include "randomcat/engine/detail/impl_only_access.hpp"
 #include "randomcat/engine/detail/templates.hpp"
 #include "randomcat/engine/graphics/detail/default_vertex.hpp"
+#include "randomcat/engine/graphics/texture/texture_sections.hpp"
 
 namespace randomcat::engine::graphics {
     namespace object_detail {
@@ -129,9 +130,7 @@ namespace randomcat::engine::graphics {
     }    // namespace render_object_detail
 
     using location_triangle = render_object_detail::basic_triangle<default_vertex::location_t>;
-    using texture_triangle = render_object_detail::basic_triangle<default_vertex::texture_t>;
     using location_quad = render_object_detail::basic_quad<default_vertex::location_t>;
-    using texture_quad = render_object_detail::basic_quad<default_vertex::texture_t>;
 
     template<typename>
     class render_object_triangle;
@@ -174,10 +173,10 @@ namespace randomcat::engine::graphics {
 
         using render_object_detail::render_object_triangle_base<vertex>::render_object_triangle_base;
 
-        render_object_triangle(location_triangle _locations, texture_triangle _texture) noexcept
-        : render_object_detail::render_object_triangle_base<default_vertex>{vertex{_locations[0], _texture[0]},
-                                                                            vertex{_locations[1], _texture[1]},
-                                                                            vertex{_locations[2], _texture[2]}} {
+        render_object_triangle(location_triangle _locations, textures::texture_triangle _texture) noexcept
+        : render_object_detail::render_object_triangle_base<default_vertex>{vertex{_locations[0], {_texture[0], _texture.layer()}},
+                                                                            vertex{_locations[1], {_texture[1], _texture.layer()}},
+                                                                            vertex{_locations[2], {_texture[2], _texture.layer()}}} {
             set_normal(impl_call, -glm::normalize(glm::cross(_locations[1].value - _locations[0].value, _locations[2].value - _locations[1].value)));
         }
 
@@ -237,13 +236,13 @@ namespace randomcat::engine::graphics {
 
         using render_object_detail::render_object_rectangle_base<vertex>::render_object_rectangle_base;
 
-        render_object_rectangle(location_quad _locations, texture_quad _texture) noexcept
+        render_object_rectangle(location_quad _locations, textures::texture_quad _texture) noexcept
         : render_object_detail::render_object_rectangle_base<
             vertex>{impl_call,
                     render_object_triangle<vertex>{location_triangle{_locations[0], _locations[1], _locations[2]},
-                                                   texture_triangle{_texture[0], _texture[1], _texture[2]}},
+                                                   textures::texture_triangle{_texture.layer(), _texture[0], _texture[1], _texture[2]}},
                     render_object_triangle<vertex>{location_triangle{_locations[0], _locations[2], _locations[3]},
-                                                   texture_triangle{_texture[0], _texture[2], _texture[3]}}} {}
+                                                   textures::texture_triangle{_texture.layer(), _texture[0], _texture[2], _texture[3]}}} {}
     };
 
     template<typename>
@@ -295,17 +294,17 @@ namespace randomcat::engine::graphics {
     public:
         using vertex = default_vertex;
 
-        explicit render_object_rect_prism(glm::vec3 _center, glm::vec3 _sides, texture_array_index _texture) noexcept
+        explicit render_object_rect_prism(glm::vec3 _center, glm::vec3 _sides, textures::texture_quad _texture) noexcept
         : render_object_rect_prism(_center, _sides, _texture, _texture, _texture, _texture, _texture, _texture) {}
 
         explicit render_object_rect_prism(glm::vec3 _center,
                                           glm::vec3 _sides,
-                                          texture_array_index _texHX,
-                                          texture_array_index _texLX,
-                                          texture_array_index _texHY,
-                                          texture_array_index _texLY,
-                                          texture_array_index _texHZ,
-                                          texture_array_index _texLZ) noexcept
+                                          textures::texture_quad _texHX,
+                                          textures::texture_quad _texLX,
+                                          textures::texture_quad _texHY,
+                                          textures::texture_quad _texLY,
+                                          textures::texture_quad _texHZ,
+                                          textures::texture_quad _texLZ) noexcept
         : render_object_detail::render_object_rect_prism_base<default_vertex>(impl_call,
                                                                               gen_triangles(_center, _sides, _texHX, _texLX, _texHY, _texLY, _texHZ, _texLZ),
                                                                               _center) {}
@@ -315,12 +314,12 @@ namespace randomcat::engine::graphics {
 
         std::array<rectangle, 6> gen_triangles(glm::vec3 _center,
                                                glm::vec3 _sides,
-                                               texture_array_index _texHX,
-                                               texture_array_index _texLX,
-                                               texture_array_index _texHY,
-                                               texture_array_index _texLY,
-                                               texture_array_index _texHZ,
-                                               texture_array_index _texLZ) const noexcept {
+                                               textures::texture_quad _texHX,
+                                               textures::texture_quad _texLX,
+                                               textures::texture_quad _texHY,
+                                               textures::texture_quad _texLY,
+                                               textures::texture_quad _texHZ,
+                                               textures::texture_quad _texLZ) const noexcept {
             auto vecHX = glm::vec3{_sides.x / 2, 0, 0};
             auto vecHY = glm::vec3{0, _sides.y / 2, 0};
             auto vecHZ = glm::vec3{0, 0, _sides.z / 2};
@@ -348,9 +347,7 @@ namespace randomcat::engine::graphics {
                 return location_quad{{posA}, {posB}, {posC}, {posD}};
             };
 
-            auto texture = [&](texture_array_index layer) noexcept {
-                return texture_quad{{{0, 0}, layer}, {{1, 0}, layer}, {{1, 1}, layer}, {{0, 1}, layer}};
-            };
+            auto texture = [&](textures::texture_quad texture) noexcept { return texture; };
 
             auto rectHZ = rectangle{location(pointLXHYHZ, pointHXHYHZ, pointHXLYHZ, pointLXLYHZ), texture(_texHZ)};
             auto rectLZ = rectangle{location(pointHXHYLZ, pointLXHYLZ, pointLXLYLZ, pointHXLYLZ), texture(_texLZ)};
@@ -378,17 +375,17 @@ namespace randomcat::engine::graphics {
     public:
         using vertex = default_vertex;
 
-        explicit render_object_cube(glm::vec3 _center, GLfloat _side, texture_array_index _texture) noexcept
+        explicit render_object_cube(glm::vec3 _center, GLfloat _side, textures::texture_quad _texture) noexcept
         : render_object_cube(std::move(_center), std::move(_side), _texture, _texture, _texture, _texture, _texture, _texture) {}
 
         explicit render_object_cube(glm::vec3 _center,
                                     float _side,
-                                    texture_array_index _texHX,
-                                    texture_array_index _texLX,
-                                    texture_array_index _texHY,
-                                    texture_array_index _texLY,
-                                    texture_array_index _texHZ,
-                                    texture_array_index _texLZ) noexcept
+                                    textures::texture_quad _texHX,
+                                    textures::texture_quad _texLX,
+                                    textures::texture_quad _texHY,
+                                    textures::texture_quad _texLY,
+                                    textures::texture_quad _texHZ,
+                                    textures::texture_quad _texLZ) noexcept
         : render_object_rect_prism(std::move(_center),
                                    glm::vec3{_side, _side, _side},
                                    std::move(_texHX),
@@ -449,11 +446,11 @@ namespace randomcat::engine::graphics {
         using vertex = default_vertex;
         using render_object_detail::render_object_regular_polygon_base<vertex>::render_object_regular_polygon_base;
 
-        render_object_regular_polygon(int _sides, glm::vec3 _center, float _radius, texture_array_index _texture)
+        render_object_regular_polygon(int _sides, glm::vec3 _center, float _radius, textures::texture_rectangle _texture)
         : render_object_detail::render_object_regular_polygon_base<default_vertex>(impl_call, gen_triangles(_sides, _center, _radius, _texture), _sides) {}
 
     private:
-        static std::vector<render_object_triangle<vertex>> gen_triangles(std::int32_t _sides, glm::vec3 _center, float _radius, texture_array_index _texture) noexcept {
+        static std::vector<render_object_triangle<vertex>> gen_triangles(std::int32_t _sides, glm::vec3 _center, float _radius, textures::texture_rectangle _texture) noexcept {
             std::vector<render_object_triangle<vertex>> triangles;
 
             for (int i = 0; i < _sides; ++i) {
@@ -463,11 +460,12 @@ namespace randomcat::engine::graphics {
                 auto point1 = _center + _radius * glm::vec3(cos(theta1), sin(theta1), 0);
 
                 auto texturePoint = [&](auto const& theta) {
-                    return default_vertex::texture_t{{(cos(theta) + 1.f) / 2.f, (1 - sin(theta)) / 2.f}, _texture};
+                    return _texture.center() + _texture.dimensions() * 0.5f * textures::texture_triangle::location_type{cos(theta), -sin(theta)};
                 };
 
-                triangles.push_back(render_object_triangle<vertex>(location_triangle{{_center}, {point0}, {point1}},
-                                                                   texture_triangle{{{0.5, 0.5}, _texture}, texturePoint(theta0), texturePoint(theta1)}));
+                triangles.push_back(
+                    render_object_triangle<vertex>(location_triangle{{_center}, {point0}, {point1}},
+                                                   textures::texture_triangle{_texture.layer(), _texture.center(), texturePoint(theta0), texturePoint(theta1)}));
             }
 
             return triangles;

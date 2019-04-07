@@ -6,6 +6,7 @@
 #include "randomcat/engine/graphics/detail/gl_error_guard.hpp"
 #include "randomcat/engine/graphics/detail/raii_wrappers/texture_raii.hpp"
 #include "randomcat/engine/graphics/texture/texture_manager.hpp"
+#include "randomcat/engine/graphics/texture/texture_sections.hpp"
 
 namespace randomcat::engine::graphics::textures {
     // Because this is designed to be a semi-user-facing class, we provide
@@ -75,22 +76,24 @@ namespace randomcat::engine::graphics::textures {
     }
 
     template<bool TextureIsShared>
-    void bind_texture_array_layer(basic_texture_array<TextureIsShared, /*IsMutable=*/true> const& _array,
-                                  texture_array_index _layerNum,
-                                  texture const& _texture) noexcept {
+    texture_rectangle bind_texture_array_layer(basic_texture_array<TextureIsShared, /*IsMutable=*/true> const& _array,
+                                               texture_array_index _layerNum,
+                                               texture const& _texture) noexcept {
         RC_GL_ERROR_GUARD("binding texture");
 
+        auto const imageWidth = _texture.width();
+        auto const imageHeight = _texture.height();
+
+        auto const textureArrayWidth = _array.width(impl_call);
+        auto const textureArrayHeight = _array.height(impl_call);
+
         glBindTexture(GL_TEXTURE_2D_ARRAY, _array.raw_id(impl_call).value);
-        glTexSubImage3D(GL_TEXTURE_2D_ARRAY,
-                        0,
-                        0,
-                        0,
-                        _layerNum.value,
-                        _texture.width(),
-                        _texture.height(),
-                        1,
-                        GL_RGBA,
-                        GL_UNSIGNED_BYTE,
-                        _texture.data(impl_call));
+        glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, _layerNum.value, imageWidth, imageHeight, 1, GL_RGBA, GL_UNSIGNED_BYTE, _texture.data(impl_call));
+
+        return texture_rectangle{_layerNum,
+                                 texture_rectangle::from_corner_and_dimensions,
+                                 {0, 0},
+                                 float(imageWidth) / float(textureArrayWidth),
+                                 float(imageHeight) / float(textureArrayHeight)};
     }
 }    // namespace randomcat::engine::graphics::textures
