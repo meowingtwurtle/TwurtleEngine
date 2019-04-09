@@ -57,7 +57,7 @@ namespace randomcat::engine::graphics::textures {
         template<bool, bool>
         friend class basic_texture_array;
 
-        friend basic_texture_array<false, true> gen_texture_array(int, int, int) noexcept;
+        friend basic_texture_array<false, true> make_texture_array(int _width, int _height, int _layers) noexcept;
     };
 
     using unique_texture_array = basic_texture_array</*Shared=*/false, true>;
@@ -65,7 +65,7 @@ namespace randomcat::engine::graphics::textures {
     using const_unique_texture_array = unique_texture_array::as_const;
     using const_shared_texture_array = shared_texture_array::as_const;
 
-    [[nodiscard]] unique_texture_array gen_texture_array(GLsizei _width, GLsizei _height, GLsizei _layers) noexcept {
+    [[nodiscard]] unique_texture_array make_texture_array(GLsizei _width, GLsizei _height, GLsizei _layers) noexcept {
         RC_GL_ERROR_GUARD("generating texture array");
 
         gl_detail::unique_texture_id id;
