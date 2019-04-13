@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(TwurtleEngine)
+project(TwurtleEngineAndAccessories)
 
 set(CMAKE_CXX_STANDARD 17)
 set(OpenGL_GL_PREFERENCE GLVND)

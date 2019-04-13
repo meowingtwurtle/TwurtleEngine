@@ -1,16 +1,14 @@
-project(engine)
+cmake_minimum_required(VERSION 3.0)
+project(RandomCatEngineL)
 
-file(GLOB_RECURSE headers include/*.hpp)
-file(GLOB_RECURSE impl_headers include*.inl)
-file(GLOB_RECURSE sources src/*.cpp)
+set(CMAKE_CXX_STANDARD 17)
+set(OpenGL_GL_PREFERENCE GLVND)
 
-add_library(RandomCatEngine ${sources} ${headers} ${impl_headers})
+add_library(__RC_Engine_All INTERFACE)
+add_library(RandomCat::Engine::All ALIAS __RC_Engine_All)
 
-target_include_directories(RandomCatEngine PUBLIC include)
-
-find_package(GLEW REQUIRED)
-find_package(SDL2 REQUIRED)
-find_package(OpenGL REQUIRED)
-
-target_link_libraries(RandomCatEngine ${GLEW_LIBRARY} ${GLEW_LIB} ${SDL2_LIBRARIES} glm stb RandomCat::All GSL)
-target_compile_options(RandomCatEngine PRIVATE -Wall -Wextra)
+file(GLOB sub_projects */CMakeLists.txt)
+foreach(sub_project ${sub_projects})
+    get_filename_component(directory ${sub_project} DIRECTORY)
+    add_subdirectory(${directory})
+endforeach()
