@@ -26,7 +26,12 @@ namespace randomcat::engine::graphics {
 
     class render_context {
     public:
-        explicit render_context(window const& _window) noexcept(!"Throws on error");
+        enum class flags : std::uint8_t {
+            none = 0x0,
+            debug = 0x1,
+        };
+
+        explicit render_context(window const& _window, flags _flags = flags::none) noexcept(!"Throws on error");
 
         auto make_active_lock() const noexcept { return render_context_active_lock(m_context); }
 
@@ -43,5 +48,26 @@ namespace randomcat::engine::graphics {
 
         render_context_detail::context_data m_context;
     };
+
+    inline auto __underlying(render_context::flags f) noexcept { return static_cast<std::underlying_type_t<decltype(f)>>(f); }
+    inline render_context::flags operator|(render_context::flags _first, render_context::flags _second) noexcept {
+        return render_context::flags(__underlying(_first) | __underlying(_second));
+    }
+    inline render_context::flags operator&(render_context::flags _first, render_context::flags _second) noexcept {
+        return render_context::flags(__underlying(_first) & __underlying(_second));
+    }
+    inline render_context::flags operator^(render_context::flags _first, render_context::flags _second) noexcept {
+        return render_context::flags(__underlying(_first) ^ __underlying(_second));
+    }
+    inline render_context::flags& operator|=(render_context::flags& _first, render_context::flags _second) noexcept {
+        return _first = (_first | _second);
+    }
+    inline render_context::flags& operator&=(render_context::flags& _first, render_context::flags _second) noexcept {
+        return _first = (_first & _second);
+    }
+    inline render_context::flags& operator^=(render_context::flags& _first, render_context::flags _second) noexcept {
+        return _first = (_first ^ _second);
+    }
+    inline bool is_debug(render_context::flags _f) noexcept { return (_f & render_context::flags::debug) != render_context::flags::none; }
 
 }    // namespace randomcat::engine::graphics
