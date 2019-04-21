@@ -4,7 +4,6 @@
 #include <type_traits>
 #include <vector>
 
-#include "randomcat/engine/low_level/graphics/detail/gl_error_guard.hpp"
 #include "randomcat/engine/low_level/graphics/gl_wrappers/vao_raii.hpp"
 #include "randomcat/engine/low_level/graphics/gl_wrappers/vbo_raii.hpp"
 #include "randomcat/engine/low_level/graphics/shader.hpp"
@@ -25,8 +24,6 @@ namespace randomcat::engine::graphics {
         vertex_renderer(vertex_renderer&&) noexcept = delete;
 
         explicit vertex_renderer(shader_view<vertex> _shader) noexcept : m_shader(std::move(_shader)) {
-            RC_GL_ERROR_GUARD("initializing vertex renderer");
-
             auto vaoLock = gl_detail::vao_lock(m_vao);
             auto vboLock = gl_detail::vbo_lock(m_vbo);
 
@@ -96,8 +93,6 @@ namespace randomcat::engine::graphics {
 
         template<typename _container_t, typename = std::enable_if_t<is_vertex_container_v<_container_t>>>
         void render_active(_container_t const& _vertices) const noexcept {
-            RC_GL_ERROR_GUARD("vertex renderer rendering");
-
             glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(vertex), _vertices.data(), GL_DYNAMIC_DRAW);
             glDrawArrays(GL_TRIANGLES, 0, _vertices.size());
         }

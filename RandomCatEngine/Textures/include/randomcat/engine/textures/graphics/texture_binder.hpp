@@ -5,7 +5,6 @@
 #include <GL/glew.h>
 
 #include "randomcat/engine/low_level/detail/impl_only_access.hpp"
-#include "randomcat/engine/low_level/graphics/detail/gl_error_guard.hpp"
 #include "randomcat/engine/low_level/graphics/gl_wrappers/texture_raii.hpp"
 #include "randomcat/engine/textures/graphics/texture_manager.hpp"
 #include "randomcat/engine/textures/graphics/texture_sections.hpp"
@@ -68,8 +67,6 @@ namespace randomcat::engine::graphics::textures {
     using const_shared_texture_array = shared_texture_array::as_const;
 
     [[nodiscard]] unique_texture_array make_texture_array(GLsizei _width, GLsizei _height, GLsizei _layers) noexcept {
-        RC_GL_ERROR_GUARD("generating texture array");
-
         gl_detail::unique_texture_id id;
         glBindTexture(GL_TEXTURE_2D_ARRAY, id.value());
         glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, _width, _height, _layers);
@@ -81,8 +78,6 @@ namespace randomcat::engine::graphics::textures {
     texture_rectangle bind_texture_array_layer(basic_texture_array<TextureIsShared, /*IsMutable=*/true> const& _array,
                                                texture_array_index _layerNum,
                                                texture const& _texture) noexcept {
-        RC_GL_ERROR_GUARD("binding texture");
-
         auto const imageWidth = _texture.width();
         auto const imageHeight = _texture.height();
 

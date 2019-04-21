@@ -2,13 +2,9 @@
 
 #include <gsl/gsl>
 
-#include "randomcat/engine/low_level/graphics/detail/gl_error_guard.hpp"
-
 namespace randomcat::engine::graphics {
     namespace shader_detail {
         inline auto compile_shader(GLenum _type, std::string_view _source) noexcept(!"Throws on error") {
-            RC_GL_ERROR_GUARD("compiling shader");
-
             auto shaderID = gl_detail::unique_shader_id(_type);
 
             // Third argument: array of char const*, fourth argument: array of sizes of
@@ -45,8 +41,6 @@ namespace randomcat::engine::graphics {
         inline auto link_program(Shaders const&... _shaders) noexcept(false) {
             static_assert((std::is_same_v<Shaders, gl_detail::unique_shader_id> && ...), "Arguments must all be shader_ids");
 
-            RC_GL_ERROR_GUARD("linking program");
-
             gl_detail::unique_program_id programID;
 
             {
@@ -72,8 +66,6 @@ namespace randomcat::engine::graphics {
         }
 
         inline auto program_binary_size(gl_detail::shared_program_id const& _program) noexcept {
-            RC_GL_ERROR_GUARD("getting program size");
-
             GLint size;
             glGetProgramiv(_program.value(), GL_PROGRAM_BINARY_LENGTH, &size);
             return gsl::narrow<GLuint>(size);
@@ -87,8 +79,6 @@ namespace randomcat::engine::graphics {
 
     namespace shader_detail {
         inline gl_detail::shared_program_id clone_program(gl_detail::shared_program_id const& _program) noexcept {
-            RC_GL_ERROR_GUARD("cloning program");
-
             auto const programSize = program_binary_size(_program);
             auto binary = std::vector<char>(programSize);
             GLenum binaryFormat;
@@ -148,8 +138,6 @@ namespace randomcat::engine::graphics {
 
     template<typename Capabilities>
     GLint shader_uniform_reader<Capabilities>::get_uniform_location(std::string const& _name) const {
-        RC_GL_ERROR_GUARD("getting uniform location");
-
         auto loc = glGetUniformLocation(program().value(), _name.c_str());
         if (loc == -1) throw no_such_uniform_error("No such uniform: " + _name);
 
@@ -158,8 +146,6 @@ namespace randomcat::engine::graphics {
 
     template<typename Capabilities>
     bool shader_uniform_reader<Capabilities>::get_bool(std::string const& _name) const {
-        RC_GL_ERROR_GUARD("getting bool uniform");
-
         auto l = make_active_lock();
 
         GLint result;
@@ -170,8 +156,6 @@ namespace randomcat::engine::graphics {
 
     template<typename Capabilities>
     GLint shader_uniform_reader<Capabilities>::get_int(std::string const& _name) const {
-        RC_GL_ERROR_GUARD("getting int uniform");
-
         auto l = make_active_lock();
 
         GLint result;
@@ -182,8 +166,6 @@ namespace randomcat::engine::graphics {
 
     template<typename Capabilities>
     GLfloat shader_uniform_reader<Capabilities>::get_float(std::string const& _name) const {
-        RC_GL_ERROR_GUARD("getting float uniform");
-
         auto l = make_active_lock();
 
         GLfloat result;
@@ -194,8 +176,6 @@ namespace randomcat::engine::graphics {
 
     template<typename Capabilities>
     glm::vec3 shader_uniform_reader<Capabilities>::get_vec3(std::string const& _name) const {
-        RC_GL_ERROR_GUARD("getting vec3 uniform");
-
         auto l = make_active_lock();
 
         GLfloat result[3];
@@ -206,8 +186,6 @@ namespace randomcat::engine::graphics {
 
     template<typename Capabilities>
     glm::mat4 shader_uniform_reader<Capabilities>::get_mat4(std::string const& _name) const {
-        RC_GL_ERROR_GUARD("getting mat4 uniform");
-
         auto l = make_active_lock();
 
         GLfloat result[16];
@@ -227,40 +205,30 @@ namespace randomcat::engine::graphics {
 
     template<typename Capabilities>
     void shader_uniform_writer<Capabilities>::set_bool(std::string const& _name, bool _value) const {
-        RC_GL_ERROR_GUARD("setting bool uniform");
-
         auto l = this->make_active_lock();
         glUniform1i(this->get_uniform_location(_name), _value);
     }
 
     template<typename Capabilities>
     void shader_uniform_writer<Capabilities>::set_int(std::string const& _name, GLint _value) const {
-        RC_GL_ERROR_GUARD("setting int uniform");
-
         auto l = this->make_active_lock();
         glUniform1i(this->get_uniform_location(_name), _value);
     }
 
     template<typename Capabilities>
     void shader_uniform_writer<Capabilities>::set_float(std::string const& _name, GLfloat _value) const {
-        RC_GL_ERROR_GUARD("setting float uniform");
-
         auto l = this->make_active_lock();
         glUniform1f(this->get_uniform_location(_name), _value);
     }
 
     template<typename Capabilities>
     void shader_uniform_writer<Capabilities>::set_vec3(std::string const& _name, glm::vec3 const& _value) const {
-        RC_GL_ERROR_GUARD("setting vec3 uniform");
-
         auto l = this->make_active_lock();
         glUniform3fv(this->get_uniform_location(_name), 1, reinterpret_cast<GLfloat const*>(&_value));
     }
 
     template<typename Capabilities>
     void shader_uniform_writer<Capabilities>::set_mat4(std::string const& _name, glm::mat4 const& _value) const {
-        RC_GL_ERROR_GUARD("setting mat4 uniform");
-
         auto l = this->make_active_lock();
         glUniformMatrix4fv(this->get_uniform_location(_name), 1, false, reinterpret_cast<GLfloat const*>(&_value));
     }
