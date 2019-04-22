@@ -176,9 +176,9 @@ namespace randomcat::engine::graphics {
         using render_object_detail::render_object_triangle_base<vertex>::render_object_triangle_base;
 
         render_object_triangle(location_triangle _locations, textures::texture_triangle _texture) noexcept
-        : render_object_detail::render_object_triangle_base<default_vertex>{vertex{_locations[0], {_texture[0], _texture.layer()}},
-                                                                            vertex{_locations[1], {_texture[1], _texture.layer()}},
-                                                                            vertex{_locations[2], {_texture[2], _texture.layer()}}} {
+        : render_object_detail::render_object_triangle_base<default_vertex>{vertex{_locations[0], {_texture[0], _texture.layer()}, {}},
+                                                                            vertex{_locations[1], {_texture[1], _texture.layer()}, {}},
+                                                                            vertex{_locations[2], {_texture[2], _texture.layer()}, {}}} {
             set_normal(impl_call, -glm::normalize(glm::cross(_locations[1].value - _locations[0].value, _locations[2].value - _locations[1].value)));
         }
 

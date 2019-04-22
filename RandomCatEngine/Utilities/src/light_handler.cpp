@@ -5,7 +5,7 @@ namespace randomcat::engine::graphics {
     void light_handler::update() const noexcept {
         m_uniformWriter.set_int("lightsUsed", m_lights.size());
 
-        for (std::int16_t i = 0; i < m_lights.size(); ++i) {
+        for (std::uint16_t i = 0; i < m_lights.size(); ++i) {
             auto prefix = "lights[" + std::to_string(i) + "]";
             auto const& light = m_lights[i];
 

@@ -104,22 +104,22 @@ namespace randomcat::engine::graphics {
         shader<default_vertex, shader_capabilities<camera, light_handler>>
             ourShader(DEFAULT_VERTEX_SHADER,
                       DEFAULT_FRAGMENT_SHADER,
-                      {{0,
+                      {{{0},
                         shader_input::vec3_type,
                         shader_input_storage_type::floating_point,
-                        offsetof(default_vertex, location) + offsetof(default_vertex::location_t, value),
-                        sizeof(default_vertex)},
-                       {1,
+                        {offsetof(default_vertex, location) + offsetof(default_vertex::location_t, value)},
+                        {sizeof(default_vertex)}},
+                       {{1},
                         shader_input::vec2_type,
                         shader_input_storage_type::floating_point,
-                        offsetof(default_vertex, texture) + offsetof(default_vertex::texture_t, coord),
-                        sizeof(default_vertex)},
-                       {2,
+                        {offsetof(default_vertex, texture) + offsetof(default_vertex::texture_t, coord)},
+                        {sizeof(default_vertex)}},
+                       {{2},
                         shader_input::int_type,
                         shader_input_storage_type::signed_int,
-                        offsetof(default_vertex, texture) + offsetof(default_vertex::texture_t, layer),
-                        sizeof(default_vertex)},
-                       {3, shader_input::vec3_type, shader_input_storage_type::floating_point, offsetof(default_vertex, normal), sizeof(default_vertex)}});
+                        {offsetof(default_vertex, texture) + offsetof(default_vertex::texture_t, layer)},
+                        {sizeof(default_vertex)}},
+                       {{3}, shader_input::vec3_type, shader_input_storage_type::floating_point, {offsetof(default_vertex, normal)}, {sizeof(default_vertex)}}});
 
         auto uniforms = ourShader.uniforms();
 
